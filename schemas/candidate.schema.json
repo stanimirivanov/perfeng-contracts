@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://perfeng.dev/schemas/candidate.schema.json",
+  "title": "Candidate Specification",
+  "description": "Candidate software version under test",
+  "type": "object",
+  "required": ["gitSha"],
+  "additionalProperties": false,
+  "properties": {
+    "gitSha": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{40}$",
+      "description": "Git commit SHA"
+    },
+    "branch": {
+      "type": "string",
+      "description": "Git branch"
+    },
+    "imageDigest": {
+      "type": "string",
+      "description": "Container image digest"
+    },
+    "version": {
+      "type": "string",
+      "description": "Application version"
+    },
+    "configurationHash": {
+      "type": "string",
+      "description": "Configuration hash"
+    },
+    "featureFlags": {
+      "type": "object",
+      "additionalProperties": {
+        "type": ["string", "boolean", "number", "null"]
+      }
+    },
+    "databaseMigrationVersion": {
+      "type": "string",
+      "description": "Database migration version"
+    },
+    "dependencies": {
+      "type": "object",
+      "description": "Dependency versions",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  }
+}
