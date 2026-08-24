@@ -26,7 +26,7 @@
           "type": "string",
           "minLength": 1,
           "pattern": "^[a-z][a-z0-9_.]*$",
-          "description": "Metric name (e.g., checkout_duration_p95)"
+          "description": "Metric name following naming convention"
         },
         "direction": {
           "type": "string",
@@ -34,12 +34,14 @@
           "description": "Whether lower or higher values are better"
         },
         "type": {
-          "type": "string",
+          "type": ["string", "null"],
+          "default": null,
           "enum": ["latency", "throughput", "error_rate", "resource", "custom"],
           "description": "Metric type"
         },
         "unit": {
-          "type": "string",
+          "type": ["string", "null"],
+          "default": null,
           "description": "Unit of measurement (ms, req/s, %, etc.)"
         }
       }
@@ -55,55 +57,66 @@
           "description": "Number of samples"
         },
         "mean": {
-          "type": "number",
+          "type": ["number", "null"],
+          "default": null,
           "description": "Arithmetic mean"
         },
         "median": {
-          "type": "number",
+          "type": ["number", "null"],
+          "default": null,
           "description": "Median (p50)"
         },
         "p90": {
-          "type": "number",
+          "type": ["number", "null"],
+          "default": null,
           "minimum": 0,
           "description": "90th percentile"
         },
         "p95": {
-          "type": "number",
+          "type": ["number", "null"],
+          "default": null,
           "minimum": 0,
           "description": "95th percentile"
         },
         "p99": {
-          "type": "number",
+          "type": ["number", "null"],
+          "default": null,
           "minimum": 0,
           "description": "99th percentile"
         },
         "stddev": {
-          "type": "number",
+          "type": ["number", "null"],
+          "default": null,
           "minimum": 0,
           "description": "Standard deviation"
         },
         "min": {
-          "type": "number",
+          "type": ["number", "null"],
+          "default": null,
           "description": "Minimum value"
         },
         "max": {
-          "type": "number",
+          "type": ["number", "null"],
+          "default": null,
           "description": "Maximum value"
         },
         "cv": {
-          "type": "number",
+          "type": ["number", "null"],
+          "default": null,
           "minimum": 0,
           "description": "Coefficient of variation"
         }
       }
     },
     "thresholds": {
-      "type": "object",
+      "type": ["object", "null"],
+      "default": null,
       "description": "Threshold evaluation results",
       "additionalProperties": false,
       "properties": {
         "slo": {
-          "type": "object",
+          "type": ["object", "null"],
+          "default": null,
           "description": "SLO threshold results",
           "additionalProperties": {
             "type": "object",
@@ -114,16 +127,19 @@
                 "type": "boolean"
               },
               "threshold": {
-                "type": "string"
+                "type": ["string", "null"],
+                "default": null
               },
               "actual": {
-                "type": "number"
+                "type": ["number", "null"],
+                "default": null
               }
             }
           }
         },
         "regression": {
-          "type": "object",
+          "type": ["object", "null"],
+          "default": null,
           "description": "Regression threshold results",
           "additionalProperties": {
             "type": "object",
@@ -134,13 +150,16 @@
                 "type": "boolean"
               },
               "baselineValue": {
-                "type": "number"
+                "type": ["number", "null"],
+                "default": null
               },
               "actualValue": {
-                "type": "number"
+                "type": ["number", "null"],
+                "default": null
               },
               "percentChange": {
-                "type": "number"
+                "type": ["number", "null"],
+                "default": null
               }
             }
           }
@@ -148,7 +167,8 @@
       }
     },
     "metadata": {
-      "type": "object",
+      "type": ["object", "null"],
+      "default": null,
       "description": "Additional metadata",
       "additionalProperties": true
     }
