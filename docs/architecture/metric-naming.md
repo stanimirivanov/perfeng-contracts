@@ -2,7 +2,8 @@
 
 ## Overview
 
-All performance metrics follow a hierarchical naming convention to ensure consistency and enable automated processing.
+All performance metrics follow a hierarchical naming convention to ensure
+consistency and enable automated processing.
 
 ## Format
 

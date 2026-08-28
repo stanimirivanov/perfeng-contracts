@@ -2,26 +2,31 @@
 
 ## Overview
 
-All schemas in the performance platform follow semantic versioning principles to ensure backward compatibility and clear migration paths.
+All schemas in the performance platform follow semantic versioning principles to
+ensure backward compatibility and clear migration paths.
 
 ## Version Format
 
-Schemas use integer version numbers (1, 2, 3, ...) stored in the `schemaVersion` field of each document.
+Schemas use integer version numbers (1, 2, 3, ...) stored in the `schemaVersion`
+field of each document.
 
 ## Versioning Rules
 
-1. **Incremental Changes**: Minor additions that don't break existing consumers increment the patch version.
+1. **Incremental Changes**: Minor additions that don't break existing consumers
+   increment the patch version.
 
-2. **Breaking Changes**: Changes that would break existing consumers require a new major version.
+2. **Breaking Changes**: Changes that would break existing consumers require a
+   new major version.
 
-3. **Deprecation**: Fields are deprecated for at least one major version before removal.
+3. **Deprecation**: Fields are deprecated for at least one major version before
+   removal.
 
 4. **Migration**: Migration tools are provided for each major version change.
 
 ## Current Schema Versions
 
 | Schema                   | Version | Status |
-| ------------------------ | ------- | ------ |
+|--------------------------|---------|--------|
 | run-metadata.schema.json | 1       | Stable |
 | test-result.schema.json  | 1       | Stable |
 | environment.schema.json  | 1       | Stable |
