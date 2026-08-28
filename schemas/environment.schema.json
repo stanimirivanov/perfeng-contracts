@@ -23,7 +23,7 @@
       "properties": {
         "version": {
           "type": "string",
-          "pattern": "^v?\\d+\\.\\d+\\.\\d+",
+          "pattern": "^v?\\d+\\.\\d+\\.\\d+$",
           "description": "Kubernetes version"
         },
         "nodeCount": {
