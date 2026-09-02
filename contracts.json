@@ -1,6 +1,23 @@
 {
-  "version": "0.3.0",
+  "version": "0.4.0",
   "contracts": [
+    {
+      "name": "policy/v1",
+      "schema": "schemas/policy/v1/performance-policy.schema.json",
+      "examples": [
+        {"path": "examples/policy/browser.json"},
+        {"path": "examples/policy/checkout.json"}
+      ]
+    },
+    {
+      "name": "analysis/v1",
+      "schema": "schemas/analysis/v1/analysis-result.schema.json",
+      "examples": [
+        {"path": "examples/analysis/slo-pass-regression-fail.json"},
+        {"path": "examples/analysis/missing-reference.json"},
+        {"path": "examples/analysis/unknown-samples.json"}
+      ]
+    },
     {
       "name": "artifact/v1",
       "schema": "schemas/artifact/v1/artifact-reference.schema.json",

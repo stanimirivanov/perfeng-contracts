@@ -1,0 +1,12 @@
+{
+  "measurements": [
+    {
+      "name": "ui.search.action_to_visible_ms",
+      "durationMs": 90
+    },
+    {
+      "name": "ui.search.action_to_visible_ms",
+      "durationMs": 110
+    }
+  ]
+}

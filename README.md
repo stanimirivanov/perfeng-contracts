@@ -2,8 +2,8 @@
 
 Language-neutral performance engineering contracts, extracted from
 `performance-platform`. The bundle covers execution metadata, normalized metrics,
-workload definitions, test catalogues, and raw/normalized result transport from
-proposal phase 1. Policy and analysis-decision contracts are still to follow.
+workload definitions, test catalogues, raw/normalized result transport, and
+performance policies with independent quality, SLO, and regression outcomes.
 
 ## Contents
 
@@ -19,6 +19,8 @@ proposal phase 1. Policy and analysis-decision contracts are still to follow.
 | `normalized-result/v1` | [normalized result](schemas/normalized-result/v1/normalized-result.schema.json) | Multi-metric envelope with raw evidence references |
 | `workload/v1` | [workload](schemas/workload/v1/workload.schema.json) | Versioned profiles, configuration, phases, and dataset identity |
 | `catalogue/v1` | [test catalogue](schemas/catalogue/v1/test-catalogue.schema.json) | Test ownership, pinned tools/source/images, and scheduling |
+| `policy/v1` | [performance policy](schemas/policy/v1/performance-policy.schema.json) | Explicit metric thresholds and versioned baseline selection |
+| `analysis/v1` | [analysis result](schemas/analysis/v1/analysis-result.schema.json) | Independent quality, SLO, and regression outcomes with evidence references |
 
 [contracts.json](contracts.json) maps schemas to executable examples and records
 the bundle version. The original normalized-result array remains a legacy
@@ -55,11 +57,11 @@ autosave extension remains recommended. `.vscode` configuration is shared;
 IntelliJ's root `.idea` directory is ignored.
 
 Validation checks Draft 2020-12 schemas, declared defaults, all examples,
-date-time formats, catalogue/transport consistency, and negative regression
+date-time formats, catalogue/transport/policy consistency, and negative regression
 cases. Schema IDs identify bundled resources; validation does not fetch schemas
 or artifacts from the internet. Tests verify fixture checksums against local bytes.
 
-CI runs these checks and uploads a `perfeng-contracts-0.3.0.tar.gz` candidate
+CI runs these checks and uploads a `perfeng-contracts-0.4.0.tar.gz` candidate
 bundle. That CI artifact is not a published stable release. Until a release
 exists, integrations should pin the merged commit SHA, not a floating branch.
 
@@ -81,7 +83,9 @@ See [workload and catalogue contracts](docs/workloads-and-catalogues.md) for
 field semantics, hashing inputs, and migration from the prototype k6 files.
 See [artifact and result transport](docs/artifact-and-result-transport.md) for
 byte-level integrity, envelope semantics, and migration from legacy arrays.
-Policy, API, and analysis-decision contracts are subsequent work.
+See [performance policies and analysis outcomes](docs/performance-policies.md)
+for non-blocking policy semantics, evidence requirements, and prototype migration.
+API contracts and the analysis engine are subsequent work.
 Missing statistical values mean unavailable, never zero.
 Schema validation establishes structural validity, not scientific quality or
 performance-gate readiness.

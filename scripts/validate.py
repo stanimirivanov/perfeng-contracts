@@ -1,6 +1,8 @@
 """Development-only checks for the language-neutral contract bundle."""
 
+import hashlib
 import json
+import math
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -25,8 +27,23 @@ class ContractDefinition(TypedDict):
     examples: list[ExampleDefinition]
 
 
+def reject_nonfinite_constant(value: str) -> Never:
+    raise ValueError(f"Non-finite value is not valid JSON: {value}")
+
+
+def parse_finite_float(value: str) -> float:
+    number = float(value)
+    if not math.isfinite(number):
+        raise ValueError(f"JSON number exceeds finite float range: {value}")
+    return number
+
+
 def read_json(path: Path) -> Any:
-    return json.loads(path.read_text(encoding="utf-8"))
+    return json.loads(
+        path.read_text(encoding="utf-8"),
+        parse_constant=reject_nonfinite_constant,
+        parse_float=parse_finite_float,
+    )
 
 
 def no_network(uri: str) -> Never:
@@ -153,8 +170,131 @@ def check_transport_consistency(document: dict[str, Any]) -> None:
         metric_names.add(name)
 
 
+def check_policy_consistency(policy: dict[str, Any]) -> None:
+    ids: set[str] = set()
+    selectors: set[tuple[str, str]] = set()
+    for rule in policy["spec"]["rules"]:
+        if rule["id"] in ids:
+            raise ValueError("Duplicate policy rule ID")
+        selector = (rule["metric"]["name"], rule["metric"]["statistic"])
+        if selector in selectors:
+            raise ValueError("Duplicate policy metric/statistic selector")
+        ids.add(rule["id"])
+        selectors.add(selector)
+        slo = rule.get("slo", {})
+        if "min" in slo and "max" in slo and slo["min"] > slo["max"]:
+            raise ValueError("SLO minimum exceeds maximum")
+
+
+def check_analysis_consistency(
+    report: dict[str, Any], policy: dict[str, Any] | None = None
+) -> None:
+    """Check a supplied report; do not select baselines or produce verdicts.
+
+    Call after schema validation. Runtime consumers must resolve and verify the
+    policy and artifact bytes before trusting reported values and provenance.
+    """
+    candidate = report["candidateArtifact"]
+    check_artifact_reference(candidate)
+    if candidate["runId"] != report["runId"]:
+        raise ValueError("Candidate run ID does not match analysis")
+    ids = {candidate["id"].lower()}
+    locations = {candidate["uri"]}
+    references: set[str] = set()
+    for artifact in report["referenceArtifacts"]:
+        check_artifact_reference(artifact)
+        identity = artifact["id"].lower()
+        if identity in ids or artifact["uri"] in locations:
+            raise ValueError("Duplicate candidate/reference artifact identity")
+        if artifact["runId"] == report["runId"]:
+            raise ValueError("Reference must come from a different run")
+        ids.add(identity)
+        locations.add(artifact["uri"])
+        references.add(identity)
+
+    evaluations: dict[str, Any] = {}
+    for evaluation in report["evaluations"]:
+        if evaluation["ruleId"] in evaluations:
+            raise ValueError("Duplicate evaluation rule ID")
+        evaluations[evaluation["ruleId"]] = evaluation
+        for section in ("quality", "slo", "regression"):
+            verdict = evaluation[section]
+            if verdict["status"] != "PASS" and not verdict["reasons"]:
+                raise ValueError("Non-PASS outcomes require reasons")
+        if evaluation["quality"]["status"] != "PASS":
+            if any(evaluation[s]["status"] in {"PASS", "FAIL"} for s in ("slo", "regression")):
+                raise ValueError("Untrusted quality cannot yield a decisive performance outcome")
+        regression = evaluation["regression"]
+        if "referenceArtifactId" in regression:
+            if regression["referenceArtifactId"].lower() not in references:
+                raise ValueError("Regression reference artifact is not declared")
+
+    if policy is None:
+        return
+    check_policy_consistency(policy)
+    if (report["policy"]["id"], report["policy"]["version"], report["policy"]["mode"]) != (
+        policy["metadata"]["name"],
+        policy["metadata"]["version"],
+        policy["spec"]["mode"],
+    ):
+        raise ValueError("Analysis policy identity/version/mode mismatch")
+    rules = {rule["id"]: rule for rule in policy["spec"]["rules"]}
+    if set(rules) != set(evaluations):
+        raise ValueError("Analysis must account for every policy rule exactly once")
+    for rule_id, rule in rules.items():
+        evaluation = evaluations[rule_id]
+        if evaluation["metric"] != rule["metric"]:
+            raise ValueError("Analysis metric/statistic/unit does not match policy")
+        for section in ("slo", "regression"):
+            if section not in rule and evaluation[section]["status"] != "NOT_EVALUATED":
+                raise ValueError("Unconfigured policy sections must be NOT_EVALUATED")
+        quality = evaluation["quality"]
+        if quality["status"] == "PASS":
+            requirement = rule.get("quality", {})
+            if "minSamples" in requirement:
+                if quality.get("samples", 0) < requirement["minSamples"]:
+                    raise ValueError("Quality PASS requires the configured sample count")
+            if "maxCv" in requirement:
+                if "cv" not in quality or quality["cv"] > requirement["maxCv"]:
+                    raise ValueError("Quality PASS requires the configured variability bound")
+        slo = evaluation["slo"]
+        if slo["status"] in {"PASS", "FAIL"}:
+            bounds = rule["slo"]
+            passes = bounds.get("min", -math.inf) <= slo["value"] <= bounds.get("max", math.inf)
+            if (slo["status"] == "PASS") != passes:
+                raise ValueError("SLO outcome contradicts the reported value and policy bounds")
+        regression = evaluation["regression"]
+        if regression["status"] in {"PASS", "FAIL"}:
+            requirement = rule["regression"]
+            difference = requirement["practicalDifference"]
+            if regression["effect"]["kind"] != difference["kind"]:
+                raise ValueError("Regression effect kind does not match policy")
+            change = regression["candidateValue"] - regression["referenceValue"]
+            if requirement["direction"] == "higher-is-better":
+                change = -change
+            if difference["kind"] == "relative":
+                if regression["referenceValue"] == 0:
+                    raise ValueError("Relative comparison against zero is inconclusive")
+                change /= abs(regression["referenceValue"])
+            if not math.isclose(change, regression["effect"]["value"], rel_tol=1e-9, abs_tol=1e-12):
+                raise ValueError(
+                    "Reported regression effect contradicts candidate/reference values"
+                )
+            if (regression["status"] == "FAIL") != (change >= difference["value"]):
+                raise ValueError("Regression verdict contradicts the practical threshold")
+
+
 def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
     contracts, validators = load_contracts(root)
+    policies = [
+        (
+            read_json(root / example["path"]),
+            hashlib.sha256((root / example["path"]).read_bytes()).hexdigest(),
+        )
+        for entry in contracts
+        if entry["name"] == "policy/v1"
+        for example in entry["examples"]
+    ]
     schema_paths = {entry["schema"] for entry in contracts}
     actual_schemas = {p.relative_to(root).as_posix() for p in (root / "schemas").rglob("*.json")}
     if schema_paths != actual_schemas or len(schema_paths) != len(contracts):
@@ -185,6 +325,21 @@ def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
                     check_artifact_reference(instance)
                 if entry["name"] in {"raw-result/v1", "normalized-result/v1"}:
                     check_transport_consistency(instance)
+                if entry["name"] == "policy/v1":
+                    check_policy_consistency(instance)
+                if entry["name"] == "analysis/v1":
+                    matches = [
+                        policy
+                        for policy, digest in policies
+                        if policy["metadata"]["name"] == instance["policy"]["id"]
+                        and policy["metadata"]["version"] == instance["policy"]["version"]
+                        and digest == instance["policy"]["sha256"]
+                    ]
+                    if len(matches) != 1:
+                        raise ValueError(
+                            "Analysis must reference exactly one checked-in policy by hash"
+                        )
+                    check_analysis_consistency(instance, matches[0])
                 count += 1
     actual_examples = {p.relative_to(root).as_posix() for p in (root / "examples").rglob("*.json")}
     if example_paths != actual_examples:
