@@ -21,12 +21,13 @@ jobs:
       - run: uv run --locked ruff format --check .
       - run: uv run --locked ty check
       - run: uv run --locked python scripts/validate.py
+      - run: uv run --locked python scripts/validate_api.py
       - run: uv run --locked python -m unittest discover -s tests -v
       - name: Assemble candidate contract bundle
         run: |
           mkdir -p dist
-          tar -czf dist/perfeng-contracts-0.4.0.tar.gz contracts.json schemas examples docs tests/fixtures README.md LICENSE
+          tar -czf dist/perfeng-contracts-0.5.0.tar.gz contracts.json schemas examples api docs tests/fixtures README.md LICENSE
       - uses: actions/upload-artifact@v4
         with:
-          name: perfeng-contracts-0.4.0
-          path: dist/perfeng-contracts-0.4.0.tar.gz
+          name: perfeng-contracts-0.5.0
+          path: dist/perfeng-contracts-0.5.0.tar.gz

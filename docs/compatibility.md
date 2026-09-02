@@ -1,10 +1,19 @@
 # Contract compatibility
 
-The current candidate bundle is `0.4.0`. It adds `policy/v1` and `analysis/v1`
-to the `0.3.0` artifact/result transport foundation. All ten previous schemas
-remain unchanged. The new policies support only non-blocking `observe` and
-`inform` modes; `confirm` and `block` are not accepted. Establish the remaining
-phase-1 contracts before a stable `1.0.0` release.
+The current candidate bundle is 0.5.0. It adds the run-management OpenAPI
+candidate and lifecycle/HTTP fixtures under api/run-management/v1. All twelve
+JSON schemas from 0.4.0 remain unchanged, including legacy run/v1 states.
+The API adds CANCELLING and excludes INCONCLUSIVE; it is a separate wire
+shape, not a replacement run/v1 record. See [API semantics](run-management-api.md).
+
+contracts.json now includes an apis inventory alongside contracts, and the
+archive includes api/. Strict manifest readers may need updating. Existing
+consumers stay on their pinned bundles; do not silently upgrade vendored
+schemas or claim universal reader/writer compatibility.
+
+Bundle 0.4.0 added policy/v1 and analysis/v1 to the transport foundation.
+Policies still support only observe/inform; confirm/block are not accepted.
+Establish the remaining phase-1 contracts before a stable 1.0.0 release.
 
 Two versions serve different purposes:
 

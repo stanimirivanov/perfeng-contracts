@@ -1,5 +1,12 @@
 {
-  "version": "0.4.0",
+  "version": "0.5.0",
+  "apis": [
+    {
+      "name": "run-management/v1",
+      "definition": "api/run-management/v1/openapi.json",
+      "transitions": "api/run-management/v1/transitions.json"
+    }
+  ],
   "contracts": [
     {
       "name": "policy/v1",

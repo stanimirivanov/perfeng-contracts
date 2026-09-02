@@ -1,6 +1,6 @@
 [project]
 name = "perfeng-contracts"
-version = "0.4.0"
+version = "0.5.0"
 description = "Language-neutral performance contracts and their validation tooling"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -9,6 +9,7 @@ dependencies = []
 
 [dependency-groups]
 dev = [
+    "openapi-spec-validator>=0.7.2,<1",
     "jsonschema[format]>=4.26.0,<5",
     "referencing>=0.37.0,<0.38",
     "ruff>=0.16.4,<0.17",

@@ -1,0 +1,39 @@
+[
+  {
+    "operationId": "createRun",
+    "status": 201,
+    "request": "create",
+    "requestHeaders": {
+      "Idempotency-Key": "fixture-create-0001"
+    },
+    "response": "created",
+    "headers": {
+      "Location": "/v1/runs/perf-20260902-120000-abcdef12",
+      "Idempotency-Key-Expires-At": "2026-09-03T12:00:00Z"
+    }
+  },
+  {
+    "operationId": "getRun",
+    "status": 200,
+    "response": "completed"
+  },
+  {
+    "operationId": "cancelRun",
+    "status": 202,
+    "response": "cancelling"
+  },
+  {
+    "operationId": "cancelRun",
+    "status": 200,
+    "response": "aborted"
+  },
+  {
+    "operationId": "createRun",
+    "status": 409,
+    "request": "create",
+    "requestHeaders": {
+      "Idempotency-Key": "fixture-create-0001"
+    },
+    "response": "error"
+  }
+]
