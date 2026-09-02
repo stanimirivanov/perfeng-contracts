@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "kind": "NormalizedResult",
+  "contractsVersion": "0.3.0",
+  "runId": "perf-20260901-130000-a1b2c3d5",
+  "testId": "search-browser",
+  "workload": {
+    "id": "search-browser-smoke",
+    "version": "1.0.0",
+    "sha256": "dcbb9c0f92dc16917a24f7eb52c95689a2091f893b64ccb219246af51a7da3c7"
+  },
+  "producer": {
+    "name": "perfeng-analysis",
+    "version": "0.1.0",
+    "image": "ghcr.io/example/perfeng-analysis@sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+  },
+  "measurementWindow": {
+    "start": "2026-09-01T13:00:00Z",
+    "end": "2026-09-01T13:01:00Z"
+  },
+  "createdAt": "2026-09-01T13:01:03Z",
+  "sourceArtifacts": [
+    {
+      "id": "55555555-5555-4555-8555-555555555555",
+      "runId": "perf-20260901-130000-a1b2c3d5",
+      "kind": "raw",
+      "uri": "s3://perfeng-example/runs/perf-20260901-130000-a1b2c3d5/raw/playwright-measurements.json",
+      "sha256": "7220fc62975b74f1d2312a219173349f2811bb1f2b1c197e4cfa7a22e51a418c",
+      "sizeBytes": 196,
+      "mediaType": "application/json",
+      "format": "playwright-measurements-json"
+    }
+  ],
+  "results": [
+    {
+      "schemaVersion": 2,
+      "runId": "perf-20260901-130000-a1b2c3d5",
+      "metric": {
+        "name": "ui.search.action_to_visible_ms",
+        "direction": "lower-is-better",
+        "type": "latency",
+        "unit": "ms"
+      },
+      "distribution": {
+        "samples": 2,
+        "mean": 100,
+        "min": 90,
+        "max": 110
+      }
+    }
+  ]
+}

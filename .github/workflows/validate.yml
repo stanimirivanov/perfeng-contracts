@@ -25,8 +25,8 @@ jobs:
       - name: Assemble candidate contract bundle
         run: |
           mkdir -p dist
-          tar -czf dist/perfeng-contracts-0.3.0.tar.gz contracts.json schemas examples docs tests/fixtures README.md LICENSE
+          tar -czf dist/perfeng-contracts-0.4.0.tar.gz contracts.json schemas examples docs tests/fixtures README.md LICENSE
       - uses: actions/upload-artifact@v4
         with:
-          name: perfeng-contracts-0.3.0
-          path: dist/perfeng-contracts-0.3.0.tar.gz
+          name: perfeng-contracts-0.4.0
+          path: dist/perfeng-contracts-0.4.0.tar.gz

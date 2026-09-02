@@ -1,9 +1,10 @@
 # Contract compatibility
 
-The current candidate bundle is `0.3.0`. It adds artifact/raw-result/normalized-result
-contracts and `result/v2` to the `0.2.0` workload/catalogue foundation. All six
-previous schemas remain unchanged. Establish the remaining phase-1 contracts
-before a stable `1.0.0` release.
+The current candidate bundle is `0.4.0`. It adds `policy/v1` and `analysis/v1`
+to the `0.3.0` artifact/result transport foundation. All ten previous schemas
+remain unchanged. The new policies support only non-blocking `observe` and
+`inform` modes; `confirm` and `block` are not accepted. Establish the remaining
+phase-1 contracts before a stable `1.0.0` release.
 
 Two versions serve different purposes:
 
@@ -50,5 +51,7 @@ documents. Every schema change must also explain reader/writer compatibility
 and add positive and negative cases for the affected boundary.
 
 Run lifecycle status, SLO outcome, regression outcome, and measurement quality
-remain distinct concepts. Their later contract PRs must preserve the proposal's
-separation between failed execution, poor measurements, and performance changes.
+remain distinct concepts. The [policy and analysis contracts](performance-policies.md)
+preserve the separation between failed execution, poor measurements, and
+performance changes. Existing producers need not emit these new documents until
+their analysis integration is implemented.
