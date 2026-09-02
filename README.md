@@ -20,17 +20,32 @@ array envelope for transport.
 
 ## Validate
 
-Use Python 3.12 or later for development checks. Python is test tooling only;
-consumers in Go, TypeScript, and Python use the same JSON schemas.
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then run
+the commands below from the repository root. uv creates `.venv` and installs
+the development tools from `uv.lock`. `.python-version` selects Python 3.12.
+The Python project is development tooling; consumers in Go, TypeScript, and
+Python use the same JSON schemas. It is not built as an installable package.
 
 ```sh
-python -m venv .venv
-# Windows PowerShell: .venv\Scripts\Activate.ps1
-# Linux/macOS: source .venv/bin/activate
-python -m pip install -r requirements-dev.txt
-python scripts/validate.py
-python -m unittest discover -s tests -v
+uv sync --locked
+uv run --locked ruff check .
+uv run --locked ruff format --check .
+uv run --locked ty check
+uv run --locked python scripts/validate.py
+uv run --locked python -m unittest discover -s tests -v
 ```
+
+Ruff handles Python linting and formatting; ty handles static type checking.
+To apply formatting and safe lint fixes, run `uv run ruff check --fix .` and
+`uv run ruff format .`. Update dependencies intentionally with `uv lock --upgrade`
+and commit the resulting `uv.lock` changes with `pyproject.toml` as appropriate.
+
+For VS Code, install the workspace's recommended extensions and select the
+`.venv` interpreter after syncing. The checked-in settings enable Ruff formatting
+and fixes on save, ty language services and type checking, and unittest discovery.
+Prettier formats JSON/YAML/Markdown; Even Better TOML formats TOML. The existing
+autosave extension remains recommended. `.vscode` configuration is shared;
+IntelliJ's root `.idea` directory is ignored.
 
 Validation checks Draft 2020-12 schemas, declared defaults, all examples,
 date-time formats, and negative regression cases. Schema IDs identify bundled
@@ -58,22 +73,3 @@ Workload, catalogue, policy, raw-artifact, API, and analysis-decision contracts
 are subsequent PRs. Missing statistical values mean unavailable, never zero.
 Schema validation establishes structural validity, not scientific quality or
 performance-gate readiness.
-
-## Pull request handoff
-
-The local feature branch is `codex/contracts-foundation`. The extracted history
-is merged with `--no-commit`, so review and commit all changes to finish that
-merge. These commands are instructions for the repository owner:
-
-```sh
-git add .
-git commit -m "Extract performance contracts and add validation"
-git push -u origin codex/contracts-foundation
-```
-
-Open a PR against `main` using [the issue text](docs/issues/001-contract-foundation.md).
-Use GitHub's **Create a merge commit** option for this extraction PR. Squashing
-would discard the imported ancestry. Do not push the temporary
-`codex/contracts-source-history` branch separately.
-
-The next steps are listed in [the implementation sequence](docs/implementation-sequence.md).

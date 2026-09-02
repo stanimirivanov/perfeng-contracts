@@ -3,6 +3,7 @@
 import json
 import sys
 from pathlib import Path
+from typing import Any, Never, NotRequired, TypedDict
 
 from jsonschema import Draft202012Validator, FormatChecker
 from referencing import Registry, Resource
@@ -11,16 +12,29 @@ from referencing.exceptions import NoSuchResource
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def read_json(path):
+class ExampleDefinition(TypedDict):
+    path: str
+    items: NotRequired[bool]
+
+
+class ContractDefinition(TypedDict):
+    name: str
+    schema: str
+    examples: list[ExampleDefinition]
+
+
+def read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def no_network(uri):
+def no_network(uri: str) -> Never:
     raise NoSuchResource(ref=uri)
 
 
-def load_contracts(root=ROOT):
-    contracts = read_json(root / "contracts.json")["contracts"]
+def load_contracts(
+    root: Path = ROOT,
+) -> tuple[list[ContractDefinition], dict[str, Draft202012Validator]]:
+    contracts: list[ContractDefinition] = read_json(root / "contracts.json")["contracts"]
     schemas = {entry["name"]: read_json(root / entry["schema"]) for entry in contracts}
     if len(schemas) != len(contracts):
         raise ValueError("Duplicate contract names")
@@ -42,7 +56,11 @@ def load_contracts(root=ROOT):
     return contracts, validators
 
 
-def check_defaults(schema, validator, location=""):
+def check_defaults(
+    schema: dict[str, Any] | bool | None,
+    validator: Draft202012Validator,
+    location: str = "",
+) -> None:
     """Walk actual subschemas, without interpreting arbitrary instance objects."""
     if not isinstance(schema, dict):
         return
@@ -60,7 +78,7 @@ def check_defaults(schema, validator, location=""):
             check_defaults(child, validator, f"{location}/{keyword}/{index}")
 
 
-def validate_bundle(root=ROOT):
+def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
     contracts, validators = load_contracts(root)
     schema_paths = {entry["schema"] for entry in contracts}
     actual_schemas = {p.relative_to(root).as_posix() for p in (root / "schemas").rglob("*.json")}
