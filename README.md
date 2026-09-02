@@ -2,8 +2,8 @@
 
 Language-neutral performance engineering contracts, extracted from
 `performance-platform`. The bundle covers execution metadata, normalized metrics,
-workload definitions, and test catalogues from proposal phase 1. Policy and
-transport contracts are still to follow.
+workload definitions, test catalogues, and raw/normalized result transport from
+proposal phase 1. Policy and analysis-decision contracts are still to follow.
 
 ## Contents
 
@@ -12,14 +12,18 @@ transport contracts are still to follow.
 | `candidate/v1` | [candidate](schemas/candidate/v1/candidate.schema.json) | Software identity |
 | `environment/v1` | [environment](schemas/environment/v1/environment.schema.json) | Standalone environment descriptor |
 | `run/v1` | [run metadata](schemas/run/v1/run-metadata.schema.json) | Execution identity, phases, and context |
-| `result/v1` | [test result](schemas/result/v1/test-result.schema.json) | One normalized metric record |
+| `result/v1` | [legacy test result](schemas/result/v1/test-result.schema.json) | Original metric record requiring a sample count |
+| `result/v2` | [test result](schemas/result/v2/test-result.schema.json) | Metric record supporting unavailable sample counts |
+| `artifact/v1` | [artifact reference](schemas/artifact/v1/artifact-reference.schema.json) | Stored bytes, checksum, size, format, and run identity |
+| `raw-result/v1` | [raw result](schemas/raw-result/v1/raw-result.schema.json) | Raw artifact manifest with producer and measurement context |
+| `normalized-result/v1` | [normalized result](schemas/normalized-result/v1/normalized-result.schema.json) | Multi-metric envelope with raw evidence references |
 | `workload/v1` | [workload](schemas/workload/v1/workload.schema.json) | Versioned profiles, configuration, phases, and dataset identity |
 | `catalogue/v1` | [test catalogue](schemas/catalogue/v1/test-catalogue.schema.json) | Test ownership, pinned tools/source/images, and scheduling |
 
 [contracts.json](contracts.json) maps schemas to executable examples and records
-the bundle version. The normalized-result example is an array of metric
-records; each element is validated separately. This PR does not define an
-array envelope for transport.
+the bundle version. The original normalized-result array remains a legacy
+fixture, validated one metric at a time. New producers use the normalized-result
+envelope containing `result/v2` records and references to raw evidence.
 
 ## Validate
 
@@ -51,10 +55,11 @@ autosave extension remains recommended. `.vscode` configuration is shared;
 IntelliJ's root `.idea` directory is ignored.
 
 Validation checks Draft 2020-12 schemas, declared defaults, all examples,
-date-time formats, catalogue consistency, and negative regression cases. Schema IDs identify bundled
-resources; validation does not fetch schemas from the internet.
+date-time formats, catalogue/transport consistency, and negative regression
+cases. Schema IDs identify bundled resources; validation does not fetch schemas
+or artifacts from the internet. Tests verify fixture checksums against local bytes.
 
-CI runs these checks and uploads a `perfeng-contracts-0.2.0.tar.gz` candidate
+CI runs these checks and uploads a `perfeng-contracts-0.3.0.tar.gz` candidate
 bundle. That CI artifact is not a published stable release. Until a release
 exists, integrations should pin the merged commit SHA, not a floating branch.
 
@@ -74,7 +79,9 @@ shapes; do not replace the inline structures with `$ref` mechanically.
 
 See [workload and catalogue contracts](docs/workloads-and-catalogues.md) for
 field semantics, hashing inputs, and migration from the prototype k6 files.
-Policy, raw-artifact, API, and analysis-decision contracts are subsequent work.
+See [artifact and result transport](docs/artifact-and-result-transport.md) for
+byte-level integrity, envelope semantics, and migration from legacy arrays.
+Policy, API, and analysis-decision contracts are subsequent work.
 Missing statistical values mean unavailable, never zero.
 Schema validation establishes structural validity, not scientific quality or
 performance-gate readiness.

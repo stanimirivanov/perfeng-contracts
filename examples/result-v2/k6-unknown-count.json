@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 2,
+  "runId": "perf-20260902-120000-a1b2c3d4",
+  "metric": {
+    "name": "api.http.duration",
+    "direction": "lower-is-better",
+    "type": "latency",
+    "unit": "ms"
+  },
+  "distribution": {
+    "mean": 180,
+    "p95": 260
+  }
+}

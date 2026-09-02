@@ -1,6 +1,38 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "contracts": [
+    {
+      "name": "artifact/v1",
+      "schema": "schemas/artifact/v1/artifact-reference.schema.json",
+      "examples": [
+        {"path": "examples/artifact/raw-reference.json"},
+        {"path": "examples/artifact/normalized-reference.json"}
+      ]
+    },
+    {
+      "name": "raw-result/v1",
+      "schema": "schemas/raw-result/v1/raw-result.schema.json",
+      "examples": [
+        {"path": "examples/raw-result/k6.json"},
+        {"path": "examples/raw-result/playwright.json"}
+      ]
+    },
+    {
+      "name": "normalized-result/v1",
+      "schema": "schemas/normalized-result/v1/normalized-result.schema.json",
+      "examples": [
+        {"path": "examples/normalized-result/k6.json"},
+        {"path": "examples/normalized-result/playwright.json"}
+      ]
+    },
+    {
+      "name": "result/v2",
+      "schema": "schemas/result/v2/test-result.schema.json",
+      "examples": [
+        {"path": "examples/result-v2/k6-unknown-count.json"},
+        {"path": "examples/result-v2/playwright-known-count.json"}
+      ]
+    },
     {
       "name": "workload/v1",
       "schema": "schemas/workload/v1/workload.schema.json",

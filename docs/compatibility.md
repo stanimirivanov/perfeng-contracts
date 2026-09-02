@@ -1,17 +1,29 @@
 # Contract compatibility
 
-The current candidate bundle is `0.2.0`. It adds workload/catalogue contracts
-to the `0.1.0` migration foundation without changing the four original payload
-schemas. Establish the missing phase-1 contracts before a stable `1.0.0` release.
+The current candidate bundle is `0.3.0`. It adds artifact/raw-result/normalized-result
+contracts and `result/v2` to the `0.2.0` workload/catalogue foundation. All six
+previous schemas remain unchanged. Establish the remaining phase-1 contracts
+before a stable `1.0.0` release.
 
 Two versions serve different purposes:
 
 - A path such as `result/v1` identifies a wire-format generation.
 - A bundle release such as `0.1.0` identifies the exact set of shipped schemas.
 
-The existing result payload keeps integer `schemaVersion: 1`. The other three
-schemas do not declare that property, so consumers must not inject it into
-their payloads. Select their version through the API or artifact contract.
+The original result payload keeps integer `schemaVersion: 1`. `result/v2` uses
+`schemaVersion: 2` and makes `distribution.samples` optional/nullable when the
+tool does not provide a count. Known counts remain positive integers. New
+normalized envelopes use v2 records; old readers need an explicit upgrade.
+
+Envelope `schemaVersion: 1` identifies the envelope shape, not its nested metric
+record version. `contractsVersion` records the producer's exact bundle version.
+Candidate, environment, run-metadata, and artifact-reference schemas do not
+declare a schemaVersion property; consumers must not inject one. Select their
+schema using the API/containing contract. A catalogue instead declares apiVersion.
+
+See [transport migration](artifact-and-result-transport.md#migrating-legacy-results)
+before wrapping old result arrays. Missing raw evidence or sample counts cannot
+be reconstructed by inventing placeholders.
 
 Changed schema IDs in this extraction require consumers to update their
 schema lookup paths. Payload fields are preserved except that an explicit

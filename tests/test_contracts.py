@@ -17,7 +17,7 @@ class ContractsTest(unittest.TestCase):
         _, cls.validators = load_contracts()
 
     def test_all_examples_and_schema_defaults(self) -> None:
-        self.assertEqual(validate_bundle(), (6, 11))
+        self.assertEqual(validate_bundle(), (10, 19))
 
     def test_bad_candidate_identity(self) -> None:
         for value in ("1234567", "g" * 40, "a" * 39, "a" * 41):

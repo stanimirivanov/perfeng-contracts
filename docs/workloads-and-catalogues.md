@@ -73,7 +73,7 @@ does not prove that a runner obeyed those boundaries.
 5. For workload-definition or resolved-configuration artifact hashes, first
    persist their exact UTF-8 JSON bytes, then hash those bytes. Do not include a
    document's own digest inside its hash input. The reference/digest envelope is
-   defined in the subsequent transport-contract step.
+   defined by [artifact/result transport](artifact-and-result-transport.md).
 
 Before execution, the consumer must verify configuration/data checksums, tool
 version, source/image correspondence, and the entrypoint. Reject missing or

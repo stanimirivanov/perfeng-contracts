@@ -1,0 +1,12 @@
+{
+  "metrics": {
+    "http_req_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 180,
+        "p(95)": 260
+      }
+    }
+  }
+}
