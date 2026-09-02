@@ -1,8 +1,9 @@
 # perfeng-contracts
 
 Language-neutral performance engineering contracts, extracted from
-`performance-platform`. This first PR implements the existing-schema portion
-of proposal phase 1 (sections 29-32 and 78). It does not complete phase 1.
+`performance-platform`. The bundle covers execution metadata, normalized metrics,
+workload definitions, and test catalogues from proposal phase 1. Policy and
+transport contracts are still to follow.
 
 ## Contents
 
@@ -12,6 +13,8 @@ of proposal phase 1 (sections 29-32 and 78). It does not complete phase 1.
 | `environment/v1` | [environment](schemas/environment/v1/environment.schema.json) | Standalone environment descriptor |
 | `run/v1` | [run metadata](schemas/run/v1/run-metadata.schema.json) | Execution identity, phases, and context |
 | `result/v1` | [test result](schemas/result/v1/test-result.schema.json) | One normalized metric record |
+| `workload/v1` | [workload](schemas/workload/v1/workload.schema.json) | Versioned profiles, configuration, phases, and dataset identity |
+| `catalogue/v1` | [test catalogue](schemas/catalogue/v1/test-catalogue.schema.json) | Test ownership, pinned tools/source/images, and scheduling |
 
 [contracts.json](contracts.json) maps schemas to executable examples and records
 the bundle version. The normalized-result example is an array of metric
@@ -48,10 +51,10 @@ autosave extension remains recommended. `.vscode` configuration is shared;
 IntelliJ's root `.idea` directory is ignored.
 
 Validation checks Draft 2020-12 schemas, declared defaults, all examples,
-date-time formats, and negative regression cases. Schema IDs identify bundled
+date-time formats, catalogue consistency, and negative regression cases. Schema IDs identify bundled
 resources; validation does not fetch schemas from the internet.
 
-CI runs these checks and uploads a `perfeng-contracts-0.1.0.tar.gz` candidate
+CI runs these checks and uploads a `perfeng-contracts-0.2.0.tar.gz` candidate
 bundle. That CI artifact is not a published stable release. Until a release
 exists, integrations should pin the merged commit SHA, not a floating branch.
 
@@ -69,7 +72,9 @@ The standalone candidate/environment descriptors are not identical to the
 inline structures in run metadata. This extraction preserves those wire
 shapes; do not replace the inline structures with `$ref` mechanically.
 
-Workload, catalogue, policy, raw-artifact, API, and analysis-decision contracts
-are subsequent PRs. Missing statistical values mean unavailable, never zero.
+See [workload and catalogue contracts](docs/workloads-and-catalogues.md) for
+field semantics, hashing inputs, and migration from the prototype k6 files.
+Policy, raw-artifact, API, and analysis-decision contracts are subsequent work.
+Missing statistical values mean unavailable, never zero.
 Schema validation establishes structural validity, not scientific quality or
 performance-gate readiness.

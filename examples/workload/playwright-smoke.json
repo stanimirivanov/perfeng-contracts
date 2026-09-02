@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "search-browser-smoke",
+  "version": "1.0.0",
+  "tool": "playwright",
+  "profile": "smoke",
+  "model": "closed",
+  "configuration": {
+    "path": "playwright.config.mts",
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "phases": {
+    "unit": "iterations",
+    "warmup": 2,
+    "measurement": 10,
+    "cooldown": 0
+  },
+  "dataset": {
+    "kind": "versioned",
+    "id": "search-fixture",
+    "version": "1.0.0",
+    "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "seed": 42
+  }
+}

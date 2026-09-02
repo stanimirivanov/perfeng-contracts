@@ -78,6 +78,34 @@ def check_defaults(
             check_defaults(child, validator, f"{location}/{keyword}/{index}")
 
 
+def check_catalogue_consistency(catalogue: dict[str, Any]) -> None:
+    """Reference conformance checks after JSON Schema validation.
+
+    These checks cover relationships that JSON Schema cannot express, such as
+    unique identifiers and a schedule selecting a declared workload profile.
+    """
+    test_ids: set[str] = set()
+    workload_versions: dict[tuple[str, str], dict[str, Any]] = {}
+    for test in catalogue["tests"]:
+        if test["id"] in test_ids:
+            raise ValueError(f"Duplicate test ID: {test['id']}")
+        test_ids.add(test["id"])
+        profiles: set[str] = set()
+        for workload in test["workloads"]:
+            if workload["tool"] != test["tool"]["name"]:
+                raise ValueError(f"Workload tool does not match test {test['id']}")
+            if workload["profile"] in profiles:
+                raise ValueError(f"Duplicate workload profile in test {test['id']}")
+            profiles.add(workload["profile"])
+            identity = (workload["id"], workload["version"])
+            if identity in workload_versions and workload_versions[identity] != workload:
+                raise ValueError(f"Conflicting workload definition: {identity}")
+            workload_versions[identity] = workload
+        for profile in test.get("schedule", {}).values():
+            if profile not in profiles:
+                raise ValueError(f"Schedule selects undeclared profile {profile}: {test['id']}")
+
+
 def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
     contracts, validators = load_contracts(root)
     schema_paths = {entry["schema"] for entry in contracts}
@@ -104,6 +132,8 @@ def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
                 errors = list(validator.iter_errors(instance))
                 if errors:
                     raise ValueError(f"{example['path']}[{index}]: {errors[0].message}")
+                if entry["name"] == "catalogue/v1":
+                    check_catalogue_consistency(instance)
                 count += 1
     actual_examples = {p.relative_to(root).as_posix() for p in (root / "examples").rglob("*.json")}
     if example_paths != actual_examples:
