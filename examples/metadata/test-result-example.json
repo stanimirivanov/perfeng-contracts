@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "runId": "perf-20240115-143022-ab12cd34",
+  "metric": {
+    "name": "checkout_duration",
+    "direction": "lower-is-better",
+    "type": "latency",
+    "unit": "ms"
+  },
+  "distribution": {
+    "samples": 1000,
+    "mean": 234.5,
+    "median": 221.0,
+    "p90": 312.0,
+    "p95": 345.0,
+    "p99": 412.0,
+    "stddev": 45.2,
+    "min": 150.0,
+    "max": 500.0,
+    "cv": 0.19
+  },
+  "thresholds": {
+    "slo": {
+      "checkout_duration_p95": {
+        "passed": true,
+        "threshold": "p(95)<400",
+        "actual": 345.0
+      },
+      "checkout_duration_p99": {
+        "passed": true,
+        "threshold": "p(99)<800",
+        "actual": 412.0
+      }
+    },
+    "regression": {
+      "checkout_duration": {
+        "passed": false,
+        "baselineValue": 210.0,
+        "actualValue": 234.5,
+        "percentChange": 11.7
+      }
+    }
+  }
+}

@@ -1,0 +1,100 @@
+[
+  {
+    "schemaVersion": 1,
+    "runId": "perf-20240115-143022-ab12cd34",
+    "metric": {
+      "name": "api.http.duration",
+      "direction": "lower-is-better",
+      "type": "latency",
+      "unit": "ms"
+    },
+    "distribution": {
+      "samples": 1000,
+      "mean": 234.56,
+      "median": 221.0,
+      "p90": 312.0,
+      "p95": 345.0,
+      "p99": 412.0,
+      "stddev": 45.2,
+      "min": 150.0,
+      "max": 500.0,
+      "cv": 0.1926
+    },
+    "thresholds": {
+      "slo": {
+        "p(95)<400": {
+          "passed": true,
+          "threshold": "p(95)<400"
+        },
+        "p(99)<800": {
+          "passed": true,
+          "threshold": "p(99)<800"
+        }
+      }
+    }
+  },
+  {
+    "schemaVersion": 1,
+    "runId": "perf-20240115-143022-ab12cd34",
+    "metric": {
+      "name": "api.http.error_rate",
+      "direction": "lower-is-better",
+      "type": "error_rate",
+      "unit": "percent"
+    },
+    "distribution": {
+      "samples": 1000
+    },
+    "thresholds": {
+      "slo": {
+        "rate<0.01": {
+          "passed": true,
+          "threshold": "rate<0.01"
+        }
+      }
+    }
+  },
+  {
+    "schemaVersion": 1,
+    "runId": "perf-20240115-143022-ab12cd34",
+    "metric": {
+      "name": "api.http.throughput",
+      "direction": "higher-is-better",
+      "type": "throughput",
+      "unit": "count"
+    },
+    "distribution": {
+      "samples": 1000
+    }
+  },
+  {
+    "schemaVersion": 1,
+    "runId": "perf-20240115-143022-ab12cd34",
+    "metric": {
+      "name": "biz.checkout.duration",
+      "direction": "lower-is-better",
+      "type": "latency",
+      "unit": "ms"
+    },
+    "distribution": {
+      "samples": 500,
+      "mean": 310.25,
+      "median": 295.0,
+      "p90": 380.0,
+      "p95": 415.0,
+      "p99": 510.0,
+      "stddev": 55.8,
+      "min": 200.0,
+      "max": 600.0,
+      "cv": 0.1798
+    },
+    "thresholds": {
+      "slo": {
+        "p(95)<500": {
+          "passed": true,
+          "threshold": "p(95)<500"
+        }
+      }
+    }
+  }
+]

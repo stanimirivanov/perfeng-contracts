@@ -1,0 +1,27 @@
+name: Validate contracts
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python scripts/validate.py
+      - run: python -m unittest discover -s tests -v
+      - name: Assemble candidate contract bundle
+        run: |
+          mkdir -p dist
+          tar -czf dist/perfeng-contracts-0.1.0.tar.gz contracts.json schemas examples docs README.md LICENSE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: perfeng-contracts-0.1.0
+          path: dist/perfeng-contracts-0.1.0.tar.gz
