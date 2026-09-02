@@ -1,7 +1,8 @@
 # Contract compatibility
 
-The initial bundle is `0.1.0`, a migration foundation rather than a stable
-`1.0.0` promise. Establish the missing phase-1 contracts before a stable release.
+The current candidate bundle is `0.2.0`. It adds workload/catalogue contracts
+to the `0.1.0` migration foundation without changing the four original payload
+schemas. Establish the missing phase-1 contracts before a stable `1.0.0` release.
 
 Two versions serve different purposes:
 

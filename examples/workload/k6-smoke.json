@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "checkout-smoke",
+  "version": "1.0.0",
+  "tool": "k6",
+  "profile": "smoke",
+  "model": "open",
+  "configuration": {
+    "path": "workloads/smoke/checkout.json",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "phases": {
+    "unit": "seconds",
+    "warmup": 0,
+    "measurement": 120,
+    "cooldown": 0
+  },
+  "dataset": {
+    "kind": "none"
+  }
+}

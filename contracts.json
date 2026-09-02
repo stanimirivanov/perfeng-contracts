@@ -1,6 +1,19 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "contracts": [
+    {
+      "name": "workload/v1",
+      "schema": "schemas/workload/v1/workload.schema.json",
+      "examples": [
+        {"path": "examples/workload/k6-smoke.json"},
+        {"path": "examples/workload/playwright-smoke.json"}
+      ]
+    },
+    {
+      "name": "catalogue/v1",
+      "schema": "schemas/catalogue/v1/test-catalogue.schema.json",
+      "examples": [{"path": "examples/catalogue/application-tests.json"}]
+    },
     {
       "name": "candidate/v1",
       "schema": "schemas/candidate/v1/candidate.schema.json",

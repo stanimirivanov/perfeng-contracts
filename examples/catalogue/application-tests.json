@@ -1,0 +1,118 @@
+{
+  "apiVersion": "performance.perfeng.io/v1",
+  "kind": "TestCatalogue",
+  "metadata": {
+    "name": "example-tests",
+    "version": "1.0.0"
+  },
+  "tests": [
+    {
+      "id": "checkout-api",
+      "name": "Checkout API",
+      "owner": "payments-team",
+      "criticality": "critical",
+      "tool": {
+        "name": "k6",
+        "version": "0.48.0"
+      },
+      "source": {
+        "repository": "https://github.com/stanimirivanov/perfeng-k6",
+        "gitSha": "1111111111111111111111111111111111111111",
+        "entrypoint": "tests/checkout/scenario.js"
+      },
+      "artifact": {
+        "image": "ghcr.io/example/perfeng-k6@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      },
+      "workloads": [
+        {
+          "schemaVersion": 1,
+          "id": "checkout-smoke",
+          "version": "1.0.0",
+          "tool": "k6",
+          "profile": "smoke",
+          "model": "open",
+          "configuration": {
+            "path": "workloads/smoke/checkout.json",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "phases": {
+            "unit": "seconds",
+            "warmup": 0,
+            "measurement": 120,
+            "cooldown": 0
+          },
+          "dataset": {
+            "kind": "none"
+          }
+        }
+      ],
+      "schedule": {
+        "pr": "smoke"
+      },
+      "metrics": [
+        {
+          "name": "biz.checkout.submit_to_confirmation.duration_p95",
+          "direction": "lower-is-better",
+          "type": "latency",
+          "unit": "ms"
+        }
+      ]
+    },
+    {
+      "id": "search-browser",
+      "name": "Search action to visible results",
+      "owner": "search-team",
+      "criticality": "high",
+      "tool": {
+        "name": "playwright",
+        "version": "1.49.0"
+      },
+      "source": {
+        "repository": "https://github.com/stanimirivanov/perfeng-playwright",
+        "gitSha": "2222222222222222222222222222222222222222",
+        "entrypoint": "tests/search.spec.ts"
+      },
+      "artifact": {
+        "image": "ghcr.io/example/perfeng-playwright@sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      },
+      "workloads": [
+        {
+          "schemaVersion": 1,
+          "id": "search-browser-smoke",
+          "version": "1.0.0",
+          "tool": "playwright",
+          "profile": "smoke",
+          "model": "closed",
+          "configuration": {
+            "path": "playwright.config.mts",
+            "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "phases": {
+            "unit": "iterations",
+            "warmup": 2,
+            "measurement": 10,
+            "cooldown": 0
+          },
+          "dataset": {
+            "kind": "versioned",
+            "id": "search-fixture",
+            "version": "1.0.0",
+            "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "seed": 42
+          }
+        }
+      ],
+      "schedule": {
+        "pr": "smoke"
+      },
+      "metrics": [
+        {
+          "name": "ui.search.action_to_visible_ms",
+          "direction": "lower-is-better",
+          "type": "latency",
+          "unit": "ms"
+        }
+      ]
+    }
+  ]
+}
