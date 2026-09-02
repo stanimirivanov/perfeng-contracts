@@ -1,0 +1,31 @@
+{
+  "id": "perf-20260902-120000-abcdef12",
+  "state": "ABORTED",
+  "revision": 4,
+  "request": {
+    "testSuite": "checkout-api",
+    "catalogue": {
+      "id": "application-tests",
+      "version": "1.0.0",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "profile": "smoke",
+    "candidate": {
+      "gitSha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "image": "ghcr.io/example/sample-api@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    "environment": {
+      "id": "local-kind",
+      "version": "1.0.0",
+      "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+    },
+    "policy": {
+      "id": "checkout-policy",
+      "version": "1.0.0",
+      "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    }
+  },
+  "createdAt": "2026-09-02T12:00:00Z",
+  "updatedAt": "2026-09-02T12:01:02Z",
+  "finishedAt": "2026-09-02T12:01:02Z"
+}
