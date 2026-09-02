@@ -1,0 +1,10 @@
+{
+  "id": "33333333-3333-4333-8333-333333333333",
+  "runId": "perf-20260902-120000-a1b2c3d4",
+  "kind": "normalized",
+  "uri": "s3://perfeng-example/runs/perf-20260902-120000-a1b2c3d4/normalized/k6.json",
+  "sha256": "03164445ec1983ddbcbbabf14506b3db27632cc365580f1043406f59b0f741e5",
+  "sizeBytes": 1413,
+  "mediaType": "application/json",
+  "format": "normalized-result/v1"
+}

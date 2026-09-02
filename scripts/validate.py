@@ -2,8 +2,10 @@
 
 import json
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Never, NotRequired, TypedDict
+from urllib.parse import urlsplit
 
 from jsonschema import Draft202012Validator, FormatChecker
 from referencing import Registry, Resource
@@ -106,6 +108,51 @@ def check_catalogue_consistency(catalogue: dict[str, Any]) -> None:
                 raise ValueError(f"Schedule selects undeclared profile {profile}: {test['id']}")
 
 
+def check_artifact_reference(reference: dict[str, Any]) -> None:
+    """Check location semantics after schema validation; never fetch content."""
+    location = urlsplit(reference["uri"])
+    if not location.hostname:
+        raise ValueError("Artifact URI must have a storage host or bucket")
+    if location.username is not None or location.password is not None:
+        raise ValueError("Artifact URI must not contain credentials")
+
+
+def check_transport_consistency(document: dict[str, Any]) -> None:
+    """Reference conformance checks after validating the envelope schema."""
+    window = document["measurementWindow"]
+    start = datetime.fromisoformat(window["start"])
+    end = datetime.fromisoformat(window["end"])
+    created = datetime.fromisoformat(document["createdAt"])
+    if start >= end:
+        raise ValueError("Measurement window start must precede end")
+    if created < end:
+        raise ValueError("Envelope creation must not precede measurement end")
+
+    key = "artifacts" if document["kind"] == "RawResult" else "sourceArtifacts"
+    ids: set[str] = set()
+    locations: set[str] = set()
+    for artifact in document[key]:
+        check_artifact_reference(artifact)
+        if artifact["runId"] != document["runId"]:
+            raise ValueError("Artifact run ID does not match envelope")
+        identity = artifact["id"].lower()
+        if identity in ids:
+            raise ValueError("Duplicate artifact ID")
+        if artifact["uri"] in locations:
+            raise ValueError("Duplicate artifact URI")
+        ids.add(identity)
+        locations.add(artifact["uri"])
+
+    metric_names: set[str] = set()
+    for result in document.get("results", []):
+        if result["runId"] != document["runId"]:
+            raise ValueError("Metric run ID does not match envelope")
+        name = result["metric"]["name"]
+        if name in metric_names:
+            raise ValueError(f"Duplicate metric name: {name}")
+        metric_names.add(name)
+
+
 def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
     contracts, validators = load_contracts(root)
     schema_paths = {entry["schema"] for entry in contracts}
@@ -134,6 +181,10 @@ def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
                     raise ValueError(f"{example['path']}[{index}]: {errors[0].message}")
                 if entry["name"] == "catalogue/v1":
                     check_catalogue_consistency(instance)
+                if entry["name"] == "artifact/v1":
+                    check_artifact_reference(instance)
+                if entry["name"] in {"raw-result/v1", "normalized-result/v1"}:
+                    check_transport_consistency(instance)
                 count += 1
     actual_examples = {p.relative_to(root).as_posix() for p in (root / "examples").rglob("*.json")}
     if example_paths != actual_examples:

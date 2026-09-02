@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 2,
+  "runId": "perf-20260902-130000-a1b2c3d5",
+  "metric": {
+    "name": "ui.search.action_to_visible_ms",
+    "direction": "lower-is-better",
+    "type": "latency",
+    "unit": "ms"
+  },
+  "distribution": {
+    "samples": 2,
+    "mean": 140,
+    "min": 130,
+    "max": 150
+  }
+}
