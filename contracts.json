@@ -1,0 +1,28 @@
+{
+  "version": "0.1.0",
+  "contracts": [
+    {
+      "name": "candidate/v1",
+      "schema": "schemas/candidate/v1/candidate.schema.json",
+      "examples": [{"path": "examples/metadata/candidate-example.json"}]
+    },
+    {
+      "name": "environment/v1",
+      "schema": "schemas/environment/v1/environment.schema.json",
+      "examples": [{"path": "examples/metadata/environment-example.json"}]
+    },
+    {
+      "name": "run/v1",
+      "schema": "schemas/run/v1/run-metadata.schema.json",
+      "examples": [{"path": "examples/metadata/run-metadata-example.json"}]
+    },
+    {
+      "name": "result/v1",
+      "schema": "schemas/result/v1/test-result.schema.json",
+      "examples": [
+        {"path": "examples/metadata/test-result-example.json"},
+        {"path": "examples/metadata/normalized-result-example.json", "items": true}
+      ]
+    }
+  ]
+}

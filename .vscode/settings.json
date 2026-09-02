@@ -1,0 +1,36 @@
+{
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv",
+  "python.languageServer": "None",
+  "python.testing.unittestEnabled": true,
+  "python.testing.pytestEnabled": false,
+  "python.testing.cwd": "${workspaceFolder}",
+  "python.testing.unittestArgs": ["-v", "-s", "./tests", "-p", "test_*.py"],
+  "ruff.importStrategy": "fromEnvironment",
+  "ty.importStrategy": "fromEnvironment",
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
+    }
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+  "files.watcherExclude": {
+    "**/.venv/**": true,
+    "**/.ruff_cache/**": true,
+    "**/__pycache__/**": true
+  },
+  "search.exclude": {
+    "**/.venv": true,
+    "**/.ruff_cache": true,
+    "**/__pycache__": true,
+    "**/uv.lock": true
+  }
+}

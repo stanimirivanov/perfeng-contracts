@@ -1,0 +1,5 @@
+{
+  "cluster": "perf-local",
+  "fingerprint": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "kubernetes": {"version": "1.28.0", "nodeCount": 3}
+}

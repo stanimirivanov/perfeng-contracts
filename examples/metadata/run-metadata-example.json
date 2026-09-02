@@ -1,0 +1,72 @@
+{
+  "run": {
+    "id": "perf-20240115-143022-ab12cd34",
+    "suite": "checkout-api",
+    "profile": "regression",
+    "timestamp": "2024-01-15T14:30:22Z",
+    "trigger": "ci",
+    "status": "COMPLETED",
+    "policyVersion": "1.0.0",
+    "notes": "Example run for demonstration purposes"
+  },
+  "test": {
+    "type": "api",
+    "tool": "k6",
+    "toolVersion": "0.48.0",
+    "scenario": "checkout-flow",
+    "workloadVersion": "1.2.0",
+    "configHash": "abc123def456"
+  },
+  "candidate": {
+    "gitSha": "1234567890abcdef1234567890abcdef12345678",
+    "imageDigest": "sha256:abcdef1234567890",
+    "version": "2.1.0",
+    "branch": "main",
+    "configurationHash": "config123",
+    "featureFlags": {
+      "new-checkout": "enabled",
+      "payment-v2": "disabled"
+    },
+    "databaseMigrationVersion": "20240115_001"
+  },
+  "environment": {
+    "cluster": "perf-k8s-01",
+    "kubernetesVersion": "1.28.0",
+    "nodePool": "perf-pool",
+    "nodeModel": "m5.xlarge",
+    "cpuArchitecture": "amd64",
+    "kernel": "5.10.0",
+    "containerRuntime": "containerd",
+    "cni": "calico",
+    "storageClass": "gp3",
+    "fingerprint": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    "nodeCount": 3,
+    "region": "us-west-2"
+  },
+  "runtime": {
+    "replicas": 3,
+    "cpuRequests": "500m",
+    "cpuLimits": "1000m",
+    "memoryRequests": "512Mi",
+    "memoryLimits": "1024Mi",
+    "hpa": {
+      "enabled": true,
+      "minReplicas": 2,
+      "maxReplicas": 10,
+      "targetCpuUtilization": 70
+    }
+  },
+  "data": {
+    "datasetId": "checkout-dataset",
+    "datasetVersion": "2.0.0",
+    "databaseSize": "10GB",
+    "seedVersion": "20240101"
+  },
+  "phases": {
+    "provisionStart": "2024-01-15T14:00:00Z",
+    "warmupStart": "2024-01-15T14:10:00Z",
+    "measurementStart": "2024-01-15T14:30:22Z",
+    "measurementEnd": "2024-01-15T14:45:22Z",
+    "cooldownEnd": "2024-01-15T14:50:00Z"
+  }
+}
