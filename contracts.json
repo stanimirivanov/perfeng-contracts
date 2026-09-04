@@ -1,5 +1,5 @@
 {
-  "version": "0.6.0",
+  "version": "0.7.0",
   "apis": [
     {
       "name": "run-management/v1",
@@ -8,6 +8,14 @@
     }
   ],
   "contracts": [
+    {
+      "name": "baseline/v1",
+      "schema": "schemas/baseline/v1/baseline.schema.json",
+      "examples": [
+        {"path": "examples/baseline/candidate.json"},
+        {"path": "examples/baseline/approved.json"}
+      ]
+    },
     {
       "name": "policy/v1",
       "schema": "schemas/policy/v1/performance-policy.schema.json",

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "kind": "PerformanceBaseline",
+  "id": "approved-search-browser",
+  "version": "1.0.0",
+  "revision": 3,
+  "state": "APPROVED",
+  "testId": "search-browser",
+  "sourceRunId": "perf-20260901-130000-a1b2c3d5",
+  "artifact": {
+    "id": "66666666-6666-4666-8666-666666666666",
+    "runId": "perf-20260901-130000-a1b2c3d5",
+    "kind": "normalized",
+    "uri": "s3://perfeng-example/runs/perf-20260901-130000-a1b2c3d5/normalized/playwright.json",
+    "sha256": "9430060da3f66d21e555aab2d52c6b8ad45febbb72817193c657be0a82d19f41",
+    "sizeBytes": 1501,
+    "mediaType": "application/json",
+    "format": "normalized-result/v1"
+  },
+  "software": {
+    "gitSha": "0000000000000000000000000000000000000001",
+    "image": "ghcr.io/example/search@sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "version": "2026.9.1"
+  },
+  "workload": {
+    "id": "search-browser-smoke",
+    "version": "1.0.0",
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "environment": {
+    "id": "local-kind",
+    "version": "1.0.0",
+    "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "fingerprint": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+  },
+  "dataset": {
+    "kind": "versioned",
+    "id": "search-corpus",
+    "version": "1.0.0",
+    "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "seed": 42
+  },
+  "qualification": {
+    "status": "PASSED",
+    "reasons": [],
+    "sampleCount": 40,
+    "maximumCv": 0.08
+  },
+  "createdAt": "2026-09-01T13:05:00Z",
+  "lifecycle": [
+    {
+      "state": "CANDIDATE",
+      "at": "2026-09-01T13:05:00Z",
+      "actor": "perfeng-control-plane",
+      "reason": "Created from an explicitly selected completed run."
+    },
+    {
+      "state": "QUALIFIED",
+      "at": "2026-09-01T14:00:00Z",
+      "actor": "performance-platform",
+      "reason": "The calibration policy requirements passed."
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-09-01T15:00:00Z",
+      "actor": "performance-team",
+      "reason": "Approved as the known-good anchor for this environment class."
+    }
+  ]
+}
