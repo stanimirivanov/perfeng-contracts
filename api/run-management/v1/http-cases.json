@@ -18,6 +18,14 @@
     "response": "completed"
   },
   {
+    "operationId": "listRunArtifacts",
+    "status": 200,
+    "pathParameters": {
+      "runId": "perf-20260902-120000-abcdef12"
+    },
+    "response": "artifacts"
+  },
+  {
     "operationId": "cancelRun",
     "status": 202,
     "response": "cancelling"

@@ -2,7 +2,7 @@
   "openapi": "3.1.1",
   "info": {
     "title": "Performance Run Management API",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Candidate contract only. Run lifecycle is independent of measurement quality, SLO and regression verdicts. See docs/run-management-api.md."
   },
   "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
@@ -215,6 +215,60 @@
         }
       }
     },
+    "/v1/runs/{runId}/artifacts": {
+      "parameters": [
+        {
+          "name": "runId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/RunId"
+          },
+          "description": "Server-generated run identity."
+        }
+      ],
+      "get": {
+        "tags": [
+          "Runs"
+        ],
+        "operationId": "listRunArtifacts",
+        "summary": "List immutable artifacts visible for a run",
+        "description": "Returns the current principal-scoped artifact-reference snapshot in ascending artifact-ID order. The collection can be empty or partial while the run is active. References are evidence metadata, not object bytes, credentials, signed URLs, lifecycle completion, or analysis verdicts.",
+        "responses": {
+          "200": {
+            "description": "Current artifact-reference snapshot for the visible run.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
     "/v1/runs/{runId}/cancel": {
       "parameters": [
         {
@@ -317,6 +371,73 @@
       "RunId": {
         "type": "string",
         "pattern": "^perf-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}$"
+      },
+      "Artifact": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "runId",
+          "kind",
+          "uri",
+          "sha256",
+          "sizeBytes",
+          "mediaType",
+          "format"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+          },
+          "runId": {
+            "$ref": "#/components/schemas/RunId"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "raw",
+              "normalized"
+            ]
+          },
+          "uri": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^(s3|https)://[^\\s?#]+$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mediaType": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9!#$&^_.+-]*/[a-z0-9][a-z0-9!#$&^_.+-]*$"
+          },
+          "format": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9./_-]*$"
+          }
+        }
+      },
+      "ArtifactCollection": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "artifacts"
+        ],
+        "properties": {
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Artifact"
+            }
+          }
+        }
       },
       "Reference": {
         "type": "object",
