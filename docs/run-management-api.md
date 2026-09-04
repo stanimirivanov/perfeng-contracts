@@ -3,7 +3,7 @@
 The [OpenAPI 3.1.1 document](../api/run-management/v1/openapi.json) defines the
 control-plane boundary from proposal sections 12-13. This is a specification
 and conformance corpus, not a deployed service. API description version 0.2.0
-ships in candidate bundle 0.6.0; neither is a stable v1 release.
+ships in candidate bundle 0.7.0; neither is a stable v1 release.
 
 ## Operations
 

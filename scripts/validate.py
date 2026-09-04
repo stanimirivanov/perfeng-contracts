@@ -284,6 +284,48 @@ def check_analysis_consistency(
                 raise ValueError("Regression verdict contradicts the practical threshold")
 
 
+def check_baseline_consistency(baseline: dict[str, Any]) -> None:
+    """Check baseline lifecycle and evidence relationships after schema validation."""
+    artifact = baseline["artifact"]
+    check_artifact_reference(artifact)
+    if artifact["runId"] != baseline["sourceRunId"]:
+        raise ValueError("Baseline artifact run ID does not match source run")
+
+    lifecycle = baseline["lifecycle"]
+    if lifecycle[0]["state"] != "CANDIDATE":
+        raise ValueError("Baseline lifecycle must start at CANDIDATE")
+    if lifecycle[-1]["state"] != baseline["state"]:
+        raise ValueError("Baseline state must match the last lifecycle event")
+    if lifecycle[0]["at"] != baseline["createdAt"]:
+        raise ValueError("Baseline creation time must match its first lifecycle event")
+    if baseline["revision"] != len(lifecycle):
+        raise ValueError("Baseline revision must match its lifecycle length")
+
+    transitions = {
+        "CANDIDATE": {"QUALIFIED", "RETIRED"},
+        "QUALIFIED": {"APPROVED", "RETIRED"},
+        "APPROVED": {"RETIRED"},
+        "RETIRED": set(),
+    }
+    previous_state = lifecycle[0]["state"]
+    previous_time = datetime.fromisoformat(lifecycle[0]["at"])
+    for event in lifecycle[1:]:
+        event_time = datetime.fromisoformat(event["at"])
+        if event["state"] not in transitions[previous_state]:
+            raise ValueError("Invalid baseline lifecycle transition")
+        if event_time < previous_time:
+            raise ValueError("Baseline lifecycle timestamps must be ordered")
+        previous_state = event["state"]
+        previous_time = event_time
+
+    qualification = baseline["qualification"]
+    if baseline["state"] in {"QUALIFIED", "APPROVED"}:
+        if qualification["status"] != "PASSED":
+            raise ValueError("Qualified or approved baseline must pass qualification")
+    if baseline["state"] == "CANDIDATE" and qualification["status"] == "PASSED":
+        raise ValueError("Passed qualification must advance the baseline state")
+
+
 def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
     contracts, validators = load_contracts(root)
     policies = [
@@ -340,6 +382,8 @@ def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
                             "Analysis must reference exactly one checked-in policy by hash"
                         )
                     check_analysis_consistency(instance, matches[0])
+                if entry["name"] == "baseline/v1":
+                    check_baseline_consistency(instance)
                 count += 1
     actual_examples = {p.relative_to(root).as_posix() for p in (root / "examples").rglob("*.json")}
     if example_paths != actual_examples:

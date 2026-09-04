@@ -21,8 +21,10 @@ Each rule configures an SLO, a regression comparison, or both:
   Relative `0.10` means 10%, not ten times the reference. Absolute differences
   use the selected metric unit.
 - Regression `reference` names a baseline ID and a pinned version. Baseline
-  resolution must preserve the mapping to immutable normalized artifacts;
-  neither floating aliases nor automatic baseline promotion are implied.
+  resolution must return an `APPROVED`
+  [baseline/v1](../schemas/baseline/v1/baseline.schema.json) record and preserve
+  its mapping to immutable normalized evidence. Neither floating aliases nor
+  automatic baseline promotion are implied.
 
 For lower-is-better metrics, directed change is candidate minus reference;
 for higher-is-better metrics it is reference minus candidate. Relative effect

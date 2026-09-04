@@ -1,9 +1,19 @@
 # Contract compatibility
 
-The current candidate bundle is 0.6.0. It extends the run-management OpenAPI
-candidate with principal-scoped artifact-reference listing and its HTTP fixture.
-The response reuses artifact/v1 fields in a self-contained API component and
-does not change any of the twelve standalone JSON schemas. API 0.2.0 readers
+The current candidate bundle is 0.7.0. It adds baseline/v1 as a new standalone
+contract without changing the twelve existing schema generations or the
+run-management API. Strict bundle readers must recognize the thirteenth contract;
+consumers pinned to 0.6.0 continue to use the unchanged earlier bundle.
+
+Baseline/v1 records immutable normalized-result anchors together with exact
+software, workload, environment and dataset identities. Their state and complete
+lifecycle history distinguish qualification from explicit approval and retirement.
+This is an additive bundle change, not permission to treat a floating or passing
+result as an approved baseline.
+
+Bundle 0.6.0 extended the run-management OpenAPI candidate with
+principal-scoped artifact-reference listing and its HTTP fixture. The response
+reuses artifact/v1 fields in a self-contained API component. API 0.2.0 readers
 gain an operation and response type; existing 0.1.0 operations and payloads are
 unchanged. See [API semantics](run-management-api.md).
 

@@ -21,6 +21,7 @@ performance policies with independent quality, SLO, and regression outcomes.
 | `catalogue/v1` | [test catalogue](schemas/catalogue/v1/test-catalogue.schema.json) | Test ownership, pinned tools/source/images, and scheduling |
 | `policy/v1` | [performance policy](schemas/policy/v1/performance-policy.schema.json) | Explicit metric thresholds and versioned baseline selection |
 | `analysis/v1` | [analysis result](schemas/analysis/v1/analysis-result.schema.json) | Independent quality, SLO, and regression outcomes with evidence references |
+| `baseline/v1` | [performance baseline](schemas/baseline/v1/baseline.schema.json) | Versioned normalized-result anchor, qualification, environment identity, and approval history |
 
 [contracts.json](contracts.json) maps schemas to executable examples and records
 the bundle version. The original normalized-result array remains a legacy
@@ -58,17 +59,19 @@ autosave extension remains recommended. `.vscode` configuration is shared;
 IntelliJ's root `.idea` directory is ignored.
 
 Validation checks Draft 2020-12 schemas, declared defaults, all examples,
-date-time formats, catalogue/transport/policy consistency, and negative regression
-cases. Schema IDs identify bundled resources; validation does not fetch schemas
-or artifacts from the internet. Tests verify fixture checksums against local bytes.
+date-time formats, catalogue/transport/policy consistency, baseline lifecycle,
+and negative regression cases. Schema IDs identify bundled resources; validation
+does not fetch schemas or artifacts from the internet. Tests verify fixture
+checksums against local bytes.
 
-CI runs these checks and uploads a `perfeng-contracts-0.6.0.tar.gz` candidate
+CI runs these checks and uploads a `perfeng-contracts-0.7.0.tar.gz` candidate
 bundle. That CI artifact is not a published stable release. Until a release
 exists, integrations should pin the merged commit SHA, not a floating branch.
 
 ## Compatibility and migration
 
 Read [compatibility](docs/compatibility.md),
+[baseline lifecycle](docs/baseline-lifecycle.md),
 [source provenance](docs/migration-provenance.md), and
 [metric naming](docs/architecture/metric-naming.md).
 

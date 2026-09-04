@@ -1,0 +1,258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://perfeng.dev/schemas/baseline/v1/baseline.schema.json",
+  "title": "Versioned performance baseline with explicit approval history",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "id",
+    "version",
+    "revision",
+    "state",
+    "testId",
+    "sourceRunId",
+    "artifact",
+    "software",
+    "workload",
+    "environment",
+    "dataset",
+    "qualification",
+    "createdAt",
+    "lifecycle"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "PerformanceBaseline"
+    },
+    "id": {
+      "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/id"
+    },
+    "version": {
+      "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/version"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "state": {
+      "$ref": "#/$defs/state"
+    },
+    "testId": {
+      "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/id"
+    },
+    "sourceRunId": {
+      "$ref": "https://perfeng.dev/schemas/result/v1/test-result.schema.json#/properties/runId"
+    },
+    "artifact": {
+      "allOf": [
+        {
+          "$ref": "https://perfeng.dev/schemas/artifact/v1/artifact-reference.schema.json"
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "normalized"
+            },
+            "mediaType": {
+              "const": "application/json"
+            },
+            "format": {
+              "const": "normalized-result/v1"
+            }
+          }
+        }
+      ]
+    },
+    "software": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gitSha",
+        "image"
+      ],
+      "properties": {
+        "gitSha": {
+          "$ref": "https://perfeng.dev/schemas/candidate/v1/candidate.schema.json#/properties/gitSha"
+        },
+        "image": {
+          "$ref": "https://perfeng.dev/schemas/catalogue/v1/test-catalogue.schema.json#/properties/tests/items/properties/artifact/properties/image"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "workload": {
+      "$ref": "#/$defs/identity"
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "sha256",
+        "fingerprint"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/id"
+        },
+        "version": {
+          "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/version"
+        },
+        "sha256": {
+          "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/sha256"
+        },
+        "fingerprint": {
+          "$ref": "https://perfeng.dev/schemas/environment/v1/environment.schema.json#/properties/fingerprint"
+        }
+      }
+    },
+    "dataset": {
+      "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/properties/dataset"
+    },
+    "qualification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "reasons"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "PENDING",
+            "PASSED",
+            "FAILED"
+          ]
+        },
+        "reasons": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        },
+        "sampleCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maximumCv": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "PASSED"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "sampleCount",
+              "maximumCv"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "FAILED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reasons": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "createdAt": {
+      "$ref": "https://perfeng.dev/schemas/raw-result/v1/raw-result.schema.json#/$defs/timestamp"
+    },
+    "lifecycle": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "state",
+          "at",
+          "actor",
+          "reason"
+        ],
+        "properties": {
+          "state": {
+            "$ref": "#/$defs/state"
+          },
+          "at": {
+            "$ref": "https://perfeng.dev/schemas/raw-result/v1/raw-result.schema.json#/$defs/timestamp"
+          },
+          "actor": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "\\S"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024,
+            "pattern": "\\S"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "state": {
+      "enum": [
+        "CANDIDATE",
+        "QUALIFIED",
+        "APPROVED",
+        "RETIRED"
+      ]
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/id"
+        },
+        "version": {
+          "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/version"
+        },
+        "sha256": {
+          "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/sha256"
+        }
+      }
+    }
+  }
+}
