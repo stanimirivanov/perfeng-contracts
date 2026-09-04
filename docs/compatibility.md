@@ -1,10 +1,15 @@
 # Contract compatibility
 
-The current candidate bundle is 0.5.0. It adds the run-management OpenAPI
-candidate and lifecycle/HTTP fixtures under api/run-management/v1. All twelve
-JSON schemas from 0.4.0 remain unchanged, including legacy run/v1 states.
-The API adds CANCELLING and excludes INCONCLUSIVE; it is a separate wire
-shape, not a replacement run/v1 record. See [API semantics](run-management-api.md).
+The current candidate bundle is 0.6.0. It extends the run-management OpenAPI
+candidate with principal-scoped artifact-reference listing and its HTTP fixture.
+The response reuses artifact/v1 fields in a self-contained API component and
+does not change any of the twelve standalone JSON schemas. API 0.2.0 readers
+gain an operation and response type; existing 0.1.0 operations and payloads are
+unchanged. See [API semantics](run-management-api.md).
+
+Bundle 0.5.0 introduced the run-management OpenAPI candidate and lifecycle/HTTP
+fixtures under api/run-management/v1. The API added CANCELLING and excluded
+INCONCLUSIVE as a separate wire shape, not a replacement run/v1 record.
 
 contracts.json now includes an apis inventory alongside contracts, and the
 archive includes api/. Strict manifest readers may need updating. Existing

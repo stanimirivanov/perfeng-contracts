@@ -4,6 +4,7 @@ import json
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from jsonschema import Draft202012Validator, FormatChecker
 from jsonschema.protocols import Validator
@@ -25,6 +26,7 @@ FIXTURES = {
     "completed": "Run",
     "invalid": "Run",
     "error": "Error",
+    "artifacts": "ArtifactCollection",
 }
 
 
@@ -126,6 +128,27 @@ def check_http(document: dict[str, Any], case: dict[str, Any], examples: dict[st
             raise ValueError("Idempotency retention is shorter than 24 hours")
     if body.get("code") == "REQUEST_IN_PROGRESS" and "retry-after" not in headers:
         raise ValueError("In-progress retry requires Retry-After")
+    if case["operationId"] == "listRunArtifacts":
+        check_artifacts(document, body, case.get("pathParameters", {}).get("runId"))
+
+
+def check_artifacts(document: dict[str, Any], value: dict[str, Any], run_id: Any) -> None:
+    if not isinstance(run_id, str):
+        raise ValueError("Artifact listing requires the run path parameter")
+    schema_validator(document, "RunId").validate(run_id)
+    artifacts = value["artifacts"]
+    ids = [artifact["id"] for artifact in artifacts]
+    locations = [artifact["uri"] for artifact in artifacts]
+    if ids != sorted(ids):
+        raise ValueError("Artifacts are not ordered by ID")
+    if len(ids) != len(set(ids)) or len(locations) != len(set(locations)):
+        raise ValueError("Artifact identities and locations must be unique")
+    if any(artifact["runId"] != run_id for artifact in artifacts):
+        raise ValueError("Artifact belongs to another run")
+    for location in locations:
+        parsed = urlsplit(location)
+        if parsed.username is not None or parsed.password is not None:
+            raise ValueError("Artifact location contains user information")
 
 
 def check_run(value: dict[str, Any]) -> None:
@@ -177,7 +200,7 @@ def lint(document: dict[str, Any], transitions: dict[str, list[str]]) -> None:
             for status in ["400", "401", "403", "429", "500", "503"]:
                 if status not in operation["responses"]:
                     raise ValueError("Missing standard error response")
-    if identifiers != {"createRun", "getRun", "cancelRun"}:
+    if identifiers != {"createRun", "getRun", "listRunArtifacts", "cancelRun"}:
         raise ValueError("Unexpected API operation inventory")
     states = set(document["components"]["schemas"]["RunState"]["enum"])
     if set(transitions) != states or not TERMINAL <= states:
@@ -226,6 +249,7 @@ def validate_api(root: Path = ROOT) -> int:
         ("createRun", 201),
         ("createRun", 409),
         ("getRun", 200),
+        ("listRunArtifacts", 200),
         ("cancelRun", 200),
         ("cancelRun", 202),
     }

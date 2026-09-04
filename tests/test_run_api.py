@@ -21,8 +21,52 @@ class RunApiTests(unittest.TestCase):
 
     def test_all_contracts_and_http_fixtures_validate_without_network(self):
         with patch("socket.create_connection", side_effect=AssertionError("network")):
-            self.assertEqual(api.validate_api(), 7)
+            self.assertEqual(api.validate_api(), 8)
             self.assertEqual(validate_bundle(), (12, 24))
+
+    def test_artifact_listing_is_scoped_unique_and_ordered(self):
+        case = next(c for c in self.cases if c["operationId"] == "listRunArtifacts")
+        api.check_http(self.document, case, self.examples)
+
+        empty = copy.deepcopy(self.examples)
+        empty["artifacts"]["artifacts"] = []
+        api.check_http(self.document, case, empty)
+
+        original = self.examples["artifacts"]
+        changes = []
+
+        wrong_run = copy.deepcopy(original)
+        wrong_run["artifacts"][0]["runId"] = "perf-20260902-120000-ffffffff"
+        changes.append(wrong_run)
+
+        unordered = copy.deepcopy(original)
+        unordered["artifacts"].reverse()
+        changes.append(unordered)
+
+        duplicate_id = copy.deepcopy(original)
+        duplicate_id["artifacts"][1]["id"] = duplicate_id["artifacts"][0]["id"]
+        changes.append(duplicate_id)
+
+        duplicate_location = copy.deepcopy(original)
+        duplicate_location["artifacts"][1]["uri"] = duplicate_location["artifacts"][0]["uri"]
+        changes.append(duplicate_location)
+
+        for artifacts in changes:
+            examples = {**self.examples, "artifacts": artifacts}
+            with self.assertRaises(ValueError):
+                api.check_http(self.document, case, examples)
+
+        invalid = copy.deepcopy(self.examples)
+        invalid["artifacts"]["artifacts"][0]["uri"] += "?signature=secret"
+        with self.assertRaises(ValidationError):
+            api.check_http(self.document, case, invalid)
+
+        credentialed = copy.deepcopy(self.examples)
+        credentialed["artifacts"]["artifacts"][0]["uri"] = (
+            "https://user@example.com/runs/perf-20260902-120000-abcdef12/raw-result.json"
+        )
+        with self.assertRaises(ValueError):
+            api.check_http(self.document, case, credentialed)
 
     def test_required_request_fields_and_approved_resource_identity(self):
         validator = api.schema_validator(self.document, "CreateRun")

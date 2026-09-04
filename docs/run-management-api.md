@@ -2,8 +2,8 @@
 
 The [OpenAPI 3.1.1 document](../api/run-management/v1/openapi.json) defines the
 control-plane boundary from proposal sections 12-13. This is a specification
-and conformance corpus, not a deployed service. API description version 0.1.0
-ships in candidate bundle 0.5.0; neither is a stable v1 release.
+and conformance corpus, not a deployed service. API description version 0.2.0
+ships in candidate bundle 0.6.0; neither is a stable v1 release.
 
 ## Operations
 
@@ -11,6 +11,7 @@ ships in candidate bundle 0.5.0; neither is a stable v1 release.
 | --- | --- | --- |
 | POST /v1/runs | 201 + Run + Location | Durably accepted, not executed |
 | GET /v1/runs/{runId} | 200 + Run | Current consistent snapshot |
+| GET /v1/runs/{runId}/artifacts | 200 + ArtifactCollection | Current immutable-reference snapshot |
 | POST /v1/runs/{runId}/cancel | 202 + CANCELLING Run | Cancellation requested |
 | Repeat cancel after ABORTED | 200 + ABORTED Run | No mutation |
 
@@ -19,6 +20,26 @@ principal and authorization scope from the credential, never from a body field.
 TLS is required outside isolated development. Token issuance and identity-provider
 selection remain deployment work. Invisible runs return 404 on read/cancel;
 lacking the operation permission itself can return 403.
+
+## Artifact retrieval
+
+`GET /v1/runs/{runId}/artifacts` returns the immutable artifact references that
+are currently durable and visible to the authenticated principal. The response
+is always an object containing `artifacts`, including when the list is empty.
+Entries are ordered by lowercase artifact UUID and every entry belongs to the
+path Run. IDs and object locations are unique within a response.
+
+The list is a current snapshot, not a completion signal. Collection can be
+empty or partial while a Run is active because evidence registration and
+lifecycle advancement are separate durable operations. Read the Run state to
+determine lifecycle progress; after REPORTING or COMPLETED the normalized
+`normalized-result/v1` reference can be selected by its kind and format.
+
+The API returns references, not object bytes. It does not issue object-store
+credentials, presigned URLs or redirects, and stored URIs never carry query
+parameters or user information. Authorization to read referenced bytes belongs
+to the artifact data plane. A reference establishes neither an analysis verdict
+nor renewed verification of bytes by the API request.
 
 Only create accepts a body: application/json, at most 65,536 UTF-8 bytes.
 Duplicate JSON object keys at any depth, nonfinite numbers, invalid UTF-8,
@@ -142,9 +163,9 @@ connection strings, credentials or raw logs.
 - 500: unexpected error; acceptance may be uncertain.
 
 Quality, SLO and regression outcomes belong to analysis/v1. No API field invents
-a measurement window or result before one exists. Artifact/result retrieval
-endpoints are outside this slice. The environment's local-capture/v1 receipt
-is not automatically promoted to RawResult.
+a measurement window or result before one exists. Artifact listing exposes
+durable references without proxying their content or interpreting it. The
+environment's local-capture/v1 receipt is not automatically promoted to RawResult.
 
 Legacy run/v1 remains unchanged: its INCONCLUSIVE state is not accepted here,
 and it cannot express CANCELLING. Do not serialize API Run directly into that
@@ -160,8 +181,9 @@ uv run --locked python -m unittest discover -s tests -v
 ~~~
 
 The API is self-contained with static local references. Validation never fetches
-schemas. CI checks OpenAPI structure, operation/authentication rules, seven body
-fixtures, five HTTP cases, transition consistency and negative cases. All twelve
+schemas. CI checks OpenAPI structure, operation/authentication rules, eight body
+fixtures, six HTTP cases, artifact ownership and ordering, transition consistency
+and negative cases. All twelve
 existing JSON schemas and their compatibility corpus remain unchanged.
 
 These are contract tests, not proof of runtime concurrency, authorization,
