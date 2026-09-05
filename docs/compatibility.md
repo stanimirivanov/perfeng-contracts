@@ -1,10 +1,18 @@
 # Contract compatibility
 
-The current candidate bundle is 0.8.0. It extends the run-management OpenAPI
-candidate to API 0.3.0 with additive baseline create, exact-version read and
-revision-checked transition operations. Existing run operations and all thirteen
-schema contracts are unchanged. Strict API clients that reject unknown paths or
-error codes need an explicit upgrade; consumers pinned to 0.7.0 retain API 0.2.0.
+The current candidate bundle is 0.9.0. Run-management API 0.4.0 makes
+pre-dispatch cancellation synchronous: CREATED and VALIDATING now transition
+directly to ABORTED with HTTP 200, while PROVISIONING and later active states
+continue through CANCELLING with HTTP 202. This replaces two lifecycle edges and
+changes observable behavior without changing the Run wire schema. Upgrade the
+control plane and its pinned transition snapshot together; consumers that still
+implement universal asynchronous cancellation must remain on bundle 0.8.0.
+
+Bundle 0.8.0 extended the run-management OpenAPI candidate to API 0.3.0 with
+additive baseline create, exact-version read and revision-checked transition
+operations. Existing run operations and all thirteen schema contracts were
+unchanged. Strict API clients that reject unknown paths or error codes need an
+explicit upgrade; consumers pinned to 0.7.0 retain API 0.2.0.
 
 Baseline administration accepts immutable evidence and an audit reason, while
 the authenticated actor is server-derived. The contract has no list, latest,

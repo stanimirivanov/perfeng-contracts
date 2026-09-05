@@ -3,7 +3,7 @@
 The [OpenAPI 3.1.1 document](../api/run-management/v1/openapi.json) defines the
 control-plane boundary from proposal sections 12-13 together with explicit
 baseline administration. This is a specification and conformance corpus, not a
-deployed service. API description version 0.3.0 ships in candidate bundle 0.8.0;
+deployed service. API description version 0.4.0 ships in candidate bundle 0.9.0;
 neither is a stable v1 release.
 
 ## Operations
@@ -13,7 +13,8 @@ neither is a stable v1 release.
 | POST /v1/runs | 201 + Run + Location | Durably accepted, not executed |
 | GET /v1/runs/{runId} | 200 + Run | Current consistent snapshot |
 | GET /v1/runs/{runId}/artifacts | 200 + ArtifactCollection | Current immutable-reference snapshot |
-| POST /v1/runs/{runId}/cancel | 202 + CANCELLING Run | Cancellation requested |
+| POST /v1/runs/{runId}/cancel before dispatch | 200 + ABORTED Run | Cancellation completed |
+| POST /v1/runs/{runId}/cancel after dispatch begins | 202 + CANCELLING Run | Cancellation requested |
 | Repeat cancel after ABORTED | 200 + ABORTED Run | No mutation |
 | POST /v1/baselines | 201 + CANDIDATE Baseline + Location | Immutable version created |
 | GET /v1/baselines/{id}/versions/{version} | 200 + Baseline | Exact current snapshot |
@@ -158,16 +159,22 @@ be retained; unrecoverable infrastructure failure can terminate immediately.
 - ABORTED: cancellation completed and active execution stopped.
 - COMPLETED: collection, analysis and reporting finished, regardless of verdicts.
 
-Every active state accepts cancellation by atomically entering CANCELLING.
-Repeats in that state return 202 without incrementing revision. The worker
-stops execution and retains available evidence before ABORTED. Cancellation
-does not delete durable artifacts. Stop/cleanup failure can instead become
-INFRASTRUCTURE_FAILURE.
+Cancellation in CREATED or VALIDATING atomically enters ABORTED because no
+execution has been dispatched and no external cleanup is required. This is a
+synchronous terminal mutation and returns 200. Cancellation from PROVISIONING
+onward atomically enters CANCELLING and returns 202 because execution may exist
+or dispatch may be in flight. Repeats in CANCELLING return 202 without
+incrementing revision. The worker stops execution and retains available
+evidence before ABORTED. Cancellation does not delete durable artifacts.
+Stop/cleanup failure can instead become INFRASTRUCTURE_FAILURE.
 
-Cancellation/completion races are serialized: cancellation winning prevents
-normal completion from overwriting CANCELLING; another terminal transition
-winning yields 409 RUN_TERMINAL. Already ABORTED remains 200. Cancel after
-COMPLETED is not deletion or a rerun request.
+Cancellation/lifecycle races are serialized. If cancellation wins before
+dispatch, validation cannot subsequently advance an ABORTED Run. If lifecycle
+advancement reaches PROVISIONING first, cancellation uses CANCELLING and the
+worker performs cleanup. Cancellation winning after dispatch prevents normal
+completion from overwriting CANCELLING; another terminal transition winning
+yields 409 RUN_TERMINAL. Already ABORTED remains 200. Cancel after COMPLETED is
+not deletion or a rerun request.
 
 Every persisted mutation increases revision; no-op replays do not. createdAt is
 immutable and updatedAt never precedes it. Terminal snapshots require finishedAt
