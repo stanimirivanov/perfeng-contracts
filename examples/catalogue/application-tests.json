@@ -65,7 +65,7 @@
       "criticality": "high",
       "tool": {
         "name": "playwright",
-        "version": "1.49.0"
+        "version": "1.62.1"
       },
       "source": {
         "repository": "https://github.com/stanimirivanov/perfeng-playwright",

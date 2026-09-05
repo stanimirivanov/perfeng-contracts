@@ -1,7 +1,15 @@
 # Contract compatibility
 
-The current candidate bundle is 0.9.0. Run-management API 0.4.0 makes
-pre-dispatch cancellation synchronous: CREATED and VALIDATING now transition
+The current candidate bundle is 0.10.0. It adds the
+`playwright-measurements/v1` native payload contract without changing existing
+schema generations or run-management API 0.4.0. Strict bundle readers must
+recognize the fourteenth contract. The checked-in Playwright raw fixture and
+its transport references now use the contract shape; consumers of those
+candidate fixtures must update their expected checksum and sample statistics.
+Consumers pinned to bundle 0.9.0 retain the earlier informal two-sample payload.
+
+Bundle 0.9.0 made run-management API 0.4.0 pre-dispatch cancellation
+synchronous: CREATED and VALIDATING now transition
 directly to ABORTED with HTTP 200, while PROVISIONING and later active states
 continue through CANCELLING with HTTP 202. This replaces two lifecycle edges and
 changes observable behavior without changing the Run wire schema. Upgrade the

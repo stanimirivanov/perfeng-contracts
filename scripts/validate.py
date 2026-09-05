@@ -170,6 +170,33 @@ def check_transport_consistency(document: dict[str, Any]) -> None:
         metric_names.add(name)
 
 
+def check_playwright_measurements(document: dict[str, Any]) -> None:
+    """Check temporal and repetition semantics after schema validation."""
+    window = document["measurementWindow"]
+    start = datetime.fromisoformat(window["start"])
+    end = datetime.fromisoformat(window["end"])
+    created = datetime.fromisoformat(document["createdAt"])
+    if start >= end:
+        raise ValueError("Measurement window start must precede end")
+    if created < end:
+        raise ValueError("Measurement creation must not precede measurement end")
+
+    measurements = document["measurements"]
+    identities = [(item["iteration"], item["name"]) for item in measurements]
+    if len(set(identities)) != len(identities):
+        raise ValueError("Duplicate Playwright measurement iteration and name")
+    if identities != sorted(identities):
+        raise ValueError("Playwright measurements must be ordered by iteration and name")
+
+    expected = list(range(1, document["scenario"]["measurementIterations"] + 1))
+    iterations_by_metric: dict[str, list[int]] = {}
+    for measurement in measurements:
+        iterations_by_metric.setdefault(measurement["name"], []).append(measurement["iteration"])
+    for name, iterations in iterations_by_metric.items():
+        if iterations != expected:
+            raise ValueError(f"Playwright metric {name} must cover every declared iteration")
+
+
 def check_policy_consistency(policy: dict[str, Any]) -> None:
     ids: set[str] = set()
     selectors: set[tuple[str, str]] = set()
@@ -367,6 +394,8 @@ def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
                     check_artifact_reference(instance)
                 if entry["name"] in {"raw-result/v1", "normalized-result/v1"}:
                     check_transport_consistency(instance)
+                if entry["name"] == "playwright-measurements/v1":
+                    check_playwright_measurements(instance)
                 if entry["name"] == "policy/v1":
                     check_policy_consistency(instance)
                 if entry["name"] == "analysis/v1":

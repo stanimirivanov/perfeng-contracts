@@ -11,7 +11,7 @@
   },
   "producer": {
     "name": "playwright",
-    "version": "1.49.0",
+    "version": "1.62.1",
     "image": "ghcr.io/example/perfeng-playwright@sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
   },
   "measurementWindow": {
@@ -25,8 +25,8 @@
       "runId": "perf-20260902-130000-a1b2c3d5",
       "kind": "raw",
       "uri": "s3://perfeng-example/runs/perf-20260902-130000-a1b2c3d5/raw/playwright-measurements.json",
-      "sha256": "e0e699926c52d3dc52d0022072f658b5ab66205256459c290bda29c355784c44",
-      "sizeBytes": 197,
+      "sha256": "258889ffa8a7be060cdb0f915ee92699887968c9cc2174944b1c77d44771864c",
+      "sizeBytes": 1780,
       "mediaType": "application/json",
       "format": "playwright-measurements-json"
     }
