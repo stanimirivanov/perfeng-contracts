@@ -12,9 +12,23 @@ from openapi_spec_validator import OpenAPIV31SpecValidator
 from referencing import Registry
 
 if __package__:
-    from .validate import ROOT, no_network, parse_finite_float, read_json, reject_nonfinite_constant
+    from .validate import (
+        ROOT,
+        check_baseline_consistency,
+        no_network,
+        parse_finite_float,
+        read_json,
+        reject_nonfinite_constant,
+    )
 else:
-    from validate import ROOT, no_network, parse_finite_float, read_json, reject_nonfinite_constant
+    from validate import (
+        ROOT,
+        check_baseline_consistency,
+        no_network,
+        parse_finite_float,
+        read_json,
+        reject_nonfinite_constant,
+    )
 
 API_PATH = "api/run-management/v1"
 TERMINAL = {"COMPLETED", "INVALID", "ABORTED", "INFRASTRUCTURE_FAILURE", "TEST_FAILURE"}
@@ -27,6 +41,12 @@ FIXTURES = {
     "invalid": "Run",
     "error": "Error",
     "artifacts": "ArtifactCollection",
+    "baseline-create": "CreateBaseline",
+    "baseline-candidate": "Baseline",
+    "baseline-transition": "BaselineTransition",
+    "baseline-approved": "Baseline",
+    "baseline-exists-error": "Error",
+    "baseline-transition-error": "Error",
 }
 
 
@@ -83,22 +103,26 @@ def parse_request(body: bytes) -> Any:
 
 
 def check_http(document: dict[str, Any], case: dict[str, Any], examples: dict[str, Any]) -> None:
-    operation = next(
-        op
+    path, operation = next(
+        (path, op)
         for path in document["paths"].values()
         for method, op in path.items()
         if method in {"get", "post"} and op["operationId"] == case["operationId"]
     )
     validator = schema_validator(document, "Run")
-    for parameter in operation.get("parameters", []):
-        if parameter["in"] != "header":
+    for parameter in path.get("parameters", []) + operation.get("parameters", []):
+        if parameter["in"] == "header":
+            values = {k.lower(): v for k, v in case.get("requestHeaders", {}).items()}
+            name = parameter["name"].lower()
+        elif parameter["in"] == "path":
+            values = case.get("pathParameters", {})
+            name = parameter["name"]
+        else:
             continue
-        headers = {k.lower(): v for k, v in case.get("requestHeaders", {}).items()}
-        name = parameter["name"].lower()
-        if parameter.get("required") and name not in headers:
-            raise ValueError("Required request header missing")
-        if name in headers:
-            validator.evolve(schema=parameter["schema"]).validate(headers[name])
+        if parameter.get("required") and name not in values:
+            raise ValueError("Required request parameter missing")
+        if name in values:
+            validator.evolve(schema=parameter["schema"]).validate(values[name])
     if "requestBody" in operation:
         body = parse_request(json.dumps(examples[case["request"]]).encode())
         validator.evolve(
@@ -117,7 +141,7 @@ def check_http(document: dict[str, Any], case: dict[str, Any], examples: dict[st
             raise ValueError("Required response header missing")
         if name.lower() in headers:
             validator.evolve(schema=definition["schema"]).validate(headers[name.lower()])
-    if case["status"] == 201:
+    if case["operationId"] == "createRun" and case["status"] == 201:
         check_run(body)
         if headers["location"] != "/v1/runs/" + body["id"]:
             raise ValueError("Location does not identify the accepted run")
@@ -126,6 +150,32 @@ def check_http(document: dict[str, Any], case: dict[str, Any], examples: dict[st
         expires = datetime.fromisoformat(headers["idempotency-key-expires-at"])
         if expires < datetime.fromisoformat(body["createdAt"]) + timedelta(hours=24):
             raise ValueError("Idempotency retention is shorter than 24 hours")
+    if case["operationId"] == "createBaseline" and case["status"] == 201:
+        check_baseline_consistency(body)
+        request = examples[case["request"]]
+        for name in request.keys() - {"reason"}:
+            if body[name] != request[name]:
+                raise ValueError("Created baseline differs from submitted immutable fields")
+        if body["state"] != "CANDIDATE" or body["revision"] != 1:
+            raise ValueError("Created baseline is not revision-one CANDIDATE")
+        if body["lifecycle"][0]["reason"] != request["reason"]:
+            raise ValueError("Creation reason differs from the first lifecycle event")
+        location = f"/v1/baselines/{body['id']}/versions/{body['version']}"
+        if headers.get("location") != location:
+            raise ValueError("Location does not identify the created baseline version")
+    if case["operationId"] in {"getBaseline", "transitionBaseline"} and case["status"] == 200:
+        check_baseline_consistency(body)
+        parameters = case.get("pathParameters", {})
+        if body["id"] != parameters.get("baselineId") or body["version"] != parameters.get(
+            "version"
+        ):
+            raise ValueError("Baseline response differs from the path identity")
+    if case["operationId"] == "transitionBaseline" and case["status"] == 200:
+        request = examples[case["request"]]
+        if body["state"] != request["state"] or body["revision"] != request["expectedRevision"] + 1:
+            raise ValueError("Transition response does not apply the requested state and revision")
+        if body["lifecycle"][-1]["reason"] != request["reason"]:
+            raise ValueError("Transition reason differs from the appended lifecycle event")
     if body.get("code") == "REQUEST_IN_PROGRESS" and "retry-after" not in headers:
         raise ValueError("In-progress retry requires Retry-After")
     if case["operationId"] == "listRunArtifacts":
@@ -200,7 +250,15 @@ def lint(document: dict[str, Any], transitions: dict[str, list[str]]) -> None:
             for status in ["400", "401", "403", "429", "500", "503"]:
                 if status not in operation["responses"]:
                     raise ValueError("Missing standard error response")
-    if identifiers != {"createRun", "getRun", "listRunArtifacts", "cancelRun"}:
+    if identifiers != {
+        "createRun",
+        "getRun",
+        "listRunArtifacts",
+        "cancelRun",
+        "createBaseline",
+        "getBaseline",
+        "transitionBaseline",
+    }:
         raise ValueError("Unexpected API operation inventory")
     states = set(document["components"]["schemas"]["RunState"]["enum"])
     if set(transitions) != states or not TERMINAL <= states:
@@ -252,6 +310,11 @@ def validate_api(root: Path = ROOT) -> int:
         ("listRunArtifacts", 200),
         ("cancelRun", 200),
         ("cancelRun", 202),
+        ("createBaseline", 201),
+        ("createBaseline", 409),
+        ("getBaseline", 200),
+        ("transitionBaseline", 200),
+        ("transitionBaseline", 409),
     }
     if len(cases) != len(expected) or {(c["operationId"], c["status"]) for c in cases} != expected:
         raise ValueError("HTTP fixture coverage is incomplete or duplicated")

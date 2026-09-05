@@ -1,9 +1,22 @@
 # Contract compatibility
 
-The current candidate bundle is 0.7.0. It adds baseline/v1 as a new standalone
-contract without changing the twelve existing schema generations or the
-run-management API. Strict bundle readers must recognize the thirteenth contract;
-consumers pinned to 0.6.0 continue to use the unchanged earlier bundle.
+The current candidate bundle is 0.8.0. It extends the run-management OpenAPI
+candidate to API 0.3.0 with additive baseline create, exact-version read and
+revision-checked transition operations. Existing run operations and all thirteen
+schema contracts are unchanged. Strict API clients that reject unknown paths or
+error codes need an explicit upgrade; consumers pinned to 0.7.0 retain API 0.2.0.
+
+Baseline administration accepts immutable evidence and an audit reason, while
+the authenticated actor is server-derived. The contract has no list, latest,
+automatic-promotion or delete operation. Lifecycle mutation requires the
+observed revision and can only request QUALIFIED, APPROVED or RETIRED using the
+state-specific qualification shape. These additions do not expose the internal
+approved-baseline resolver used by analysis.
+
+Bundle 0.7.0 added baseline/v1 as a new standalone contract without changing
+the twelve earlier schema generations or run-management API 0.2.0. Strict bundle
+readers must recognize the thirteenth contract; consumers pinned to 0.6.0
+continue to use the unchanged earlier bundle.
 
 Baseline/v1 records immutable normalized-result anchors together with exact
 software, workload, environment and dataset identities. Their state and complete

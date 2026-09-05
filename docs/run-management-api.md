@@ -1,9 +1,10 @@
 # Run-management API (candidate)
 
 The [OpenAPI 3.1.1 document](../api/run-management/v1/openapi.json) defines the
-control-plane boundary from proposal sections 12-13. This is a specification
-and conformance corpus, not a deployed service. API description version 0.2.0
-ships in candidate bundle 0.7.0; neither is a stable v1 release.
+control-plane boundary from proposal sections 12-13 together with explicit
+baseline administration. This is a specification and conformance corpus, not a
+deployed service. API description version 0.3.0 ships in candidate bundle 0.8.0;
+neither is a stable v1 release.
 
 ## Operations
 
@@ -14,6 +15,9 @@ ships in candidate bundle 0.7.0; neither is a stable v1 release.
 | GET /v1/runs/{runId}/artifacts | 200 + ArtifactCollection | Current immutable-reference snapshot |
 | POST /v1/runs/{runId}/cancel | 202 + CANCELLING Run | Cancellation requested |
 | Repeat cancel after ABORTED | 200 + ABORTED Run | No mutation |
+| POST /v1/baselines | 201 + CANDIDATE Baseline + Location | Immutable version created |
+| GET /v1/baselines/{id}/versions/{version} | 200 + Baseline | Exact current snapshot |
+| POST /v1/baselines/{id}/versions/{version}/transitions | 200 + Baseline | Revision-checked decision |
 
 All operations require bearer authentication. The server derives a stable
 principal and authorization scope from the credential, never from a body field.
@@ -41,10 +45,39 @@ parameters or user information. Authorization to read referenced bytes belongs
 to the artifact data plane. A reference establishes neither an analysis verdict
 nor renewed verification of bytes by the API request.
 
-Only create accepts a body: application/json, at most 65,536 UTF-8 bytes.
-Duplicate JSON object keys at any depth, nonfinite numbers, invalid UTF-8,
-malformed JSON and unknown properties are rejected. Cancel has no body;
-even an empty JSON object is a 400 error.
+Run creation and baseline create/transition accept application/json bodies of at
+most 65,536 UTF-8 bytes. Duplicate JSON object keys at any depth, nonfinite
+numbers, invalid UTF-8, malformed JSON and unknown properties are rejected.
+Cancel has no body; even an empty JSON object is a 400 error.
+
+## Baseline administration
+
+Baseline creation accepts one explicit ID and semantic version, a completed
+source Run, its exact registered normalized-result/v1 artifact, and immutable
+software, test, workload, environment and dataset identity. The server verifies
+that evidence under the authenticated principal and creates revision one in
+CANDIDATE. Callers provide an audit reason but cannot provide actor, state,
+revision, qualification, timestamps or lifecycle history; actor comes from the
+verified credential and authorization policy.
+
+The ID/version pair is immutable. A duplicate returns 409 BASELINE_EXISTS even
+when its body is identical. A connection failure, 500 or 503 can leave creation
+uncertain, so recovery reads that exact ID/version before deciding what to do.
+There is no list, `latest`, overwrite, automatic promotion or delete operation.
+
+GET returns one exact principal-visible version in any lifecycle state. Missing
+and cross-principal versions are both 404. This administrative read is distinct
+from report-time baseline resolution: analysis may use only an APPROVED record
+whose trusted compatibility dimensions match the candidate.
+
+Transition requests contain the observed `expectedRevision`, target state and
+audit reason. The server appends the authenticated actor and authoritative time.
+QUALIFIED requires passed sample-count and maximum-CV evidence. RETIRED may carry
+failed qualification evidence when rejecting a candidate; approval and ordinary
+retirement do not accept qualification fields. The baseline/v1 forward-only
+lifecycle remains normative. A stale revision returns 409 REVISION_CONFLICT and
+an invalid lifecycle edge returns 409 BASELINE_TRANSITION_CONFLICT. After an
+outcome-uncertain response, GET the exact version before retrying.
 
 ## Declarative create request
 
@@ -181,13 +214,14 @@ uv run --locked python -m unittest discover -s tests -v
 ~~~
 
 The API is self-contained with static local references. Validation never fetches
-schemas. CI checks OpenAPI structure, operation/authentication rules, eight body
-fixtures, six HTTP cases, artifact ownership and ordering, transition consistency
-and negative cases. All twelve
-existing JSON schemas and their compatibility corpus remain unchanged.
+schemas. CI checks OpenAPI structure, operation/authentication rules, fourteen
+body fixtures, eleven HTTP cases, artifact ownership and ordering, run/baseline
+transition consistency and negative cases. All thirteen existing JSON schemas
+and their compatibility corpus remain unchanged.
 
 These are contract tests, not proof of runtime concurrency, authorization,
-restart persistence or cancellation. Those tests belong in the future Go service.
+restart persistence or cancellation. Those tests belong in the Go control-plane
+implementation.
 This initial corpus is not a general OpenAPI breaking-change detector; future
 changes require reader/writer compatibility review.
 

@@ -64,7 +64,7 @@ and negative regression cases. Schema IDs identify bundled resources; validation
 does not fetch schemas or artifacts from the internet. Tests verify fixture
 checksums against local bytes.
 
-CI runs these checks and uploads a `perfeng-contracts-0.7.0.tar.gz` candidate
+CI runs these checks and uploads a `perfeng-contracts-0.8.0.tar.gz` candidate
 bundle. That CI artifact is not a published stable release. Until a release
 exists, integrations should pin the merged commit SHA, not a floating branch.
 
@@ -90,10 +90,11 @@ byte-level integrity, envelope semantics, and migration from legacy arrays.
 See [performance policies and analysis outcomes](docs/performance-policies.md)
 for non-blocking policy semantics, evidence requirements, and prototype migration.
 The [run-management API](docs/run-management-api.md) specifies create/get/cancel,
-principal-scoped artifact listing, idempotency and lifecycle behavior. Its
-self-contained OpenAPI description and fixtures are under api/run-management/v1
-and included in the candidate bundle.
-The HTTP server, persistence and analysis engine are subsequent work.
+principal-scoped artifact listing, idempotency, run lifecycle and explicit
+baseline administration. Its self-contained OpenAPI description and fixtures
+are under api/run-management/v1 and included in the candidate bundle.
+HTTP, persistence and analysis implementations live in their owning repositories;
+this repository defines only their language-neutral interchange boundaries.
 Missing statistical values mean unavailable, never zero.
 Schema validation establishes structural validity, not scientific quality or
 performance-gate readiness.

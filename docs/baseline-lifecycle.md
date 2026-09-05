@@ -50,4 +50,6 @@ also checks artifact/source-Run binding, lifecycle order, revision/history
 agreement, current-state agreement and qualification/state consistency. Durable
 storage, authorization, optimistic updates, uniqueness of `(id, version)`, and
 selection of an environment-compatible approved record belong to the control
-plane.
+plane. The candidate [management API](run-management-api.md#baseline-administration)
+creates exact versions, reads their current snapshots and records authenticated,
+revision-checked lifecycle decisions; it provides no floating-version operation.
