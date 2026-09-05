@@ -15,6 +15,9 @@
   {
     "operationId": "getRun",
     "status": 200,
+    "pathParameters": {
+      "runId": "perf-20260902-120000-abcdef12"
+    },
     "response": "completed"
   },
   {
@@ -28,11 +31,17 @@
   {
     "operationId": "cancelRun",
     "status": 202,
+    "pathParameters": {
+      "runId": "perf-20260902-120000-abcdef12"
+    },
     "response": "cancelling"
   },
   {
     "operationId": "cancelRun",
     "status": 200,
+    "pathParameters": {
+      "runId": "perf-20260902-120000-abcdef12"
+    },
     "response": "aborted"
   },
   {
@@ -43,5 +52,49 @@
       "Idempotency-Key": "fixture-create-0001"
     },
     "response": "error"
+  },
+  {
+    "operationId": "createBaseline",
+    "status": 201,
+    "request": "baseline-create",
+    "response": "baseline-candidate",
+    "headers": {
+      "Location": "/v1/baselines/approved-search-browser/versions/2.0.0"
+    }
+  },
+  {
+    "operationId": "createBaseline",
+    "status": 409,
+    "request": "baseline-create",
+    "response": "baseline-exists-error"
+  },
+  {
+    "operationId": "getBaseline",
+    "status": 200,
+    "pathParameters": {
+      "baselineId": "approved-search-browser",
+      "version": "1.0.0"
+    },
+    "response": "baseline-approved"
+  },
+  {
+    "operationId": "transitionBaseline",
+    "status": 200,
+    "pathParameters": {
+      "baselineId": "approved-search-browser",
+      "version": "1.0.0"
+    },
+    "request": "baseline-transition",
+    "response": "baseline-approved"
+  },
+  {
+    "operationId": "transitionBaseline",
+    "status": 409,
+    "pathParameters": {
+      "baselineId": "approved-search-browser",
+      "version": "1.0.0"
+    },
+    "request": "baseline-transition",
+    "response": "baseline-transition-error"
   }
 ]

@@ -21,7 +21,7 @@ class RunApiTests(unittest.TestCase):
 
     def test_all_contracts_and_http_fixtures_validate_without_network(self):
         with patch("socket.create_connection", side_effect=AssertionError("network")):
-            self.assertEqual(api.validate_api(), 8)
+            self.assertEqual(api.validate_api(), 14)
             self.assertEqual(validate_bundle(), (13, 26))
 
     def test_artifact_listing_is_scoped_unique_and_ordered(self):
@@ -119,7 +119,7 @@ class RunApiTests(unittest.TestCase):
     def test_in_progress_requires_retry_delay_and_errors_match_http_status(self):
         examples = copy.deepcopy(self.examples)
         examples["error"]["code"] = "REQUEST_IN_PROGRESS"
-        case = self.cases[-1]
+        case = next(c for c in self.cases if c["operationId"] == "createRun" and c["status"] == 409)
         with self.assertRaises(ValueError):
             api.check_http(self.document, case, examples)
         api.check_http(self.document, {**case, "headers": {"Retry-After": 3}}, examples)
@@ -165,7 +165,12 @@ class RunApiTests(unittest.TestCase):
 
     def test_cancel_http_codes_require_the_documented_states(self):
         for status, name in [(202, "cancelling"), (200, "aborted")]:
-            case = {"operationId": "cancelRun", "status": status, "response": name}
+            case = {
+                "operationId": "cancelRun",
+                "status": status,
+                "pathParameters": {"runId": "perf-20260902-120000-abcdef12"},
+                "response": name,
+            }
             api.check_http(self.document, case, self.examples)
             with self.assertRaises(ValidationError):
                 api.check_http(self.document, {**case, "response": "completed"}, self.examples)
@@ -196,6 +201,91 @@ class RunApiTests(unittest.TestCase):
         changed["created"]["request"]["testSuite"] = "another-suite"
         with self.assertRaises(ValueError):
             api.check_http(self.document, original, changed)
+
+    def test_baseline_create_uses_completed_evidence_and_server_actor(self):
+        validator = api.schema_validator(self.document, "CreateBaseline")
+        original = self.examples["baseline-create"]
+        validator.validate(original)
+        for key in original:
+            self.assertFalse(validator.is_valid({k: v for k, v in original.items() if k != key}))
+
+        changed = copy.deepcopy(original)
+        changed["artifact"]["kind"] = "raw"
+        self.assertFalse(validator.is_valid(changed))
+        self.assertFalse(validator.is_valid({**original, "actor": "caller-selected"}))
+
+        case = next(c for c in self.cases if c["operationId"] == "createBaseline")
+        api.check_http(self.document, case, self.examples)
+        with self.assertRaises(ValueError):
+            api.check_http(
+                self.document,
+                {**case, "headers": {"Location": "/v1/baselines/other/versions/2.0.0"}},
+                self.examples,
+            )
+
+    def test_baseline_transitions_are_revision_checked_and_state_specific(self):
+        validator = api.schema_validator(self.document, "BaselineTransition")
+        transitions = [
+            self.examples["baseline-transition"],
+            {
+                "expectedRevision": 1,
+                "state": "QUALIFIED",
+                "qualification": {
+                    "status": "PASSED",
+                    "reasons": [],
+                    "sampleCount": 40,
+                    "maximumCv": 0.08,
+                },
+                "reason": "Evidence met the reviewed policy.",
+            },
+            {
+                "expectedRevision": 1,
+                "state": "RETIRED",
+                "qualification": {
+                    "status": "FAILED",
+                    "reasons": ["Variability exceeded the reviewed policy."],
+                },
+                "reason": "Candidate rejected during qualification.",
+            },
+            {
+                "expectedRevision": 3,
+                "state": "RETIRED",
+                "reason": "Superseded by another approved version.",
+            },
+        ]
+        for transition in transitions:
+            validator.validate(transition)
+
+        for transition in [
+            {**transitions[0], "expectedRevision": 0},
+            {**transitions[0], "qualification": transitions[1]["qualification"]},
+            {k: v for k, v in transitions[1].items() if k != "qualification"},
+            {**transitions[1], "qualification": transitions[2]["qualification"]},
+        ]:
+            self.assertFalse(validator.is_valid(transition))
+
+        case = next(c for c in self.cases if c["operationId"] == "transitionBaseline")
+        api.check_http(self.document, case, self.examples)
+        changed = copy.deepcopy(self.examples)
+        changed["baseline-approved"]["revision"] = 4
+        with self.assertRaises(ValueError):
+            api.check_http(self.document, case, changed)
+
+    def test_baseline_reads_are_exact_versioned_resources(self):
+        case = next(c for c in self.cases if c["operationId"] == "getBaseline")
+        api.check_http(self.document, case, self.examples)
+        with self.assertRaises(ValueError):
+            api.check_http(
+                self.document,
+                {**case, "pathParameters": {**case["pathParameters"], "version": "2.0.0"}},
+                self.examples,
+            )
+        with self.assertRaises(ValidationError):
+            api.check_http(
+                self.document,
+                {**case, "pathParameters": {**case["pathParameters"], "version": "latest"}},
+                self.examples,
+            )
 
     def test_authentication_remote_refs_and_terminal_escape_are_rejected(self):
         document = copy.deepcopy(self.document)
