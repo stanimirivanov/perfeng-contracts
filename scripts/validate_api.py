@@ -32,6 +32,7 @@ else:
 
 API_PATH = "api/run-management/v1"
 TERMINAL = {"COMPLETED", "INVALID", "ABORTED", "INFRASTRUCTURE_FAILURE", "TEST_FAILURE"}
+PRE_DISPATCH = {"CREATED", "VALIDATING"}
 FIXTURES = {
     "create": "CreateRun",
     "created": "Run",
@@ -268,8 +269,11 @@ def lint(document: dict[str, Any], transitions: dict[str, list[str]]) -> None:
             raise ValueError("Invalid lifecycle transition")
         if (state in TERMINAL) != (not targets):
             raise ValueError("Terminal states must have no outgoing transitions")
-        if state not in TERMINAL | {"CANCELLING"} and "CANCELLING" not in targets:
-            raise ValueError("Every active state must support cancellation")
+        if state in PRE_DISPATCH:
+            if "ABORTED" not in targets or "CANCELLING" in targets:
+                raise ValueError("Pre-dispatch states must abort without asynchronous cleanup")
+        elif state not in TERMINAL | {"CANCELLING"} and "CANCELLING" not in targets:
+            raise ValueError("Dispatched active states must support asynchronous cancellation")
     reached = {"CREATED"}
     while True:
         expanded = reached | {target for state in reached for target in transitions[state]}

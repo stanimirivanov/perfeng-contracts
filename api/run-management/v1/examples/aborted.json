@@ -1,7 +1,7 @@
 {
   "id": "perf-20260902-120000-abcdef12",
   "state": "ABORTED",
-  "revision": 4,
+  "revision": 2,
   "request": {
     "testSuite": "checkout-api",
     "catalogue": {
@@ -26,6 +26,6 @@
     }
   },
   "createdAt": "2026-09-02T12:00:00Z",
-  "updatedAt": "2026-09-02T12:01:02Z",
-  "finishedAt": "2026-09-02T12:01:02Z"
+  "updatedAt": "2026-09-02T12:00:01Z",
+  "finishedAt": "2026-09-02T12:00:01Z"
 }

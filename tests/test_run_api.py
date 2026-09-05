@@ -175,6 +175,29 @@ class RunApiTests(unittest.TestCase):
             with self.assertRaises(ValidationError):
                 api.check_http(self.document, {**case, "response": "completed"}, self.examples)
 
+    def test_cancellation_distinguishes_pre_dispatch_and_dispatched_runs(self):
+        self.assertEqual(self.transitions["CREATED"], ["VALIDATING", "ABORTED"])
+        self.assertEqual(
+            self.transitions["VALIDATING"],
+            ["PROVISIONING", "INVALID", "INFRASTRUCTURE_FAILURE", "ABORTED"],
+        )
+        for state in [
+            "PROVISIONING",
+            "WARMING_UP",
+            "RUNNING",
+            "COLLECTING",
+            "ANALYZING",
+            "REPORTING",
+        ]:
+            self.assertIn("CANCELLING", self.transitions[state])
+            self.assertNotIn("ABORTED", self.transitions[state])
+        self.assertEqual(self.examples["aborted"]["revision"], 2)
+
+        transitions = copy.deepcopy(self.transitions)
+        transitions["CREATED"][-1] = "CANCELLING"
+        with self.assertRaises(ValueError):
+            api.lint(self.document, transitions)
+
     def test_create_requires_idempotency_and_consistent_response_headers(self):
         original = self.cases[0]
         changes = [
