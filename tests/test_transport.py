@@ -10,6 +10,7 @@ from jsonschema import Draft202012Validator
 from scripts.validate import (
     ROOT,
     check_artifact_reference,
+    check_playwright_measurements,
     check_transport_consistency,
     load_contracts,
     read_json,
@@ -86,6 +87,8 @@ class TransportContractsTest(unittest.TestCase):
 
     def test_browser_statistics_use_only_observed_samples(self) -> None:
         raw = read_json(ROOT / "tests/fixtures/transport/playwright-measurements.json")
+        self.validators["playwright-measurements/v1"].validate(raw)
+        check_playwright_measurements(raw)
         durations = [measurement["durationMs"] for measurement in raw["measurements"]]
         distribution = self.envelope(tool="playwright")["results"][0]["distribution"]
         self.assertEqual(
@@ -97,6 +100,69 @@ class TransportContractsTest(unittest.TestCase):
                 "max": max(durations),
             },
         )
+
+    def test_browser_fixture_matches_its_contract_example_and_manifest(self) -> None:
+        payload = read_json(ROOT / "tests/fixtures/transport/playwright-measurements.json")
+        example = read_json(ROOT / "examples/playwright-measurements/search-warm.json")
+        manifest = self.envelope("raw-result", "playwright")
+        self.assertEqual(payload, example)
+        self.assertEqual(payload["runId"], manifest["runId"])
+        self.assertEqual(payload["testId"], manifest["testId"])
+        self.assertEqual(
+            {key: payload["workload"][key] for key in ("id", "version", "sha256")},
+            manifest["workload"],
+        )
+        self.assertEqual(payload["runtime"]["playwrightVersion"], manifest["producer"]["version"])
+        self.assertEqual(payload["measurementWindow"], manifest["measurementWindow"])
+        self.assertEqual(payload["createdAt"], manifest["createdAt"])
+
+    def test_browser_cache_profile_controls_context_reuse(self) -> None:
+        original = read_json(ROOT / "examples/playwright-measurements/search-warm.json")
+        validator = self.validators["playwright-measurements/v1"]
+        for cache_profile, context_reuse in (("cold", "per-run"), ("warm", "per-iteration")):
+            with self.subTest(cache_profile=cache_profile, context_reuse=context_reuse):
+                data = copy.deepcopy(original)
+                data["scenario"]["cacheProfile"] = cache_profile
+                data["scenario"]["contextReuse"] = context_reuse
+                self.assertFalse(validator.is_valid(data))
+
+    def test_browser_samples_cover_each_declared_iteration_in_order(self) -> None:
+        original = read_json(ROOT / "examples/playwright-measurements/search-warm.json")
+        validator = self.validators["playwright-measurements/v1"]
+        for mutate, message in (
+            (lambda data: data["measurements"].pop(), "cover every declared iteration"),
+            (
+                lambda data: data["measurements"].append(copy.deepcopy(data["measurements"][-1])),
+                "Duplicate Playwright measurement",
+            ),
+            (
+                lambda data: data["measurements"].reverse(),
+                "ordered by iteration and name",
+            ),
+        ):
+            with self.subTest(message=message):
+                data = copy.deepcopy(original)
+                mutate(data)
+                validator.validate(data)
+                with self.assertRaisesRegex(ValueError, message):
+                    check_playwright_measurements(data)
+
+    def test_browser_measurement_times_are_ordered(self) -> None:
+        original = read_json(ROOT / "examples/playwright-measurements/search-warm.json")
+        validator = self.validators["playwright-measurements/v1"]
+        for field, value, message in (
+            ("start", original["measurementWindow"]["end"], "start must precede"),
+            ("createdAt", "2026-09-02T12:59:59Z", "creation must not precede"),
+        ):
+            with self.subTest(field=field):
+                data = copy.deepcopy(original)
+                if field == "createdAt":
+                    data[field] = value
+                else:
+                    data["measurementWindow"][field] = value
+                validator.validate(data)
+                with self.assertRaisesRegex(ValueError, message):
+                    check_playwright_measurements(data)
 
     def test_reference_syntax_rejects_bad_digest_size_and_ephemeral_uri(self) -> None:
         original = read_json(ROOT / "examples/artifact/raw-reference.json")

@@ -21,8 +21,8 @@
     "runId": "perf-20260902-130000-a1b2c3d5",
     "kind": "normalized",
     "uri": "s3://perfeng-example/runs/perf-20260902-130000-a1b2c3d5/normalized/playwright.json",
-    "sha256": "b655b5d065089324417762682264de9e76ff97f4a28a972c284fc6bde0ad7f03",
-    "sizeBytes": 1502,
+    "sha256": "586619a56a91ea457bed32d19789e708ea40cea5cf89b8da2ccf44c956317075",
+    "sizeBytes": 1506,
     "mediaType": "application/json",
     "format": "normalized-result/v1"
   },

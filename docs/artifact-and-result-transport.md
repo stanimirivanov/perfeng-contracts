@@ -3,7 +3,8 @@
 This contract slice implements proposal sections 29 and 35-36: immutable raw
 evidence, derived measurements, and the context needed to interpret them. It
 defines documents, not an upload service, normalizer implementation, or quality
-gate. Candidate bundle `0.3.0` includes these schemas and their fixture corpus.
+gate. Bundle `0.3.0` introduced the transport envelopes; candidate bundle
+`0.10.0` adds the native Playwright measurement schema.
 
 ## Documents
 
@@ -11,6 +12,7 @@ gate. Candidate bundle `0.3.0` includes these schemas and their fixture corpus.
 | --- | --- |
 | `artifact/v1` | A reference to exact stored bytes: ID, run ID, raw/normalized kind, stable URI, SHA-256, byte count, media type, and format |
 | `raw-result/v1` | A manifest of raw artifacts from a measurement window, with producer, test, and workload identity |
+| `playwright-measurements/v1` | Native semantic browser samples with cache, repetition, runtime, and browser context |
 | `result/v2` | One metric with available statistics and an optional/nullable sample count |
 | `normalized-result/v1` | A set of v2 metrics plus the raw artifact references from which they were derived |
 
@@ -40,7 +42,8 @@ reformat, or migrate raw bytes in place. `mediaType` is a lowercase type/subtype
 without parameters. `format` identifies the adapter-specific payload layout,
 such as `k6-summary-json`; the producer version supplies its tool context.
 Consumers must reject formats they cannot decode rather than guessing from a
-filename. The schemas validate reference syntax, not native payload structure.
+filename. Artifact schemas validate reference syntax; the separate
+`playwright-measurements/v1` contract validates that native browser payload.
 
 A normalized envelope contains raw source references and inline metrics. After
 writing its final UTF-8 JSON bytes, assign it a separate `kind: normalized`
@@ -126,9 +129,9 @@ evidence. Consumers must choose a supported version explicitly.
 
 The k6 and browser raw payloads under `tests/fixtures/transport` are small
 synthetic format examples. The k6 fixture has a mean and p95 but no count. The
-browser fixture has two observed durations; its example reports only the count,
-mean, minimum, and maximum derivable from them. Neither fixture demonstrates a
-complete production run or attainment of its workload's planned budget.
+browser fixture is schema-backed and has ten observed durations after two
+excluded warm-up iterations; its example reports only the count, mean, minimum,
+and maximum derivable from them. Neither fixture demonstrates a production run.
 
 The examples' raw-data and workload checksums match checked-in bytes. The
 standalone normalized artifact reference hashes the completed k6 envelope.
@@ -143,6 +146,8 @@ external reference. The archive includes the fixtures for inspection.
 
 Run the repository's normal uv validation and test commands. Schema references
 resolve offline. Development semantic checks enforce location, window, run-ID,
-and uniqueness rules; equivalent checks are required in each runtime consumer.
+and uniqueness rules. Playwright checks additionally enforce cache/context
+pairing, complete iteration coverage, deterministic ordering, and native timing
+order; equivalent checks are required in each runtime consumer.
 Only fixture tests read local payloads. The general validator does not download
 artifacts or verify remote storage, native payload formats, or scientific quality.
