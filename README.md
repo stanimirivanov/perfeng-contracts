@@ -16,7 +16,10 @@ performance policies with independent quality, SLO, and regression outcomes.
 | `result/v2` | [test result](schemas/result/v2/test-result.schema.json) | Metric record supporting unavailable sample counts |
 | `artifact/v1` | [artifact reference](schemas/artifact/v1/artifact-reference.schema.json) | Stored bytes, checksum, size, format, and run identity |
 | `raw-result/v1` | [raw result](schemas/raw-result/v1/raw-result.schema.json) | Raw artifact manifest with producer and measurement context |
-| `playwright-measurements/v1` | [Playwright measurements](schemas/playwright-measurements/v1/playwright-measurements.schema.json) | Repeatable semantic browser timings with runtime and cache context |
+| `playwright-measurements/v1` | [Playwright measurements](schemas/playwright-measurements/v1/playwright-measurements.schema.json) | Original semantic browser timings with runtime and cache context |
+| `playwright-measurements/v2` | [contextual Playwright measurements](schemas/playwright-measurements/v2/playwright-measurements.schema.json) | Semantic timings with page lifetime, diagnostic mode, and environment identity |
+| `browser-environment/v1` | [browser environment](schemas/browser-environment/v1/browser-environment.schema.json) | Versioned host, browser, display, power, and calibration evidence |
+| `browser-diagnostics/v1` | [browser diagnostics](schemas/browser-diagnostics/v1/browser-diagnostics.schema.json) | Capture status and immutable references for browser diagnostic evidence |
 | `normalized-result/v1` | [normalized result](schemas/normalized-result/v1/normalized-result.schema.json) | Multi-metric envelope with raw evidence references |
 | `workload/v1` | [workload](schemas/workload/v1/workload.schema.json) | Versioned profiles, configuration, phases, and dataset identity |
 | `catalogue/v1` | [test catalogue](schemas/catalogue/v1/test-catalogue.schema.json) | Test ownership, pinned tools/source/images, and scheduling |
@@ -65,7 +68,7 @@ and negative regression cases. Schema IDs identify bundled resources; validation
 does not fetch schemas or artifacts from the internet. Tests verify fixture
 checksums against local bytes.
 
-CI runs these checks and uploads a `perfeng-contracts-0.10.0.tar.gz` candidate
+CI runs these checks and uploads a `perfeng-contracts-0.11.0.tar.gz` candidate
 bundle. That CI artifact is not a published stable release. Until a release
 exists, integrations should pin the merged commit SHA, not a floating branch.
 
@@ -90,6 +93,8 @@ See [artifact and result transport](docs/artifact-and-result-transport.md) for
 byte-level integrity, envelope semantics, and migration from legacy arrays.
 See [Playwright measurements](docs/playwright-measurements.md) for browser,
 cache, repetition, timing, and native-payload semantics.
+See [browser environments and diagnostics](docs/browser-diagnostics.md) for
+reference-machine identity, page lifetime, capture modes, evidence, and privacy.
 See [performance policies and analysis outcomes](docs/performance-policies.md)
 for non-blocking policy semantics, evidence requirements, and prototype migration.
 The [run-management API](docs/run-management-api.md) specifies create/get/cancel,

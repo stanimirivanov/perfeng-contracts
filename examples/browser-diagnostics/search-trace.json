@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "kind": "BrowserDiagnostics",
+  "runId": "perf-20260902-130000-a1b2c3d5",
+  "testId": "search-browser",
+  "workload": {
+    "id": "search-browser-smoke",
+    "version": "1.0.0",
+    "profile": "smoke",
+    "sha256": "dcbb9c0f92dc16917a24f7eb52c95689a2091f893b64ccb219246af51a7da3c7"
+  },
+  "environment": {
+    "profile": {
+      "id": "windows-mainstream",
+      "version": "1.0.0"
+    },
+    "fingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "artifact": {
+      "id": "77777777-7777-4777-8777-777777777777",
+      "runId": "perf-20260902-130000-a1b2c3d5",
+      "kind": "raw",
+      "uri": "s3://perfeng-example/runs/perf-20260902-130000-a1b2c3d5/raw/browser-environment.json",
+      "sha256": "9477636e6e2f86ab02d3c87be0f678a6b6c9df5cd0da5197fdeea63dc241df3c",
+      "sizeBytes": 1448,
+      "mediaType": "application/json",
+      "format": "browser-environment/v1"
+    }
+  },
+  "execution": {
+    "mode": "trace",
+    "contextReuse": "per-run",
+    "pageReuse": "per-iteration",
+    "captureIterations": [2]
+  },
+  "sources": ["playwright", "web-performance", "cdp", "windows"],
+  "captureWindow": {
+    "start": "2026-09-02T13:00:20Z",
+    "end": "2026-09-02T13:00:40Z"
+  },
+  "captures": [
+    {
+      "type": "observations",
+      "scope": {"kind": "run"},
+      "status": "COMPLETE",
+      "reasons": [],
+      "sensitive": false,
+      "artifact": {
+        "id": "88888888-8888-4888-8888-888888888888",
+        "runId": "perf-20260902-130000-a1b2c3d5",
+        "kind": "raw",
+        "uri": "s3://perfeng-example/runs/perf-20260902-130000-a1b2c3d5/raw/browser-observations.json",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "sizeBytes": 4096,
+        "mediaType": "application/json",
+        "format": "browser-observations-json"
+      }
+    },
+    {
+      "type": "network-summary",
+      "scope": {"kind": "iteration", "iteration": 2},
+      "status": "COMPLETE",
+      "reasons": [],
+      "sensitive": false,
+      "artifact": {
+        "id": "99999999-9999-4999-8999-999999999999",
+        "runId": "perf-20260902-130000-a1b2c3d5",
+        "kind": "raw",
+        "uri": "s3://perfeng-example/runs/perf-20260902-130000-a1b2c3d5/raw/network-summary.json",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "sizeBytes": 3072,
+        "mediaType": "application/json",
+        "format": "browser-network-summary-json"
+      }
+    },
+    {
+      "type": "trace",
+      "scope": {"kind": "iteration", "iteration": 2},
+      "status": "INCOMPLETE",
+      "reasons": ["Chrome reported trace-buffer data loss."],
+      "sensitive": true,
+      "dataLossOccurred": true,
+      "artifact": {
+        "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        "runId": "perf-20260902-130000-a1b2c3d5",
+        "kind": "raw",
+        "uri": "s3://perfeng-example/runs/perf-20260902-130000-a1b2c3d5/raw/chrome-trace.json.gz",
+        "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "sizeBytes": 1048576,
+        "mediaType": "application/gzip",
+        "format": "chrome-trace-json-gzip"
+      }
+    }
+  ],
+  "createdAt": "2026-09-02T13:01:02Z"
+}

@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://perfeng.dev/schemas/browser-diagnostics/v1/browser-diagnostics.schema.json",
+  "title": "Browser diagnostic capture manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "runId",
+    "testId",
+    "workload",
+    "environment",
+    "execution",
+    "sources",
+    "captureWindow",
+    "captures",
+    "createdAt"
+  ],
+  "properties": {
+    "schemaVersion": {"type": "integer", "const": 1},
+    "kind": {"const": "BrowserDiagnostics"},
+    "runId": {
+      "$ref": "https://perfeng.dev/schemas/result/v1/test-result.schema.json#/properties/runId"
+    },
+    "testId": {
+      "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/id"
+    },
+    "workload": {"$ref": "#/$defs/workloadIdentity"},
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "fingerprint", "artifact"],
+      "properties": {
+        "profile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "version"],
+          "properties": {
+            "id": {
+              "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/id"
+            },
+            "version": {
+              "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/version"
+            }
+          }
+        },
+        "fingerprint": {
+          "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/sha256"
+        },
+        "artifact": {
+          "allOf": [
+            {"$ref": "https://perfeng.dev/schemas/artifact/v1/artifact-reference.schema.json"},
+            {
+              "properties": {
+                "kind": {"const": "raw"},
+                "mediaType": {"const": "application/json"},
+                "format": {"const": "browser-environment/v1"}
+              }
+            }
+          ]
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "contextReuse", "pageReuse", "captureIterations"],
+      "properties": {
+        "mode": {"enum": ["lightweight", "trace", "memory", "smoothness"]},
+        "contextReuse": {"enum": ["per-iteration", "per-run"]},
+        "pageReuse": {"enum": ["per-iteration", "per-run"]},
+        "captureIterations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "integer", "minimum": 1}
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"enum": ["playwright", "web-performance", "cdp", "windows"]}
+    },
+    "captureWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": {"$ref": "#/$defs/timestamp"},
+        "end": {"$ref": "#/$defs/timestamp"}
+      }
+    },
+    "captures": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/capture"}
+    },
+    "createdAt": {"$ref": "#/$defs/timestamp"}
+  },
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:[0-5]\\d(?:\\.\\d{1,6})?(?:Z|[+-]\\d{2}:\\d{2})$"
+    },
+    "workloadIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "profile", "sha256"],
+      "properties": {
+        "id": {
+          "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/id"
+        },
+        "version": {
+          "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/version"
+        },
+        "profile": {
+          "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/properties/profile"
+        },
+        "sha256": {
+          "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "capture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "scope", "status", "reasons", "sensitive"],
+      "properties": {
+        "type": {
+          "enum": [
+            "observations",
+            "network-summary",
+            "console",
+            "trace",
+            "cpu-profile",
+            "heap-snapshot-before",
+            "heap-snapshot-after",
+            "allocation-profile",
+            "screenshot",
+            "video"
+          ]
+        },
+        "scope": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["kind"],
+              "properties": {"kind": {"const": "run"}}
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["kind", "iteration"],
+              "properties": {
+                "kind": {"const": "iteration"},
+                "iteration": {"type": "integer", "minimum": 1}
+              }
+            }
+          ]
+        },
+        "status": {"enum": ["COMPLETE", "INCOMPLETE", "FAILED", "NOT_SUPPORTED"]},
+        "reasons": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "sensitive": {"type": "boolean"},
+        "dataLossOccurred": {"type": ["boolean", "null"]},
+        "artifact": {
+          "allOf": [
+            {"$ref": "https://perfeng.dev/schemas/artifact/v1/artifact-reference.schema.json"},
+            {"properties": {"kind": {"const": "raw"}}}
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"enum": ["COMPLETE", "INCOMPLETE"]}}},
+          "then": {"required": ["artifact"]},
+          "else": {"not": {"required": ["artifact"]}}
+        },
+        {
+          "if": {"properties": {"status": {"const": "COMPLETE"}}},
+          "then": {"properties": {"reasons": {"maxItems": 0}}},
+          "else": {"properties": {"reasons": {"minItems": 1}}}
+        },
+        {
+          "if": {"properties": {"type": {"const": "trace"}}},
+          "then": {"required": ["dataLossOccurred"]},
+          "else": {"not": {"required": ["dataLossOccurred"]}}
+        }
+      ]
+    }
+  }
+}
