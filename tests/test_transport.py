@@ -41,6 +41,44 @@ class TransportContractsTest(unittest.TestCase):
                     self.validators[f"{kind}/v1"].validate(data)
                     check_transport_consistency(data)
 
+    def test_v2_raw_manifest_represents_native_execution_without_an_image(self) -> None:
+        data = read_json(ROOT / "examples/raw-result/playwright-native.json")
+        self.validators["raw-result/v2"].validate(data)
+        check_transport_consistency(data)
+        artifact = data["producer"]["artifact"]
+        self.assertEqual(artifact["kind"], "source-checkout")
+        self.assertNotIn("image", artifact)
+
+        for key in ("gitSha", "dependencyLock"):
+            with self.subTest(key=key):
+                invalid = copy.deepcopy(data)
+                del invalid["producer"]["artifact"][key]
+                self.assertFalse(self.validators["raw-result/v2"].is_valid(invalid))
+
+    def test_native_raw_manifest_contains_exact_diagnostic_evidence(self) -> None:
+        manifest = read_json(ROOT / "examples/raw-result/playwright-native.json")
+        diagnostics_path = ROOT / "examples/browser-diagnostics/search-trace.json"
+        diagnostics = read_json(diagnostics_path)
+        artifacts = {artifact["id"]: artifact for artifact in manifest["artifacts"]}
+        evidence = [diagnostics["environment"]["artifact"]]
+        evidence.extend(capture["artifact"] for capture in diagnostics["captures"])
+        for reference in evidence:
+            self.assertEqual(artifacts[reference["id"]], reference)
+
+        diagnostic_reference = next(
+            artifact
+            for artifact in manifest["artifacts"]
+            if artifact["format"] == "browser-diagnostics/v1"
+        )
+        content = diagnostics_path.read_bytes()
+        self.assertEqual(diagnostic_reference["sha256"], hashlib.sha256(content).hexdigest())
+        self.assertEqual(diagnostic_reference["sizeBytes"], len(content))
+
+    def test_v2_execution_artifact_variants_are_unambiguous(self) -> None:
+        data = read_json(ROOT / "examples/raw-result/playwright-native.json")
+        data["producer"]["artifact"]["image"] = "ghcr.io/example/runner@sha256:" + "e" * 64
+        self.assertFalse(self.validators["raw-result/v2"].is_valid(data))
+
     def test_raw_fixture_checksums_sizes_and_workload_hashes(self) -> None:
         for tool, filename in (
             ("k6", "k6-summary.json"),

@@ -19,8 +19,9 @@ class WorkloadContractsTest(unittest.TestCase):
     def workload(self, tool: str = "k6") -> dict[str, Any]:
         return read_json(ROOT / f"examples/workload/{tool}-smoke.json")
 
-    def catalogue(self) -> dict[str, Any]:
-        return read_json(ROOT / "examples/catalogue/application-tests.json")
+    def catalogue(self, version: int = 1) -> dict[str, Any]:
+        suffix = "" if version == 1 else "-v2"
+        return read_json(ROOT / f"examples/catalogue/application-tests{suffix}.json")
 
     def test_both_tool_examples_and_nested_references(self) -> None:
         for tool in ("k6", "playwright"):
@@ -99,9 +100,28 @@ class WorkloadContractsTest(unittest.TestCase):
 
     def assert_inconsistent(self, data: dict[str, Any], message: str) -> None:
         # Prove these relationships need semantic checks, not schema validation.
-        self.validators["catalogue/v1"].validate(data)
+        version = data["apiVersion"].rsplit("/", 1)[1]
+        self.validators[f"catalogue/{version}"].validate(data)
         with self.assertRaisesRegex(ValueError, message):
             check_catalogue_consistency(data)
+
+    def test_v2_supports_pinned_container_and_native_execution(self) -> None:
+        data = self.catalogue(2)
+        self.validators["catalogue/v2"].validate(data)
+        check_catalogue_consistency(data)
+        self.assertEqual(data["tests"][0]["artifact"]["kind"], "oci-image")
+        self.assertEqual(data["tests"][1]["artifact"]["kind"], "source-checkout")
+
+        for key in ("gitSha", "dependencyLock"):
+            with self.subTest(key=key):
+                invalid = self.catalogue(2)
+                del invalid["tests"][1]["artifact"][key]
+                self.assertFalse(self.validators["catalogue/v2"].is_valid(invalid))
+
+    def test_native_execution_must_match_catalogue_source(self) -> None:
+        data = self.catalogue(2)
+        data["tests"][1]["artifact"]["gitSha"] = "3" * 40
+        self.assert_inconsistent(data, "Native artifact does not match test source")
 
     def test_schedule_must_select_a_declared_profile(self) -> None:
         data = self.catalogue()

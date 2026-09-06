@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 2,
+  "kind": "RawResult",
+  "contractsVersion": "0.12.0",
+  "runId": "perf-20260902-130000-a1b2c3d5",
+  "testId": "search-browser",
+  "workload": {
+    "id": "search-browser-smoke",
+    "version": "1.0.0",
+    "sha256": "dcbb9c0f92dc16917a24f7eb52c95689a2091f893b64ccb219246af51a7da3c7"
+  },
+  "producer": {
+    "name": "playwright",
+    "version": "1.62.1",
+    "artifact": {
+      "kind": "source-checkout",
+      "repository": "https://github.com/stanimirivanov/perfeng-playwright",
+      "gitSha": "874031ad492821d46c9bef7dbf9218280aa40a0e",
+      "dependencyLock": {
+        "path": "pnpm-lock.yaml",
+        "sha256": "722c5c7dfb2b25355801a7386eb2c30926904c58df12fb9a6aecc7a743212a63"
+      }
+    }
+  },
+  "measurementWindow": {
+    "start": "2026-09-02T13:00:00Z",
+    "end": "2026-09-02T13:01:00Z"
+  },
+  "createdAt": "2026-09-02T13:01:03Z",
+  "artifacts": [
+    {
+      "id": "66666666-6666-4666-8666-666666666666",
+      "runId": "perf-20260902-130000-a1b2c3d5",
+      "kind": "raw",
+      "uri": "s3://perfeng-example/runs/perf-20260902-130000-a1b2c3d5/raw/browser/playwright-measurements.json",
+      "sha256": "3147645994b251d5b7bb7837813919a7733f2c0778a21c041d40f9eb24fe8d46",
+      "sizeBytes": 1463,
+      "mediaType": "application/json",
+      "format": "playwright-measurements/v2"
+    },
+    {
+      "id": "77777777-7777-4777-8777-777777777777",
+      "runId": "perf-20260902-130000-a1b2c3d5",
+      "kind": "raw",
+      "uri": "s3://perfeng-example/runs/perf-20260902-130000-a1b2c3d5/raw/browser/browser-environment.json",
+      "sha256": "9477636e6e2f86ab02d3c87be0f678a6b6c9df5cd0da5197fdeea63dc241df3c",
+      "sizeBytes": 1448,
+      "mediaType": "application/json",
+      "format": "browser-environment/v1"
+    },
+    {
+      "id": "88888888-8888-4888-8888-888888888888",
+      "runId": "perf-20260902-130000-a1b2c3d5",
+      "kind": "raw",
+      "uri": "s3://perfeng-example/runs/perf-20260902-130000-a1b2c3d5/raw/browser/browser-observations.json",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "sizeBytes": 4096,
+      "mediaType": "application/json",
+      "format": "browser-observations-json"
+    },
+    {
+      "id": "99999999-9999-4999-8999-999999999999",
+      "runId": "perf-20260902-130000-a1b2c3d5",
+      "kind": "raw",
+      "uri": "s3://perfeng-example/runs/perf-20260902-130000-a1b2c3d5/raw/browser/network-summary.json",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "sizeBytes": 3072,
+      "mediaType": "application/json",
+      "format": "browser-network-summary-json"
+    },
+    {
+      "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "runId": "perf-20260902-130000-a1b2c3d5",
+      "kind": "raw",
+      "uri": "s3://perfeng-example/runs/perf-20260902-130000-a1b2c3d5/raw/browser/chrome-trace.json.gz",
+      "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "sizeBytes": 1048576,
+      "mediaType": "application/gzip",
+      "format": "chrome-trace-json-gzip"
+    },
+    {
+      "id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      "runId": "perf-20260902-130000-a1b2c3d5",
+      "kind": "raw",
+      "uri": "s3://perfeng-example/runs/perf-20260902-130000-a1b2c3d5/raw/browser/browser-diagnostics.json",
+      "sha256": "2a47083a0719f88eeb87e7bbc1aa876fce58a6e93f4af738e660e0566bc419e6",
+      "sizeBytes": 3269,
+      "mediaType": "application/json",
+      "format": "browser-diagnostics/v1"
+    }
+  ]
+}

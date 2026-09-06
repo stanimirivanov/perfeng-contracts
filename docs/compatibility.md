@@ -1,6 +1,22 @@
 # Contract compatibility
 
-The current candidate bundle is 0.11.0. It adds three contracts without
+The current candidate bundle is 0.12.0. It adds `catalogue/v2` and
+`raw-result/v2` without changing the seventeen contracts and API shipped in
+0.11.0. V2 retains digest-pinned OCI execution and adds a mutually exclusive
+native source-checkout identity: HTTPS repository, full Git SHA, and the exact
+dependency-lock path and SHA-256. Native catalogue artifacts must repeat the
+catalogue source repository and revision exactly. Existing v1 producers and
+consumers remain on v1; consumers must add an explicit v2 reader before native
+browser manifests are registered.
+
+An OCI v1 raw manifest can be converted by moving `producer.image` to
+`producer.artifact.image` and adding `producer.artifact.kind: oci-image`, then
+setting `schemaVersion: 2` and the new bundle version. A native manifest cannot
+be derived from v1: capture and verify its source revision and dependency-lock
+bytes at execution time. Conversion creates a new manifest and never rewrites
+raw evidence.
+
+Bundle 0.11.0 added three contracts without
 changing the fourteen contracts or run-management API shipped in 0.10.0:
 `playwright-measurements/v2`, `browser-environment/v1`, and
 `browser-diagnostics/v1`. Strict bundle readers must recognize seventeen

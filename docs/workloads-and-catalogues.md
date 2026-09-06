@@ -8,9 +8,10 @@ adapters remain later work. They do not change the existing run-metadata schema.
 
 A workload is a versioned profile for a tool. A catalogue assigns workloads to
 named tests and records ownership, criticality, source, tool version, and runner
-image. The test ID is the stable cross-run identity; changing a Git revision
-does not require a new test ID. The source SHA and image digest identify the
-specific implementation executed.
+artifact. V1 supports only a digest-pinned image. V2 supports either that OCI
+identity or a native source checkout pinned by Git revision and dependency-lock
+checksum. The test ID is the stable cross-run identity; changing a Git revision
+does not require a new test ID.
 
 Workload IDs and versions identify immutable definitions. Change a workload
 version whenever its configuration, phases, model, or dataset changes. A
@@ -38,6 +39,8 @@ pipeline tier; it is not a cron expression or an instruction to deploy a schedul
 | `dataset.kind: versioned` | Dataset ID, version, exact content checksum, and deterministic generation seed |
 | Catalogue `source` | HTTPS repository, full Git SHA, and relative scenario entrypoint |
 | Catalogue `artifact.image` | Immutable OCI image reference ending in `@sha256:<64 lowercase hex characters>` |
+| Catalogue v2 `artifact.kind` | `oci-image` or `source-checkout`; the discriminator prevents ambiguous provenance |
+| Catalogue v2 native artifact | Source repository/revision repeated from `source`, plus the dependency-lock path and exact checksum |
 | Catalogue `tool.version` | Recorded runner tool version, independent of the workload version |
 
 For k6, phase units are seconds. An adapter must verify that native executor
@@ -76,7 +79,8 @@ does not prove that a runner obeyed those boundaries.
    defined by [artifact/result transport](artifact-and-result-transport.md).
 
 Before execution, the consumer must verify configuration/data checksums, tool
-version, source/image correspondence, and the entrypoint. Reject missing or
+version, source/artifact correspondence, and the entrypoint. A native runner
+must also require the declared clean revision and exact dependency-lock bytes. Reject missing or
 mismatched inputs. Resolve paths within the extracted artifact, including a
 check that symlinks cannot escape it. JSON Schema checks path spelling only.
 
