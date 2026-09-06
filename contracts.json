@@ -1,5 +1,5 @@
 {
-  "version": "0.10.0",
+  "version": "0.11.0",
   "apis": [
     {
       "name": "run-management/v1",
@@ -54,6 +54,27 @@
       "schema": "schemas/playwright-measurements/v1/playwright-measurements.schema.json",
       "examples": [
         {"path": "examples/playwright-measurements/search-warm.json"}
+      ]
+    },
+    {
+      "name": "playwright-measurements/v2",
+      "schema": "schemas/playwright-measurements/v2/playwright-measurements.schema.json",
+      "examples": [
+        {"path": "examples/playwright-measurements/search-windows-lightweight.json"}
+      ]
+    },
+    {
+      "name": "browser-environment/v1",
+      "schema": "schemas/browser-environment/v1/browser-environment.schema.json",
+      "examples": [
+        {"path": "examples/browser-environment/windows-mainstream.json"}
+      ]
+    },
+    {
+      "name": "browser-diagnostics/v1",
+      "schema": "schemas/browser-diagnostics/v1/browser-diagnostics.schema.json",
+      "examples": [
+        {"path": "examples/browser-diagnostics/search-trace.json"}
       ]
     },
     {

@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "kind": "BrowserEnvironment",
+  "runId": "perf-20260902-130000-a1b2c3d5",
+  "profile": {
+    "id": "windows-mainstream",
+    "version": "1.0.0"
+  },
+  "fingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "host": {
+    "virtualization": "physical",
+    "os": {
+      "family": "windows",
+      "edition": "Windows 11 Pro",
+      "version": "24H2",
+      "build": "26100.4946",
+      "architecture": "x64"
+    },
+    "cpu": {
+      "model": "Reference 6-core mobile CPU",
+      "logicalCores": 12,
+      "physicalCores": 6,
+      "availableLogicalCores": 12
+    },
+    "memory": {
+      "totalBytes": 17179869184,
+      "availableBytes": 10737418240
+    },
+    "gpu": {
+      "model": "Reference integrated GPU",
+      "driverVersion": "32.0.101.0000",
+      "hardwareAcceleration": true
+    },
+    "display": {
+      "width": 1920,
+      "height": 1080,
+      "scaleFactor": 1.25,
+      "refreshRateHz": 60
+    },
+    "power": {
+      "source": "ac",
+      "plan": "Balanced",
+      "batterySaver": false
+    }
+  },
+  "browser": {
+    "name": "chromium",
+    "channel": "chrome-for-testing",
+    "version": "140.0.7339.16",
+    "headless": false
+  },
+  "calibration": {
+    "status": "ACCEPTED",
+    "reasons": [],
+    "idleCpuPercent": 3.2,
+    "availableMemoryBytes": 10737418240,
+    "clockSynchronized": true,
+    "softwareRendering": false
+  },
+  "capturedAt": "2026-09-02T12:59:58Z"
+}

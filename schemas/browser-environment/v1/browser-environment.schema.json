@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://perfeng.dev/schemas/browser-environment/v1/browser-environment.schema.json",
+  "title": "Browser execution environment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "runId",
+    "profile",
+    "fingerprint",
+    "host",
+    "browser",
+    "calibration",
+    "capturedAt"
+  ],
+  "properties": {
+    "schemaVersion": {"type": "integer", "const": 1},
+    "kind": {"const": "BrowserEnvironment"},
+    "runId": {
+      "$ref": "https://perfeng.dev/schemas/result/v1/test-result.schema.json#/properties/runId"
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": {
+          "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/id"
+        },
+        "version": {
+          "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/version"
+        }
+      }
+    },
+    "fingerprint": {
+      "$ref": "https://perfeng.dev/schemas/workload/v1/workload.schema.json#/$defs/sha256"
+    },
+    "host": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["virtualization", "os", "cpu", "memory", "gpu", "display", "power"],
+      "properties": {
+        "virtualization": {"enum": ["physical", "virtual"]},
+        "os": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["family", "edition", "version", "build", "architecture"],
+          "properties": {
+            "family": {"enum": ["windows", "linux", "macos"]},
+            "edition": {"type": "string", "minLength": 1},
+            "version": {"type": "string", "minLength": 1},
+            "build": {"type": "string", "minLength": 1},
+            "architecture": {"enum": ["x64", "arm64"]}
+          }
+        },
+        "cpu": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["model", "logicalCores", "availableLogicalCores"],
+          "properties": {
+            "model": {"type": "string", "minLength": 1},
+            "logicalCores": {"type": "integer", "minimum": 1},
+            "physicalCores": {"type": "integer", "minimum": 1},
+            "availableLogicalCores": {"type": "number", "exclusiveMinimum": 0}
+          }
+        },
+        "memory": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["totalBytes", "availableBytes"],
+          "properties": {
+            "totalBytes": {"type": "integer", "minimum": 1},
+            "availableBytes": {"type": "integer", "minimum": 0}
+          }
+        },
+        "gpu": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["model", "driverVersion", "hardwareAcceleration"],
+          "properties": {
+            "model": {"type": "string", "minLength": 1},
+            "driverVersion": {"type": "string", "minLength": 1},
+            "hardwareAcceleration": {"type": "boolean"}
+          }
+        },
+        "display": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["width", "height", "scaleFactor", "refreshRateHz"],
+          "properties": {
+            "width": {"type": "integer", "minimum": 1},
+            "height": {"type": "integer", "minimum": 1},
+            "scaleFactor": {"type": "number", "exclusiveMinimum": 0},
+            "refreshRateHz": {"type": "number", "exclusiveMinimum": 0}
+          }
+        },
+        "power": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source", "plan", "batterySaver"],
+          "properties": {
+            "source": {"enum": ["ac", "battery", "unknown"]},
+            "plan": {"type": "string", "minLength": 1},
+            "batterySaver": {"type": "boolean"}
+          }
+        }
+      }
+    },
+    "browser": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "channel", "version", "headless"],
+      "properties": {
+        "name": {"enum": ["chromium", "firefox", "webkit"]},
+        "channel": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "headless": {"type": "boolean"}
+      }
+    },
+    "calibration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "reasons",
+        "idleCpuPercent",
+        "availableMemoryBytes",
+        "clockSynchronized",
+        "softwareRendering"
+      ],
+      "properties": {
+        "status": {"enum": ["ACCEPTED", "REJECTED"]},
+        "reasons": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "idleCpuPercent": {"type": "number", "minimum": 0, "maximum": 100},
+        "availableMemoryBytes": {"type": "integer", "minimum": 0},
+        "clockSynchronized": {"type": "boolean"},
+        "softwareRendering": {"type": "boolean"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "ACCEPTED"}}},
+          "then": {"properties": {"reasons": {"maxItems": 0}}},
+          "else": {"properties": {"reasons": {"minItems": 1}}}
+        }
+      ]
+    },
+    "capturedAt": {"$ref": "#/$defs/timestamp"}
+  },
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:[0-5]\\d(?:\\.\\d{1,6})?(?:Z|[+-]\\d{2}:\\d{2})$"
+    }
+  }
+}

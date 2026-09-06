@@ -197,6 +197,114 @@ def check_playwright_measurements(document: dict[str, Any]) -> None:
             raise ValueError(f"Playwright metric {name} must cover every declared iteration")
 
 
+def check_browser_environment(document: dict[str, Any]) -> None:
+    """Check host capacity and calibration claims after schema validation."""
+    host = document["host"]
+    cpu = host["cpu"]
+    if cpu["availableLogicalCores"] > cpu["logicalCores"]:
+        raise ValueError("Available logical cores exceed installed logical cores")
+    if cpu.get("physicalCores", 0) > cpu["logicalCores"]:
+        raise ValueError("Physical cores exceed logical cores")
+    memory = host["memory"]
+    if memory["availableBytes"] > memory["totalBytes"]:
+        raise ValueError("Available memory exceeds total memory")
+    calibration = document["calibration"]
+    if calibration["availableMemoryBytes"] != memory["availableBytes"]:
+        raise ValueError("Calibration and host available memory disagree")
+    if calibration["status"] == "ACCEPTED":
+        if not calibration["clockSynchronized"]:
+            raise ValueError("Accepted environment requires a synchronized clock")
+        if calibration["softwareRendering"] or not host["gpu"]["hardwareAcceleration"]:
+            raise ValueError("Accepted environment requires hardware rendering")
+
+
+CAPTURE_FORMATS = {
+    "observations": {("application/json", "browser-observations-json")},
+    "network-summary": {("application/json", "browser-network-summary-json")},
+    "console": {("application/json", "browser-console-json")},
+    "trace": {
+        ("application/gzip", "chrome-trace-json-gzip"),
+        ("application/x-protobuf", "perfetto-trace-proto"),
+    },
+    "cpu-profile": {("application/json", "v8-cpu-profile-json")},
+    "heap-snapshot-before": {("application/json", "v8-heap-snapshot-json")},
+    "heap-snapshot-after": {("application/json", "v8-heap-snapshot-json")},
+    "allocation-profile": {("application/json", "v8-allocation-profile-json")},
+    "screenshot": {("image/png", "browser-screenshot-png")},
+    "video": {("video/webm", "playwright-video-webm")},
+}
+
+SENSITIVE_CAPTURES = {
+    "trace",
+    "cpu-profile",
+    "heap-snapshot-before",
+    "heap-snapshot-after",
+    "allocation-profile",
+    "screenshot",
+    "video",
+}
+
+
+def check_browser_diagnostics(document: dict[str, Any]) -> None:
+    """Check diagnostic evidence relationships after schema validation."""
+    window = document["captureWindow"]
+    start = datetime.fromisoformat(window["start"])
+    end = datetime.fromisoformat(window["end"])
+    created = datetime.fromisoformat(document["createdAt"])
+    if start >= end:
+        raise ValueError("Diagnostic capture start must precede end")
+    if created < end:
+        raise ValueError("Diagnostic creation must not precede capture end")
+
+    iterations = document["execution"]["captureIterations"]
+    if iterations != sorted(iterations):
+        raise ValueError("Diagnostic capture iterations must be ordered")
+
+    artifacts = [document["environment"]["artifact"]]
+    capture_types: set[str] = set()
+    for capture in document["captures"]:
+        capture_types.add(capture["type"])
+        scope = capture["scope"]
+        if scope["kind"] == "iteration" and scope["iteration"] not in iterations:
+            raise ValueError("Diagnostic scope iteration is not selected for capture")
+        if capture.get("dataLossOccurred") is True and capture["status"] != "INCOMPLETE":
+            raise ValueError("Trace data loss requires INCOMPLETE status")
+        if capture["type"] == "trace" and capture["status"] == "COMPLETE":
+            if capture["dataLossOccurred"] is not False:
+                raise ValueError("Complete trace requires an explicit no-data-loss result")
+        if capture["type"] in SENSITIVE_CAPTURES and not capture["sensitive"]:
+            raise ValueError("Sensitive diagnostic capture is not classified as sensitive")
+        artifact = capture.get("artifact")
+        if artifact is not None:
+            artifacts.append(artifact)
+            identity = (artifact["mediaType"], artifact["format"])
+            if identity not in CAPTURE_FORMATS[capture["type"]]:
+                raise ValueError("Diagnostic artifact format does not match capture type")
+
+    required_types = {
+        "lightweight": {"observations"},
+        "trace": {"trace"},
+        "memory": {"heap-snapshot-before", "heap-snapshot-after"},
+        "smoothness": {"trace"},
+    }[document["execution"]["mode"]]
+    if not required_types.issubset(capture_types):
+        raise ValueError("Diagnostic mode does not account for its required captures")
+    if document["execution"]["mode"] != "lightweight" and "cdp" not in document["sources"]:
+        raise ValueError("Deep Chromium diagnostics require the CDP source")
+
+    ids: set[str] = set()
+    locations: set[str] = set()
+    for artifact in artifacts:
+        check_artifact_reference(artifact)
+        if artifact["runId"] != document["runId"]:
+            raise ValueError("Diagnostic artifact run ID does not match manifest")
+        identity = artifact["id"].lower()
+        if identity in ids or artifact["uri"] in locations:
+            raise ValueError("Duplicate diagnostic artifact identity or URI")
+        ids.add(identity)
+        locations.add(artifact["uri"])
+
+
 def check_policy_consistency(policy: dict[str, Any]) -> None:
     ids: set[str] = set()
     selectors: set[tuple[str, str]] = set()
@@ -394,8 +502,15 @@ def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
                     check_artifact_reference(instance)
                 if entry["name"] in {"raw-result/v1", "normalized-result/v1"}:
                     check_transport_consistency(instance)
-                if entry["name"] == "playwright-measurements/v1":
+                if entry["name"] in {
+                    "playwright-measurements/v1",
+                    "playwright-measurements/v2",
+                }:
                     check_playwright_measurements(instance)
+                if entry["name"] == "browser-environment/v1":
+                    check_browser_environment(instance)
+                if entry["name"] == "browser-diagnostics/v1":
+                    check_browser_diagnostics(instance)
                 if entry["name"] == "policy/v1":
                     check_policy_consistency(instance)
                 if entry["name"] == "analysis/v1":

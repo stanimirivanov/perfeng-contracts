@@ -4,7 +4,8 @@ This contract slice implements proposal sections 29 and 35-36: immutable raw
 evidence, derived measurements, and the context needed to interpret them. It
 defines documents, not an upload service, normalizer implementation, or quality
 gate. Bundle `0.3.0` introduced the transport envelopes; candidate bundle
-`0.10.0` adds the native Playwright measurement schema.
+`0.10.0` added the native Playwright measurement schema, and `0.11.0` adds its
+environment-aware generation and diagnostic evidence contracts.
 
 ## Documents
 
@@ -13,6 +14,9 @@ gate. Bundle `0.3.0` introduced the transport envelopes; candidate bundle
 | `artifact/v1` | A reference to exact stored bytes: ID, run ID, raw/normalized kind, stable URI, SHA-256, byte count, media type, and format |
 | `raw-result/v1` | A manifest of raw artifacts from a measurement window, with producer, test, and workload identity |
 | `playwright-measurements/v1` | Native semantic browser samples with cache, repetition, runtime, and browser context |
+| `playwright-measurements/v2` | Native semantic browser samples with page lifetime, diagnostic mode, and environment identity |
+| `browser-environment/v1` | Detailed browser-host identity and per-run calibration |
+| `browser-diagnostics/v1` | Status and immutable references for diagnostic evidence |
 | `result/v2` | One metric with available statistics and an optional/nullable sample count |
 | `normalized-result/v1` | A set of v2 metrics plus the raw artifact references from which they were derived |
 

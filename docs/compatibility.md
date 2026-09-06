@@ -1,6 +1,15 @@
 # Contract compatibility
 
-The current candidate bundle is 0.10.0. It adds the
+The current candidate bundle is 0.11.0. It adds three contracts without
+changing the fourteen contracts or run-management API shipped in 0.10.0:
+`playwright-measurements/v2`, `browser-environment/v1`, and
+`browser-diagnostics/v1`. Strict bundle readers must recognize seventeen
+contracts. Existing Playwright producers remain valid v1 producers; they do not
+gain v2 page-lifetime, diagnostic-mode, or environment claims automatically.
+Consumers must select the measurement generation explicitly and must not mix v1
+and v2 documents as one comparison cohort without an intentional migration.
+
+Bundle 0.10.0 added the
 `playwright-measurements/v1` native payload contract without changing existing
 schema generations or run-management API 0.4.0. Strict bundle readers must
 recognize the fourteenth contract. The checked-in Playwright raw fixture and
