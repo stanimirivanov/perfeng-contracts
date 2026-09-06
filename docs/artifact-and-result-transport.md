@@ -4,8 +4,9 @@ This contract slice implements proposal sections 29 and 35-36: immutable raw
 evidence, derived measurements, and the context needed to interpret them. It
 defines documents, not an upload service, normalizer implementation, or quality
 gate. Bundle `0.3.0` introduced the transport envelopes; candidate bundle
-`0.10.0` added the native Playwright measurement schema, and `0.11.0` adds its
-environment-aware generation and diagnostic evidence contracts.
+`0.10.0` added the native Playwright measurement schema, `0.11.0` added its
+environment-aware generation and diagnostic evidence contracts, and `0.12.0`
+adds raw-result/v2 for truthful container or native execution provenance.
 
 ## Documents
 
@@ -13,6 +14,7 @@ environment-aware generation and diagnostic evidence contracts.
 | --- | --- |
 | `artifact/v1` | A reference to exact stored bytes: ID, run ID, raw/normalized kind, stable URI, SHA-256, byte count, media type, and format |
 | `raw-result/v1` | A manifest of raw artifacts from a measurement window, with producer, test, and workload identity |
+| `raw-result/v2` | The raw manifest with a discriminated OCI-image or native source-checkout execution artifact |
 | `playwright-measurements/v1` | Native semantic browser samples with cache, repetition, runtime, and browser context |
 | `playwright-measurements/v2` | Native semantic browser samples with page lifetime, diagnostic mode, and environment identity |
 | `browser-environment/v1` | Detailed browser-host identity and per-run calibration |
@@ -27,10 +29,15 @@ joins the catalogue; workload ID/version/checksum identifies the exact persisted
 workload definition. Runtime configuration overrides belong in a separate
 immutable resolved-configuration snapshot, not silently in the workload digest.
 
-The raw producer identifies the capture tool or adapter. The normalized producer
-identifies the normalizer. Both record a numeric three-part version and a runner
-image pinned by digest. These fields provide traceability, not proof that an
-untrusted producer actually ran that image; the control plane must verify it.
+The raw producer identifies the capture tool or adapter. V1 and normalized
+producers record a runner image pinned by digest. Raw-result/v2 instead records
+an execution artifact. `oci-image` retains that image identity;
+`source-checkout` records an HTTPS repository, full Git SHA, and exact dependency
+lock path and checksum for native execution. A native adapter must reject a dirty
+checkout, a different HEAD, or changed lock bytes before running. Browser and OS
+versions remain observed environment facts rather than source-artifact identity.
+These fields provide traceability, not proof of the producer claim; the control
+plane must compare them with the selected catalogue entry.
 
 ## Artifact identity and integrity
 

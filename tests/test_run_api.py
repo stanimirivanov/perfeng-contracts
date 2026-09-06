@@ -22,7 +22,7 @@ class RunApiTests(unittest.TestCase):
     def test_all_contracts_and_http_fixtures_validate_without_network(self):
         with patch("socket.create_connection", side_effect=AssertionError("network")):
             self.assertEqual(api.validate_api(), 14)
-            self.assertEqual(validate_bundle(), (17, 30))
+        self.assertEqual(validate_bundle(), (19, 32))
 
     def test_artifact_listing_is_scoped_unique_and_ordered(self):
         case = next(c for c in self.cases if c["operationId"] == "listRunArtifacts")

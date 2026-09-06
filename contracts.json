@@ -1,5 +1,5 @@
 {
-  "version": "0.11.0",
+  "version": "0.12.0",
   "apis": [
     {
       "name": "run-management/v1",
@@ -47,6 +47,13 @@
       "examples": [
         {"path": "examples/raw-result/k6.json"},
         {"path": "examples/raw-result/playwright.json"}
+      ]
+    },
+    {
+      "name": "raw-result/v2",
+      "schema": "schemas/raw-result/v2/raw-result.schema.json",
+      "examples": [
+        {"path": "examples/raw-result/playwright-native.json"}
       ]
     },
     {
@@ -105,6 +112,11 @@
       "name": "catalogue/v1",
       "schema": "schemas/catalogue/v1/test-catalogue.schema.json",
       "examples": [{"path": "examples/catalogue/application-tests.json"}]
+    },
+    {
+      "name": "catalogue/v2",
+      "schema": "schemas/catalogue/v2/test-catalogue.schema.json",
+      "examples": [{"path": "examples/catalogue/application-tests-v2.json"}]
     },
     {
       "name": "candidate/v1",

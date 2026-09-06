@@ -109,6 +109,12 @@ def check_catalogue_consistency(catalogue: dict[str, Any]) -> None:
         if test["id"] in test_ids:
             raise ValueError(f"Duplicate test ID: {test['id']}")
         test_ids.add(test["id"])
+        artifact = test["artifact"]
+        if artifact.get("kind") == "source-checkout" and (
+            artifact["repository"] != test["source"]["repository"]
+            or artifact["gitSha"] != test["source"]["gitSha"]
+        ):
+            raise ValueError(f"Native artifact does not match test source: {test['id']}")
         profiles: set[str] = set()
         for workload in test["workloads"]:
             if workload["tool"] != test["tool"]["name"]:
@@ -496,11 +502,15 @@ def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
                 errors = list(validator.iter_errors(instance))
                 if errors:
                     raise ValueError(f"{example['path']}[{index}]: {errors[0].message}")
-                if entry["name"] == "catalogue/v1":
+                if entry["name"] in {"catalogue/v1", "catalogue/v2"}:
                     check_catalogue_consistency(instance)
                 if entry["name"] == "artifact/v1":
                     check_artifact_reference(instance)
-                if entry["name"] in {"raw-result/v1", "normalized-result/v1"}:
+                if entry["name"] in {
+                    "raw-result/v1",
+                    "raw-result/v2",
+                    "normalized-result/v1",
+                }:
                     check_transport_consistency(instance)
                 if entry["name"] in {
                     "playwright-measurements/v1",
