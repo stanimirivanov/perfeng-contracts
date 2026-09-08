@@ -16,7 +16,7 @@ performance policies with independent quality, SLO, and regression outcomes.
 | `result/v2` | [test result](schemas/result/v2/test-result.schema.json) | Metric record supporting unavailable sample counts |
 | `artifact/v1` | [artifact reference](schemas/artifact/v1/artifact-reference.schema.json) | Stored bytes, checksum, size, format, and run identity |
 | `raw-result/v1` | [raw result](schemas/raw-result/v1/raw-result.schema.json) | Raw artifact manifest with producer and measurement context |
-| `raw-result/v2` | [raw result with execution provenance](schemas/raw-result/v2/raw-result.schema.json) | Raw artifact manifest supporting OCI images and native source checkouts |
+| `raw-result/v2` | [raw result with execution provenance](schemas/raw-result/v2/raw-result.schema.json) | Raw artifact manifest supporting OCI images, native source checkouts, and verified release archives |
 | `playwright-measurements/v1` | [Playwright measurements](schemas/playwright-measurements/v1/playwright-measurements.schema.json) | Original semantic browser timings with runtime and cache context |
 | `playwright-measurements/v2` | [contextual Playwright measurements](schemas/playwright-measurements/v2/playwright-measurements.schema.json) | Semantic timings with page lifetime, diagnostic mode, and environment identity |
 | `browser-environment/v1` | [browser environment](schemas/browser-environment/v1/browser-environment.schema.json) | Versioned host, browser, display, power, and calibration evidence |
@@ -70,7 +70,7 @@ and negative regression cases. Schema IDs identify bundled resources; validation
 does not fetch schemas or artifacts from the internet. Tests verify fixture
 checksums against local bytes.
 
-CI runs these checks and uploads a `perfeng-contracts-0.12.0.tar.gz` candidate
+CI runs these checks and uploads a `perfeng-contracts-0.13.0.tar.gz` candidate
 bundle. That CI artifact is not a published stable release. Until a release
 exists, integrations should pin the merged commit SHA, not a floating branch.
 

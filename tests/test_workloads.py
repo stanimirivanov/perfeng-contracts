@@ -23,8 +23,8 @@ class WorkloadContractsTest(unittest.TestCase):
         suffix = "" if version == 1 else "-v2"
         return read_json(ROOT / f"examples/catalogue/application-tests{suffix}.json")
 
-    def test_both_tool_examples_and_nested_references(self) -> None:
-        for tool in ("k6", "playwright"):
+    def test_tool_examples_and_nested_references(self) -> None:
+        for tool in ("k6", "playwright", "kube-burner"):
             with self.subTest(tool=tool):
                 self.validators["workload/v1"].validate(self.workload(tool))
         catalogue = self.catalogue()
@@ -66,6 +66,16 @@ class WorkloadContractsTest(unittest.TestCase):
         for key, value in (("model", "open"), ("unit", "seconds")):
             with self.subTest(key=key):
                 data = self.workload("playwright")
+                if key == "unit":
+                    data["phases"][key] = value
+                else:
+                    data[key] = value
+                self.assertFalse(self.validators["workload/v1"].is_valid(data))
+
+    def test_kube_burner_requires_open_iteration_work(self) -> None:
+        for key, value in (("model", "closed"), ("unit", "seconds")):
+            with self.subTest(key=key):
+                data = self.workload("kube-burner")
                 if key == "unit":
                     data["phases"][key] = value
                 else:

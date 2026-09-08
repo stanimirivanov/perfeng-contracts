@@ -1,17 +1,18 @@
 # Workload and test-catalogue contracts
 
 These contracts implement the workload/catalogue slice of proposal sections
-16-17, 30, 63, and 78. They describe k6 and Playwright workloads; cluster benchmark
-adapters remain later work. They do not change the existing run-metadata schema.
+16-17, 30, 63, and 78. They describe k6, Playwright, and kube-burner workloads.
+Cluster execution and result adapters remain consumer work. They do not change
+the existing run-metadata schema.
 
 ## Responsibility and identity
 
 A workload is a versioned profile for a tool. A catalogue assigns workloads to
 named tests and records ownership, criticality, source, tool version, and runner
-artifact. V1 supports only a digest-pinned image. V2 supports either that OCI
-identity or a native source checkout pinned by Git revision and dependency-lock
-checksum. The test ID is the stable cross-run identity; changing a Git revision
-does not require a new test ID.
+artifact. V1 supports only a digest-pinned image. V2 supports that OCI identity,
+a native source checkout pinned by Git revision and dependency-lock checksum, or
+a release archive pinned by archive and executable checksums. The test ID is the
+stable cross-run identity; changing a Git revision does not require a new test ID.
 
 Workload IDs and versions identify immutable definitions. Change a workload
 version whenever its configuration, phases, model, or dataset changes. A
@@ -29,7 +30,7 @@ pipeline tier; it is not a cron expression or an instruction to deploy a schedul
 
 | Field | Meaning |
 | --- | --- |
-| Workload `tool` | `k6` or `playwright`; must match the containing test's tool |
+| Workload `tool` | `k6`, `playwright`, or `kube-burner`; must match the containing test's tool |
 | `profile` | Testing purpose: smoke, average, regression, stress, capacity, or soak |
 | `model` | Open: arrivals are externally scheduled; closed: the next iteration depends on the previous one finishing |
 | `configuration.path` | Relative POSIX path inside the pinned runner artifact |
@@ -39,8 +40,9 @@ pipeline tier; it is not a cron expression or an instruction to deploy a schedul
 | `dataset.kind: versioned` | Dataset ID, version, exact content checksum, and deterministic generation seed |
 | Catalogue `source` | HTTPS repository, full Git SHA, and relative scenario entrypoint |
 | Catalogue `artifact.image` | Immutable OCI image reference ending in `@sha256:<64 lowercase hex characters>` |
-| Catalogue v2 `artifact.kind` | `oci-image` or `source-checkout`; the discriminator prevents ambiguous provenance |
+| Catalogue v2 `artifact.kind` | `oci-image`, `source-checkout`, or `release-archive`; the discriminator prevents ambiguous provenance |
 | Catalogue v2 native artifact | Source repository/revision repeated from `source`, plus the dependency-lock path and exact checksum |
+| Catalogue v2 release artifact | Credential-free HTTPS release URL plus exact archive and extracted-executable checksums |
 | Catalogue `tool.version` | Recorded runner tool version, independent of the workload version |
 
 For k6, phase units are seconds. An adapter must verify that native executor
@@ -55,6 +57,14 @@ excluded from measurements. Browser build, cold/warm context strategy, retries,
 workers, and timing definitions must be pinned in the runner/configuration and
 recorded by the eventual adapter. Open browser load and time-budgeted browser
 execution are not defined by this v1 contract.
+
+For kube-burner, the contract uses an open model because object creation is
+paced independently through QPS/burst controls, and measurement is budgeted in
+iterations. The configuration checksum identifies the exact entry configuration;
+the execution artifact separately identifies the verified kube-burner binary.
+Referenced Kubernetes templates and resolved environment substitutions still
+require immutable capture by the producer and must not be inferred from the
+entry-file checksum.
 
 Warm-up and cooldown may be zero. Measurement must be positive. These are
 declared budgets, not observed timestamps. Later run/artifact contracts record
@@ -120,9 +130,12 @@ relabelled as warm-up. Any later change to the measurement selection requires a
 new workload version and corresponding runner behaviour.
 
 The browser example is a proposed fixture journey, not an extraction of a
-working browser benchmark. All example image/configuration/dataset digests and
-source SHAs are illustrative placeholders, not published artifacts or verified
-source/image attestations. Tool versions are example labels, not recommendations.
+working browser benchmark. Its image/configuration/dataset digests and source
+SHAs are illustrative placeholders, not published artifacts or verified
+attestations. The kube-burner example identifies the exact pod-startup
+configuration from perfeng-k8s commit
+`98ec41b788c58d4d5d44dcaf50b7d785ba41d386`; it does not claim that referenced
+templates or a target environment are captured by that single-file checksum.
 
 ## Validation and compatibility
 
