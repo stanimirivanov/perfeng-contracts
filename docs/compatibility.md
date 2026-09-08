@@ -1,13 +1,22 @@
 # Contract compatibility
 
-The current candidate bundle is 0.12.0. It adds `catalogue/v2` and
-`raw-result/v2` without changing the seventeen contracts and API shipped in
-0.11.0. V2 retains digest-pinned OCI execution and adds a mutually exclusive
-native source-checkout identity: HTTPS repository, full Git SHA, and the exact
-dependency-lock path and SHA-256. Native catalogue artifacts must repeat the
-catalogue source repository and revision exactly. Existing v1 producers and
-consumers remain on v1; consumers must add an explicit v2 reader before native
-browser manifests are registered.
+The current candidate bundle is 0.13.0. It extends the existing workload and
+execution-artifact unions without adding a schema generation or changing the
+run-management API. `workload/v1` now accepts `kube-burner` only as an open,
+iteration-budgeted workload. The shared catalogue/raw-result v2 execution
+artifact adds `release-archive`, which records an HTTPS release URL and separate
+SHA-256 values for the downloaded archive and extracted executable. URLs with
+credentials, query parameters, or fragments are rejected. Consumers pinned to
+0.12.0 must not accept kube-burner workloads or release archives until their
+closed unions and provenance checks are updated.
+
+Bundle 0.12.0 added `catalogue/v2` and `raw-result/v2` without changing the
+seventeen contracts and API shipped in 0.11.0. V2 retains digest-pinned OCI
+execution and adds a mutually exclusive native source-checkout identity: HTTPS
+repository, full Git SHA, and the exact dependency-lock path and SHA-256. Native
+catalogue artifacts must repeat the catalogue source repository and revision
+exactly. Existing v1 producers and consumers remain on v1; consumers must add an
+explicit v2 reader before native browser manifests are registered.
 
 An OCI v1 raw manifest can be converted by moving `producer.image` to
 `producer.artifact.image` and adding `producer.artifact.kind: oci-image`, then

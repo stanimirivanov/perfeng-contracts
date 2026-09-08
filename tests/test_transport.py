@@ -79,6 +79,34 @@ class TransportContractsTest(unittest.TestCase):
         data["producer"]["artifact"]["image"] = "ghcr.io/example/runner@sha256:" + "e" * 64
         self.assertFalse(self.validators["raw-result/v2"].is_valid(data))
 
+    def test_v2_represents_checksum_verified_release_execution(self) -> None:
+        data = read_json(ROOT / "examples/raw-result/playwright-native.json")
+        data["producer"]["artifact"] = {
+            "kind": "release-archive",
+            "url": "https://github.com/kube-burner/kube-burner/releases/download/v2.8.5/kube-burner-V2.8.5-windows-x86_64.zip",
+            "archiveSha256": "a" * 64,
+            "executableSha256": "b" * 64,
+        }
+        validator = self.validators["raw-result/v2"]
+        validator.validate(data)
+
+        for key in ("url", "archiveSha256", "executableSha256"):
+            with self.subTest(key=key):
+                invalid = copy.deepcopy(data)
+                del invalid["producer"]["artifact"][key]
+                self.assertFalse(validator.is_valid(invalid))
+        for key, value in (
+            ("url", "http://example.invalid/kube-burner.zip"),
+            ("url", "https://example.invalid/kube-burner.zip?token=secret"),
+            ("url", "https://user:password@example.invalid/kube-burner.zip"),
+            ("archiveSha256", "invalid"),
+            ("image", "ghcr.io/example/kube-burner@sha256:" + "c" * 64),
+        ):
+            with self.subTest(key=key, value=value):
+                invalid = copy.deepcopy(data)
+                invalid["producer"]["artifact"][key] = value
+                self.assertFalse(validator.is_valid(invalid))
+
     def test_raw_fixture_checksums_sizes_and_workload_hashes(self) -> None:
         for tool, filename in (
             ("k6", "k6-summary.json"),

@@ -5,8 +5,9 @@ evidence, derived measurements, and the context needed to interpret them. It
 defines documents, not an upload service, normalizer implementation, or quality
 gate. Bundle `0.3.0` introduced the transport envelopes; candidate bundle
 `0.10.0` added the native Playwright measurement schema, `0.11.0` added its
-environment-aware generation and diagnostic evidence contracts, and `0.12.0`
-adds raw-result/v2 for truthful container or native execution provenance.
+environment-aware generation and diagnostic evidence contracts, `0.12.0` added
+raw-result/v2 for truthful container or native execution provenance, and
+`0.13.0` adds checksum-verified release-archive execution.
 
 ## Documents
 
@@ -14,7 +15,7 @@ adds raw-result/v2 for truthful container or native execution provenance.
 | --- | --- |
 | `artifact/v1` | A reference to exact stored bytes: ID, run ID, raw/normalized kind, stable URI, SHA-256, byte count, media type, and format |
 | `raw-result/v1` | A manifest of raw artifacts from a measurement window, with producer, test, and workload identity |
-| `raw-result/v2` | The raw manifest with a discriminated OCI-image or native source-checkout execution artifact |
+| `raw-result/v2` | The raw manifest with a discriminated OCI-image, native source-checkout, or verified release-archive execution artifact |
 | `playwright-measurements/v1` | Native semantic browser samples with cache, repetition, runtime, and browser context |
 | `playwright-measurements/v2` | Native semantic browser samples with page lifetime, diagnostic mode, and environment identity |
 | `browser-environment/v1` | Detailed browser-host identity and per-run calibration |
@@ -33,9 +34,13 @@ The raw producer identifies the capture tool or adapter. V1 and normalized
 producers record a runner image pinned by digest. Raw-result/v2 instead records
 an execution artifact. `oci-image` retains that image identity;
 `source-checkout` records an HTTPS repository, full Git SHA, and exact dependency
-lock path and checksum for native execution. A native adapter must reject a dirty
-checkout, a different HEAD, or changed lock bytes before running. Browser and OS
-versions remain observed environment facts rather than source-artifact identity.
+lock path and checksum for native execution; `release-archive` records a
+credential-free HTTPS URL, the downloaded archive checksum, and the checksum of
+the executable actually started. These shapes are mutually exclusive. A native
+adapter must reject a dirty checkout, a different HEAD, or changed lock bytes
+before running. A release adapter must verify both recorded checksums and must
+not treat the URL as sufficient identity. Browser and OS versions remain observed
+environment facts rather than source-artifact identity.
 These fields provide traceability, not proof of the producer claim; the control
 plane must compare them with the selected catalogue entry.
 
