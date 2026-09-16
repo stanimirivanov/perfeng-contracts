@@ -1,5 +1,18 @@
 # perfeng-contracts
 
+## TL;DR
+
+- This repository owns language-neutral schemas, OpenAPI descriptions,
+  examples, fixtures and compatibility rules shared by `perfeng-*` components.
+- Runtime behavior, persistence, analysis and deployment remain in their owning
+  repositories.
+- Contract changes require positive and negative validation plus explicit
+  compatibility and consumer-migration effects.
+- Use `make validate` or the listed `uv` commands for the complete offline
+  validation suite.
+- Candidate bundles are not stable releases; consumers pin reviewed immutable
+  revisions.
+
 Language-neutral performance engineering contracts, extracted from
 `performance-platform`. The bundle covers execution metadata, normalized metrics,
 workload definitions, test catalogues, raw/normalized result transport, and
@@ -51,6 +64,9 @@ uv run --locked python scripts/validate.py
 uv run --locked python scripts/validate_api.py
 uv run --locked python -m unittest discover -s tests -v
 ```
+
+On systems with Make, `make validate` runs the same non-mutating checks and
+tests. The individual commands remain the portable, authoritative interface.
 
 Ruff handles Python linting and formatting; ty handles static type checking.
 To apply formatting and safe lint fixes, run `uv run ruff check --fix .` and
@@ -108,3 +124,18 @@ this repository defines only their language-neutral interchange boundaries.
 Missing statistical values mean unavailable, never zero.
 Schema validation establishes structural validity, not scientific quality or
 performance-gate readiness.
+
+## Development and governance
+
+Start with these repository sources of truth:
+
+- [Repository working agreement](AGENTS.md)
+- [Contributor workflow](CONTRIBUTING.md)
+- [Contract engineering standards](docs/development/engineering-standards.md)
+- [Architecture decisions](docs/decisions/README.md)
+- [Security policy](SECURITY.md)
+- [Code of conduct](CODE_OF_CONDUCT.md)
+- [Cross-repository roadmap](https://github.com/stanimirivanov/perfeng-environment/blob/main/docs/roadmap/milestones.md)
+
+Task-specific issue and pull-request handoff text is printed for the repository
+owner and is not stored in repository documentation.

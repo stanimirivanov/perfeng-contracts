@@ -1,5 +1,17 @@
 # Performance policies and analysis outcomes
 
+## TL;DR
+
+- Policies select exact metrics, statistics and units and evaluate SLO and
+  regression outcomes independently.
+- Regression comparisons require an approved, immutable baseline and explicit
+  practical-difference direction and threshold.
+- Missing or inadequate evidence produces an inconclusive outcome, never an
+  invented zero or silent pass.
+- Analysis results preserve policy, candidate, baseline and raw-evidence
+  identity for auditability.
+- These contracts define interchange semantics, not the analysis engine.
+
 The candidate bundle `0.4.0` introduces `policy/v1` and `analysis/v1` without
 changing existing schemas. These are interchange contracts, not an analysis
 engine, API implementation, or stable release.

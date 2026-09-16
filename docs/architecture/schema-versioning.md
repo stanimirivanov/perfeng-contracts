@@ -4,6 +4,13 @@
 > [Contract compatibility](../compatibility.md). The rules below are not the
 > release policy for perfeng-contracts.
 
+## TL;DR
+
+- This is historical prototype documentation, not current release policy.
+- Use [Contract compatibility](../compatibility.md) for current bundle and
+  migration rules.
+- Do not infer current stability or supported migrations from the tables below.
+
 ## Overview
 
 All schemas in the performance platform follow semantic versioning principles to

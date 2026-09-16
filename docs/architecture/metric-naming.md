@@ -1,5 +1,16 @@
 # Metric Naming Conventions
 
+## TL;DR
+
+- Metrics use stable hierarchical names that expose domain and measurement
+  meaning.
+- Units remain explicit in the contract even when a conventional suffix hints
+  at them.
+- Producers should reuse established names and consumers must not infer unit or
+  statistic solely from the string.
+- New naming rules require compatibility review because policies and baselines
+  select metrics by exact name.
+
 ## Overview
 
 All performance metrics follow a hierarchical naming convention to ensure
