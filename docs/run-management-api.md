@@ -1,5 +1,17 @@
 # Run-management API (candidate)
 
+## TL;DR
+
+- This document defines the candidate authenticated run and baseline HTTP
+  boundary; it is a conformance specification, not a deployed service.
+- Run creation is durable acceptance, while execution, artifacts, cancellation
+  and terminal state advance independently.
+- Principal scope, idempotency, revision checks and explicit lifecycle
+  transitions are required parts of the contract.
+- Artifact endpoints return immutable references, not bytes or storage
+  credentials.
+- Implementations must follow the OpenAPI document and fixtures together.
+
 The [OpenAPI 3.1.1 document](../api/run-management/v1/openapi.json) defines the
 control-plane boundary from proposal sections 12-13 together with explicit
 baseline administration. This is a specification and conformance corpus, not a

@@ -1,5 +1,17 @@
 # Workload and test-catalogue contracts
 
+## TL;DR
+
+- Workloads define immutable tool profiles; catalogues bind them to stable test
+  identities, owners, schedules and execution artifacts.
+- `catalogue/v2` supports digest-pinned OCI images, pinned native checkouts and
+  checksum-verified release archives.
+- Workload ID, version, configuration checksum and dataset identity together
+  prevent silent reuse of changed behavior.
+- Producers and consumers must validate tool/artifact consistency and reject
+  ambiguous or mutable provenance.
+- Cluster execution and result adapters remain outside this repository.
+
 These contracts implement the workload/catalogue slice of proposal sections
 16-17, 30, 63, and 78. They describe k6, Playwright, and kube-burner workloads.
 Cluster execution and result adapters remain consumer work. They do not change

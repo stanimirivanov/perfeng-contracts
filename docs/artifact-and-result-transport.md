@@ -1,5 +1,18 @@
 # Artifact and result transport
 
+## TL;DR
+
+- Artifact references identify exact stored bytes; raw manifests describe
+  capture provenance; normalized results contain derived metrics and evidence
+  links.
+- OCI images, native checkouts and release archives use distinct immutable
+  provenance shapes in `raw-result/v2`.
+- Run, test, workload, environment and checksum identities must agree across
+  documents before evidence is accepted.
+- Missing statistical information means unavailable, never zero.
+- These contracts do not implement upload, storage, normalization or quality
+  decisions.
+
 This contract slice implements proposal sections 29 and 35-36: immutable raw
 evidence, derived measurements, and the context needed to interpret them. It
 defines documents, not an upload service, normalizer implementation, or quality

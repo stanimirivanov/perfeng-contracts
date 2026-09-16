@@ -1,5 +1,17 @@
 # Contract compatibility
 
+## TL;DR
+
+- The current candidate bundle is `0.13.0`; it is not a stable release.
+- Consumers must explicitly support new schema generations and new members of
+  closed execution-artifact or tool unions before accepting them.
+- Existing documents retain their original meaning; conversions create new
+  documents and do not rewrite evidence.
+- Bundle upgrades must coordinate producer, validator and consumer changes and
+  preserve immutable provenance.
+- Use this document as the compatibility and migration ledger for candidate
+  bundle changes.
+
 The current candidate bundle is 0.13.0. It extends the existing workload and
 execution-artifact unions without adding a schema generation or changing the
 run-management API. `workload/v1` now accepts `kube-burner` only as an open,
