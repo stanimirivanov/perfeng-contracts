@@ -49,11 +49,11 @@ the bundle version. The original normalized-result array remains a legacy
 fixture, validated one metric at a time. New producers use the normalized-result
 envelope containing `result/v2` records and references to raw evidence.
 
-`candidate/v1`, `environment/v1`, `result/v1`, and `result/v2` are authored
-under `contracts/source` and generated into their existing `schemas` paths. The
-registry in `contracts/source/registry.ts` is the migration ledger: listed contracts are
-generated and must not be edited under `schemas`; unlisted contracts remain
-hand-authored until their contract-family migration. See
+`candidate/v1`, `environment/v1`, `run/v1`, `result/v1`, and `result/v2` are
+authored under `contracts/source` and generated into their existing `schemas`
+paths. The registry in `contracts/source/registry.ts` is the migration ledger:
+listed contracts are generated and must not be edited under `schemas`; unlisted
+contracts remain hand-authored until their contract-family migration. See
 [ADR-0002](docs/decisions/0002-use-effect-schema-at-contract-boundaries.md).
 
 ## Validate
@@ -102,7 +102,7 @@ and negative regression cases. Schema IDs identify bundled resources; validation
 does not fetch schemas or artifacts from the internet. Tests verify fixture
 checksums against local bytes.
 
-CI runs these checks and uploads a `perfeng-contracts-0.13.2.tar.gz` candidate
+CI runs these checks and uploads a `perfeng-contracts-0.13.3.tar.gz` candidate
 bundle. That CI artifact is not a published stable release. Until a release
 exists, integrations should pin the merged commit SHA, not a floating branch.
 

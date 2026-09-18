@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.13.2`; it is not a stable release.
+- The current candidate bundle is `0.13.3`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -12,7 +12,18 @@
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
 
-Candidate bundle 0.13.2 changes the authoring source and exact schema bytes for
+Candidate bundle 0.13.3 changes the authoring source and exact schema bytes for
+`run/v1` without changing accepted run-metadata documents. Effect Schema now
+owns the legacy inline candidate and environment shapes as well as run, test,
+runtime, data and phase metadata. The inline shapes intentionally remain
+different from the standalone `candidate/v1` and `environment/v1` contracts.
+Runtime Effect decoding and generated JSON Schema both enforce RFC 3339
+timestamps, including calendar validity. Stable IDs, manifest names and paths
+are unchanged. Payload producers and readers require no migration; exact-byte
+consumers must update deliberately. Fourteen data contracts and the Run
+Management API retain their previous authority during the staged migration.
+
+Candidate bundle 0.13.2 changed the authoring source and exact schema bytes for
 `result/v1` and `result/v2` without changing accepted metric documents. Effect
 Schema now owns their shared run identity, metric, distribution, threshold and
 metadata shapes. V1 still requires a positive sample count. V2 still permits

@@ -22,6 +22,38 @@ export const Integer = Schema.Number.pipe(
 
 export const PositiveInteger = Integer.pipe(Schema.greaterThanOrEqualTo(1));
 
+const rfc3339DateTime =
+  /^(\d{4})-(0[1-9]|1[0-2])-(\d{2})T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$/;
+
+function isLeapYear(year: number): boolean {
+  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+}
+
+function isRfc3339DateTime(value: string): boolean {
+  const match = rfc3339DateTime.exec(value);
+  if (match === null) {
+    return false;
+  }
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  if (year === 0) {
+    return false;
+  }
+
+  const daysInMonth = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  return day >= 1 && day <= (daysInMonth[month - 1] ?? 0);
+}
+
+/** DateTimeString preserves the Draft 2020-12 date-time wire format at runtime. */
+export const DateTimeString = Schema.String.pipe(
+  Schema.filter(isRfc3339DateTime, {
+    message: () => "Expected an RFC 3339 date-time",
+    jsonSchema: { type: "string", format: "date-time" },
+  }),
+);
+
 export type JsonValue =
   | string
   | boolean
