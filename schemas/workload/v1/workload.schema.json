@@ -1,9 +1,29 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://perfeng.dev/schemas/workload/v1/workload.schema.json",
-  "title": "Versioned workload definition",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "description": "a string matching the pattern ^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "version": {
+      "type": "string",
+      "description": "a string matching the pattern ^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "relativePath": {
+      "type": "string",
+      "description": "a string matching the pattern ^(?!\\/)(?!.*(?:^|\\/)\\.{1,2}(?:\\/|$))[A-Za-z0-9_./-]+$",
+      "pattern": "^(?!\\/)(?!.*(?:^|\\/)\\.{1,2}(?:\\/|$))[A-Za-z0-9_./-]+$"
+    },
+    "sha256": {
+      "type": "string",
+      "description": "a string matching the pattern ^[a-f0-9]{64}$",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
   "type": "object",
-  "additionalProperties": false,
   "required": [
     "schemaVersion",
     "id",
@@ -17,7 +37,10 @@
   ],
   "properties": {
     "schemaVersion": {
-      "const": 1
+      "type": "number",
+      "enum": [
+        1
+      ]
     },
     "id": {
       "$ref": "#/$defs/id"
@@ -26,6 +49,7 @@
       "$ref": "#/$defs/version"
     },
     "tool": {
+      "type": "string",
       "enum": [
         "k6",
         "playwright",
@@ -33,6 +57,7 @@
       ]
     },
     "profile": {
+      "type": "string",
       "enum": [
         "smoke",
         "average",
@@ -43,6 +68,7 @@
       ]
     },
     "model": {
+      "type": "string",
       "enum": [
         "open",
         "closed"
@@ -50,7 +76,6 @@
     },
     "configuration": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "path",
         "sha256"
@@ -62,11 +87,11 @@
         "sha256": {
           "$ref": "#/$defs/sha256"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "phases": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "unit",
         "warmup",
@@ -75,6 +100,7 @@
       ],
       "properties": {
         "unit": {
+          "type": "string",
           "enum": [
             "seconds",
             "iterations"
@@ -82,35 +108,44 @@
         },
         "warmup": {
           "type": "integer",
+          "description": "a non-negative number",
+          "title": "greaterThanOrEqualTo(0)",
           "minimum": 0
         },
         "measurement": {
           "type": "integer",
+          "description": "a number greater than or equal to 1",
+          "title": "greaterThanOrEqualTo(1)",
           "minimum": 1
         },
         "cooldown": {
           "type": "integer",
+          "description": "a non-negative number",
+          "title": "greaterThanOrEqualTo(0)",
           "minimum": 0
         }
-      }
+      },
+      "additionalProperties": false
     },
     "dataset": {
-      "oneOf": [
+      "anyOf": [
         {
           "type": "object",
-          "additionalProperties": false,
           "required": [
             "kind"
           ],
           "properties": {
             "kind": {
-              "const": "none"
+              "type": "string",
+              "enum": [
+                "none"
+              ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "object",
-          "additionalProperties": false,
           "required": [
             "kind",
             "id",
@@ -120,7 +155,10 @@
           ],
           "properties": {
             "kind": {
-              "const": "versioned"
+              "type": "string",
+              "enum": [
+                "versioned"
+              ]
             },
             "id": {
               "$ref": "#/$defs/id"
@@ -133,13 +171,18 @@
             },
             "seed": {
               "type": "integer",
+              "description": "a non-negative number",
+              "title": "greaterThanOrEqualTo(0)",
               "minimum": 0
             }
-          }
+          },
+          "additionalProperties": false
         }
       ]
     }
   },
+  "additionalProperties": false,
+  "title": "Versioned workload definition",
   "allOf": [
     {
       "if": {
@@ -207,23 +250,5 @@
         }
       }
     }
-  ],
-  "$defs": {
-    "id": {
-      "type": "string",
-      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
-    },
-    "version": {
-      "type": "string",
-      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
-    },
-    "sha256": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$"
-    },
-    "relativePath": {
-      "type": "string",
-      "pattern": "^(?!/)(?!.*(?:^|/)\\.{1,2}(?:/|$))[A-Za-z0-9_./-]+$"
-    }
-  }
+  ]
 }

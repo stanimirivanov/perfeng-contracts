@@ -6,7 +6,7 @@
   examples, fixtures and compatibility rules shared by `perfeng-*` components.
 - Runtime behavior, persistence, analysis and deployment remain in their owning
   repositories.
-- Migrated data contracts are authored with Effect Schema and compiled to
+- Data contracts are authored with Effect Schema and compiled to
   checked-in Draft 2020-12 JSON Schema for every consumer.
 - Contract changes require positive and negative validation plus explicit
   compatibility and consumer-migration effects.
@@ -49,11 +49,11 @@ the bundle version. The original normalized-result array remains a legacy
 fixture, validated one metric at a time. New producers use the normalized-result
 envelope containing `result/v2` records and references to raw evidence.
 
-`candidate/v1`, `environment/v1`, `run/v1`, `result/v1`, and `result/v2` are
-authored under `contracts/source` and generated into their existing `schemas`
-paths. The registry in `contracts/source/registry.ts` is the migration ledger:
-listed contracts are generated and must not be edited under `schemas`; unlisted
-contracts remain hand-authored until their contract-family migration. See
+All nineteen data contracts are authored under `contracts/source` and generated
+into their existing `schemas` paths. The registry in
+`contracts/source/registry.ts` is the complete source-to-artifact ledger.
+Generated files under `schemas` must not be edited directly. The Run Management
+OpenAPI description remains hand-authored. See
 [ADR-0002](docs/decisions/0002-use-effect-schema-at-contract-boundaries.md).
 
 ## Validate
@@ -102,7 +102,7 @@ and negative regression cases. Schema IDs identify bundled resources; validation
 does not fetch schemas or artifacts from the internet. Tests verify fixture
 checksums against local bytes.
 
-CI runs these checks and uploads a `perfeng-contracts-0.13.3.tar.gz` candidate
+CI runs these checks and uploads a `perfeng-contracts-0.14.0.tar.gz` candidate
 bundle. That CI artifact is not a published stable release. Until a release
 exists, integrations should pin the merged commit SHA, not a floating branch.
 

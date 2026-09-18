@@ -1,9 +1,192 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://perfeng.dev/schemas/normalized-result/v1/normalized-result.schema.json",
-  "title": "Normalized multi-metric result envelope",
+  "$defs": {
+    "version": {
+      "type": "string",
+      "description": "a string matching the pattern ^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "id": {
+      "type": "string",
+      "description": "a string matching the pattern ^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "sha256": {
+      "type": "string",
+      "description": "a string matching the pattern ^[a-f0-9]{64}$",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "a string matching the pattern ^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:[0-5]\\d(?:\\.\\d{1,6})?(?:Z|[+-]\\d{2}:\\d{2})$",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:[0-5]\\d(?:\\.\\d{1,6})?(?:Z|[+-]\\d{2}:\\d{2})$"
+    },
+    "ResultThresholds": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "slo": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [],
+              "properties": {},
+              "additionalProperties": {
+                "$ref": "#/$defs/SloThreshold"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "SLO threshold results",
+          "default": null
+        },
+        "regression": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [],
+              "properties": {},
+              "additionalProperties": {
+                "$ref": "#/$defs/RegressionThreshold"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Regression threshold results",
+          "default": null
+        }
+      },
+      "additionalProperties": false
+    },
+    "SloThreshold": {
+      "type": "object",
+      "required": [
+        "passed"
+      ],
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "threshold": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "actual": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "additionalProperties": false
+    },
+    "RegressionThreshold": {
+      "type": "object",
+      "required": [
+        "passed"
+      ],
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "baselineValue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "actualValue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "percentChange": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "additionalProperties": false
+    },
+    "ResultMetadata": {
+      "type": "object",
+      "required": [],
+      "properties": {},
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      }
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          }
+        },
+        {
+          "type": "object",
+          "required": [],
+          "properties": {},
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          }
+        }
+      ]
+    }
+  },
   "type": "object",
-  "additionalProperties": false,
   "required": [
     "schemaVersion",
     "kind",
@@ -19,59 +202,408 @@
   ],
   "properties": {
     "schemaVersion": {
-      "type": "integer",
-      "const": 1
+      "type": "number",
+      "enum": [
+        1
+      ]
     },
     "kind": {
-      "const": "NormalizedResult"
+      "type": "string",
+      "enum": [
+        "NormalizedResult"
+      ]
     },
     "contractsVersion": {
-      "$ref": "https://perfeng.dev/schemas/raw-result/v1/raw-result.schema.json#/properties/contractsVersion"
+      "$ref": "#/$defs/version"
     },
     "runId": {
-      "$ref": "https://perfeng.dev/schemas/raw-result/v1/raw-result.schema.json#/properties/runId"
+      "type": "string",
+      "description": "Reference to the run metadata",
+      "pattern": "^perf-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}$"
     },
     "testId": {
-      "$ref": "https://perfeng.dev/schemas/raw-result/v1/raw-result.schema.json#/properties/testId"
+      "$ref": "#/$defs/id"
     },
     "workload": {
-      "$ref": "https://perfeng.dev/schemas/raw-result/v1/raw-result.schema.json#/properties/workload"
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "version": {
+          "$ref": "#/$defs/version"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "additionalProperties": false
     },
     "producer": {
-      "$ref": "https://perfeng.dev/schemas/raw-result/v1/raw-result.schema.json#/properties/producer"
+      "type": "object",
+      "required": [
+        "name",
+        "version",
+        "image"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/id"
+        },
+        "version": {
+          "$ref": "#/$defs/version"
+        },
+        "image": {
+          "type": "string",
+          "description": "a string matching the pattern ^[a-z0-9][a-z0-9._:/-]*@sha256:[a-f0-9]{64}$",
+          "pattern": "^[a-z0-9][a-z0-9._:/-]*@sha256:[a-f0-9]{64}$"
+        }
+      },
+      "additionalProperties": false
     },
     "measurementWindow": {
-      "$ref": "https://perfeng.dev/schemas/raw-result/v1/raw-result.schema.json#/properties/measurementWindow"
+      "type": "object",
+      "required": [
+        "start",
+        "end"
+      ],
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "end": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": false
     },
     "createdAt": {
-      "$ref": "https://perfeng.dev/schemas/raw-result/v1/raw-result.schema.json#/properties/createdAt"
+      "$ref": "#/$defs/timestamp"
     },
     "sourceArtifacts": {
       "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
       "items": {
-        "allOf": [
-          {
-            "$ref": "https://perfeng.dev/schemas/artifact/v1/artifact-reference.schema.json"
+        "type": "object",
+        "required": [
+          "id",
+          "runId",
+          "kind",
+          "uri",
+          "sha256",
+          "sizeBytes",
+          "mediaType",
+          "format"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
           },
-          {
-            "properties": {
-              "kind": {
-                "const": "raw"
-              }
-            }
+          "runId": {
+            "type": "string",
+            "description": "Reference to the run metadata",
+            "pattern": "^perf-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "raw"
+            ]
+          },
+          "uri": {
+            "type": "string",
+            "format": "uri",
+            "description": "a string matching the pattern ^(s3|https):\\/\\/[^\\s?#]+$",
+            "pattern": "^(s3|https):\\/\\/[^\\s?#]+$"
+          },
+          "sha256": {
+            "$ref": "#/$defs/sha256"
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "description": "a non-negative number",
+            "title": "greaterThanOrEqualTo(0)",
+            "minimum": 0
+          },
+          "mediaType": {
+            "type": "string",
+            "description": "a string matching the pattern ^[a-z0-9][a-z0-9!#$&^_.+-]*\\/[a-z0-9][a-z0-9!#$&^_.+-]*$",
+            "pattern": "^[a-z0-9][a-z0-9!#$&^_.+-]*\\/[a-z0-9][a-z0-9!#$&^_.+-]*$"
+          },
+          "format": {
+            "type": "string",
+            "description": "a string matching the pattern ^[a-z0-9][a-z0-9./_-]*$",
+            "title": "minLength(1)",
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9./_-]*$"
           }
-        ]
-      }
+        },
+        "additionalProperties": false
+      },
+      "uniqueItems": true,
+      "description": "an array of at least 1 item(s)",
+      "title": "minItems(1)",
+      "minItems": 1
     },
     "results": {
       "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
       "items": {
-        "$ref": "https://perfeng.dev/schemas/result/v2/test-result.schema.json"
-      }
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "runId",
+          "metric",
+          "distribution"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "const": 2
+          },
+          "runId": {
+            "type": "string",
+            "description": "Reference to the run metadata",
+            "pattern": "^perf-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}$"
+          },
+          "metric": {
+            "type": "object",
+            "required": [
+              "name",
+              "direction"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Metric name following naming convention",
+                "title": "minLength(1)",
+                "minLength": 1,
+                "pattern": "^[a-z][a-z0-9_.]*$"
+              },
+              "direction": {
+                "type": "string",
+                "enum": [
+                  "lower-is-better",
+                  "higher-is-better"
+                ],
+                "description": "Whether lower or higher values are better"
+              },
+              "type": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "latency",
+                      "throughput",
+                      "error_rate",
+                      "resource",
+                      "custom"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Metric type",
+                "default": null
+              },
+              "unit": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Unit of measurement (ms, req/s, %, etc.)",
+                "default": null
+              }
+            },
+            "additionalProperties": false
+          },
+          "distribution": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "samples": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "description": "a number greater than or equal to 1",
+                    "title": "greaterThanOrEqualTo(1)",
+                    "minimum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Known positive observation count, or absent/null when unavailable. Never invent a count."
+              },
+              "mean": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Arithmetic mean",
+                "default": null
+              },
+              "median": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Median (p50)",
+                "default": null
+              },
+              "p90": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "description": "a non-negative number",
+                    "title": "greaterThanOrEqualTo(0)",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "90th percentile",
+                "default": null
+              },
+              "p95": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "description": "a non-negative number",
+                    "title": "greaterThanOrEqualTo(0)",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "95th percentile",
+                "default": null
+              },
+              "p99": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "description": "a non-negative number",
+                    "title": "greaterThanOrEqualTo(0)",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "99th percentile",
+                "default": null
+              },
+              "stddev": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "description": "a non-negative number",
+                    "title": "greaterThanOrEqualTo(0)",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Standard deviation",
+                "default": null
+              },
+              "min": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Minimum value",
+                "default": null
+              },
+              "max": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Maximum value",
+                "default": null
+              },
+              "cv": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "description": "a non-negative number",
+                    "title": "greaterThanOrEqualTo(0)",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Coefficient of variation",
+                "default": null
+              }
+            },
+            "additionalProperties": false
+          },
+          "thresholds": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResultThresholds"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Threshold evaluation results",
+            "default": null
+          },
+          "metadata": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResultMetadata"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Additional metadata",
+            "default": null
+          }
+        },
+        "additionalProperties": false,
+        "title": "Normalized metric with explicit support for unavailable sample counts"
+      },
+      "uniqueItems": true,
+      "description": "an array of at least 1 item(s)",
+      "title": "minItems(1)",
+      "minItems": 1
     }
-  }
+  },
+  "additionalProperties": false,
+  "title": "Normalized multi-metric result envelope"
 }
