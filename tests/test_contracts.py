@@ -37,6 +37,28 @@ class ContractsTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "versions differ"):
                 check_bundle_identity(root)
 
+    def test_every_published_schema_reference_resolves(self) -> None:
+        contracts, _ = load_contracts()
+        original = read_json(ROOT / contracts[0]["schema"])
+        broken = copy.deepcopy(original)
+        broken["properties"] = {"broken": {"$ref": "#/$defs/missing"}}
+
+        schema_path = ROOT / contracts[0]["schema"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for path in ("contracts.json", "pyproject.toml"):
+                target = root / path
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes((ROOT / path).read_bytes())
+            for entry in contracts:
+                target = root / entry["schema"]
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes((ROOT / entry["schema"]).read_bytes())
+            (root / schema_path.relative_to(ROOT)).write_text(json.dumps(broken), encoding="utf-8")
+
+            with self.assertRaisesRegex(ValueError, "Unresolved schema reference"):
+                load_contracts(root)
+
     def test_bad_candidate_identity(self) -> None:
         for value in ("1234567", "g" * 40, "a" * 39, "a" * 41):
             with self.subTest(value=value):
@@ -76,6 +98,15 @@ class ContractsTest(unittest.TestCase):
         data = read_json(ROOT / "examples/metadata/test-result-example.json")
         data["metric"]["type"] = None
         self.validators["result/v1"].validate(data)
+
+    def test_result_metadata_accepts_only_json_objects(self) -> None:
+        data = read_json(ROOT / "examples/result-v2/k6-unknown-count.json")
+        data["metadata"] = {"nested": ["value", 1, True, None]}
+        validator = self.validators["result/v2"]
+        validator.validate(data)
+
+        data["metadata"] = ["not", "an", "object"]
+        self.assertFalse(validator.is_valid(data))
 
     def test_environment_identity_is_required(self) -> None:
         for data in ({}, {"cluster": "local"}, {"cluster": "local", "fingerprint": "a" * 63}):

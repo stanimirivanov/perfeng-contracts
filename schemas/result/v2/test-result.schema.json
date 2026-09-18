@@ -1,9 +1,171 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://perfeng.dev/schemas/result/v2/test-result.schema.json",
-  "title": "Normalized metric with explicit support for unavailable sample counts",
+  "$defs": {
+    "ResultThresholds": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "slo": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [],
+              "properties": {},
+              "additionalProperties": {
+                "$ref": "#/$defs/SloThreshold"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "SLO threshold results",
+          "default": null
+        },
+        "regression": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [],
+              "properties": {},
+              "additionalProperties": {
+                "$ref": "#/$defs/RegressionThreshold"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Regression threshold results",
+          "default": null
+        }
+      },
+      "additionalProperties": false
+    },
+    "SloThreshold": {
+      "type": "object",
+      "required": [
+        "passed"
+      ],
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "threshold": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "actual": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "additionalProperties": false
+    },
+    "RegressionThreshold": {
+      "type": "object",
+      "required": [
+        "passed"
+      ],
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "baselineValue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "actualValue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "percentChange": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "additionalProperties": false
+    },
+    "ResultMetadata": {
+      "type": "object",
+      "required": [],
+      "properties": {},
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      }
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          }
+        },
+        {
+          "type": "object",
+          "required": [],
+          "properties": {},
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          }
+        }
+      ]
+    }
+  },
   "type": "object",
-  "additionalProperties": false,
   "required": [
     "schemaVersion",
     "runId",
@@ -16,57 +178,235 @@
       "const": 2
     },
     "runId": {
-      "$ref": "https://perfeng.dev/schemas/result/v1/test-result.schema.json#/properties/runId"
+      "type": "string",
+      "description": "Reference to the run metadata",
+      "pattern": "^perf-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}$"
     },
     "metric": {
-      "$ref": "https://perfeng.dev/schemas/result/v1/test-result.schema.json#/properties/metric"
+      "type": "object",
+      "required": [
+        "name",
+        "direction"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Metric name following naming convention",
+          "title": "minLength(1)",
+          "minLength": 1,
+          "pattern": "^[a-z][a-z0-9_.]*$"
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "lower-is-better",
+            "higher-is-better"
+          ],
+          "description": "Whether lower or higher values are better"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "latency",
+                "throughput",
+                "error_rate",
+                "resource",
+                "custom"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Metric type",
+          "default": null
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Unit of measurement (ms, req/s, %, etc.)",
+          "default": null
+        }
+      },
+      "additionalProperties": false
     },
     "distribution": {
       "type": "object",
-      "additionalProperties": false,
+      "required": [],
       "properties": {
         "samples": {
-          "type": [
-            "integer",
-            "null"
+          "anyOf": [
+            {
+              "type": "integer",
+              "description": "a number greater than or equal to 1",
+              "title": "greaterThanOrEqualTo(1)",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
           ],
-          "minimum": 1,
           "description": "Known positive observation count, or absent/null when unavailable. Never invent a count."
         },
         "mean": {
-          "$ref": "https://perfeng.dev/schemas/result/v1/test-result.schema.json#/properties/distribution/properties/mean"
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Arithmetic mean",
+          "default": null
         },
         "median": {
-          "$ref": "https://perfeng.dev/schemas/result/v1/test-result.schema.json#/properties/distribution/properties/median"
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Median (p50)",
+          "default": null
         },
         "p90": {
-          "$ref": "https://perfeng.dev/schemas/result/v1/test-result.schema.json#/properties/distribution/properties/p90"
+          "anyOf": [
+            {
+              "type": "number",
+              "description": "a non-negative number",
+              "title": "greaterThanOrEqualTo(0)",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "90th percentile",
+          "default": null
         },
         "p95": {
-          "$ref": "https://perfeng.dev/schemas/result/v1/test-result.schema.json#/properties/distribution/properties/p95"
+          "anyOf": [
+            {
+              "type": "number",
+              "description": "a non-negative number",
+              "title": "greaterThanOrEqualTo(0)",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "95th percentile",
+          "default": null
         },
         "p99": {
-          "$ref": "https://perfeng.dev/schemas/result/v1/test-result.schema.json#/properties/distribution/properties/p99"
+          "anyOf": [
+            {
+              "type": "number",
+              "description": "a non-negative number",
+              "title": "greaterThanOrEqualTo(0)",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "99th percentile",
+          "default": null
         },
         "stddev": {
-          "$ref": "https://perfeng.dev/schemas/result/v1/test-result.schema.json#/properties/distribution/properties/stddev"
+          "anyOf": [
+            {
+              "type": "number",
+              "description": "a non-negative number",
+              "title": "greaterThanOrEqualTo(0)",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Standard deviation",
+          "default": null
         },
         "min": {
-          "$ref": "https://perfeng.dev/schemas/result/v1/test-result.schema.json#/properties/distribution/properties/min"
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Minimum value",
+          "default": null
         },
         "max": {
-          "$ref": "https://perfeng.dev/schemas/result/v1/test-result.schema.json#/properties/distribution/properties/max"
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Maximum value",
+          "default": null
         },
         "cv": {
-          "$ref": "https://perfeng.dev/schemas/result/v1/test-result.schema.json#/properties/distribution/properties/cv"
+          "anyOf": [
+            {
+              "type": "number",
+              "description": "a non-negative number",
+              "title": "greaterThanOrEqualTo(0)",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Coefficient of variation",
+          "default": null
         }
-      }
+      },
+      "additionalProperties": false
     },
     "thresholds": {
-      "$ref": "https://perfeng.dev/schemas/result/v1/test-result.schema.json#/properties/thresholds"
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ResultThresholds"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Threshold evaluation results",
+      "default": null
     },
     "metadata": {
-      "$ref": "https://perfeng.dev/schemas/result/v1/test-result.schema.json#/properties/metadata"
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ResultMetadata"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Additional metadata",
+      "default": null
     }
-  }
+  },
+  "additionalProperties": false,
+  "title": "Normalized metric with explicit support for unavailable sample counts"
 }

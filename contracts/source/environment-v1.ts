@@ -1,8 +1,7 @@
 import { Schema } from "effect";
 
-import { FeatureFlags, Integer } from "./common.js";
+import { FeatureFlags, PositiveInteger } from "./common.js";
 
-const PositiveInteger = Integer.pipe(Schema.greaterThanOrEqualTo(1));
 const NonNegativeNumber = Schema.Number.pipe(Schema.greaterThanOrEqualTo(0));
 
 const NodePool = Schema.Struct({

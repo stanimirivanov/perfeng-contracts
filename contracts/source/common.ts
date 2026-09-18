@@ -19,3 +19,22 @@ export const Integer = Schema.Number.pipe(
     jsonSchema: { type: "integer" },
   }),
 );
+
+export const PositiveInteger = Integer.pipe(Schema.greaterThanOrEqualTo(1));
+
+export type JsonValue =
+  | string
+  | boolean
+  | number
+  | null
+  | ReadonlyArray<JsonValue>
+  | { readonly [key: string]: JsonValue };
+
+/** JsonValue accepts exactly values representable by JSON. */
+export const JsonValue: Schema.Schema<JsonValue> = Schema.suspend(() =>
+  Schema.Union(
+    JsonPrimitive,
+    Schema.Array(JsonValue),
+    Schema.Record({ key: Schema.String, value: JsonValue }),
+  ),
+).annotations({ identifier: "JsonValue" });

@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.13.1`; it is not a stable release.
+- The current candidate bundle is `0.13.2`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -12,7 +12,19 @@
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
 
-Candidate bundle 0.13.1 changes the authoring source and exact schema bytes for
+Candidate bundle 0.13.2 changes the authoring source and exact schema bytes for
+`result/v1` and `result/v2` without changing accepted metric documents. Effect
+Schema now owns their shared run identity, metric, distribution, threshold and
+metadata shapes. V1 still requires a positive sample count. V2 still permits
+the count to be absent or null, but rejects zero and negative values. The
+generated v2 document inlines the shared shapes instead of referencing v1;
+nullable unions and open metadata also have equivalent generated
+representations. Stable IDs, manifest names and paths are unchanged. Payload
+producers and readers require no migration; exact-byte consumers must update
+deliberately. Fifteen data contracts and the Run Management API retain their
+previous authority during the staged migration.
+
+Candidate bundle 0.13.1 changed the authoring source and exact schema bytes for
 `candidate/v1` and `environment/v1` without changing their accepted JSON
 instances, stable IDs, manifest names or paths. Effect Schema is authoritative
 for those two contracts and deterministically generates their Draft 2020-12

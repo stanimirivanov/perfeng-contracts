@@ -12,7 +12,7 @@ from urllib.parse import urlsplit
 
 from jsonschema import Draft202012Validator, FormatChecker
 from referencing import Registry, Resource
-from referencing.exceptions import NoSuchResource
+from referencing.exceptions import NoSuchResource, Unresolvable
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -51,6 +51,16 @@ def no_network(uri: str) -> Never:
     raise NoSuchResource(ref=uri)
 
 
+def references(value: Any) -> list[str]:
+    """Collect every string-valued $ref in a checked-in schema document."""
+    if isinstance(value, list):
+        return [reference for child in value for reference in references(child)]
+    if not isinstance(value, dict):
+        return []
+    found = [value["$ref"]] if isinstance(value.get("$ref"), str) else []
+    return found + [reference for child in value.values() for reference in references(child)]
+
+
 def load_contracts(
     root: Path = ROOT,
 ) -> tuple[list[ContractDefinition], dict[str, Draft202012Validator]]:
@@ -70,6 +80,14 @@ def load_contracts(
         if schema["$id"] != "https://perfeng.dev/" + entry["schema"]:
             raise ValueError(f"Schema ID/path mismatch: {entry['schema']}")
         Draft202012Validator.check_schema(schema)
+        resolver = registry.resolver(schema["$id"])
+        for reference in references(schema):
+            try:
+                resolver.lookup(reference)
+            except Unresolvable as error:
+                raise ValueError(
+                    f"Unresolved schema reference in {entry['name']}: {reference}"
+                ) from error
         validators[entry["name"]] = Draft202012Validator(
             schema, registry=registry, format_checker=FormatChecker()
         )
