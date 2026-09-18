@@ -85,4 +85,6 @@ How will assumptions and consequences be verified?
 
 ## Index
 
-No ADRs have been accepted yet.
+| ADR | Status | Decision |
+|:--|:--|:--|
+| [0001](0001-native-windows-worker-protocol.md) | Accepted | Use a separate outbound, leased native Windows worker protocol with pre-provisioned identity and scoped direct artifact upload. |
