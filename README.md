@@ -6,10 +6,12 @@
   examples, fixtures and compatibility rules shared by `perfeng-*` components.
 - Runtime behavior, persistence, analysis and deployment remain in their owning
   repositories.
+- Migrated data contracts are authored with Effect Schema and compiled to
+  checked-in Draft 2020-12 JSON Schema for every consumer.
 - Contract changes require positive and negative validation plus explicit
   compatibility and consumer-migration effects.
-- Use `make validate` or the listed `uv` commands for the complete offline
-  validation suite.
+- Use `make validate` or the listed `pnpm` and `uv` commands for the complete
+  offline validation suite.
 - Candidate bundles are not stable releases; consumers pin reviewed immutable
   revisions.
 
@@ -47,16 +49,28 @@ the bundle version. The original normalized-result array remains a legacy
 fixture, validated one metric at a time. New producers use the normalized-result
 envelope containing `result/v2` records and references to raw evidence.
 
+`candidate/v1` and `environment/v1` are authored under `contracts/source` and
+generated into their existing `schemas` paths. The registry in
+`contracts/source/registry.ts` is the migration ledger: listed contracts are
+generated and must not be edited under `schemas`; unlisted contracts remain
+hand-authored until their contract-family migration. See
+[ADR-0002](docs/decisions/0002-use-effect-schema-at-contract-boundaries.md).
+
 ## Validate
 
-Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then run
-the commands below from the repository root. uv creates `.venv` and installs
-the development tools from `uv.lock`. `.python-version` selects Python 3.12.
-The Python project is development tooling; consumers in Go, TypeScript, and
-Python use the same JSON schemas. It is not built as an installable package.
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/), Node.js
+and pnpm, then run the commands below from the repository root. The checked-in
+`.python-version`, `.node-version`, `uv.lock` and `pnpm-lock.yaml` select the
+toolchains and dependencies. These projects are development tooling; consumers
+in Go, TypeScript and Python use the same generated JSON schemas.
 
 ```sh
 uv sync --locked
+pnpm install --frozen-lockfile
+pnpm contracts:check
+pnpm format:check
+pnpm typecheck
+pnpm test
 uv run --locked ruff check .
 uv run --locked ruff format --check .
 uv run --locked ty check
@@ -69,16 +83,18 @@ On systems with Make, `make validate` runs the same non-mutating checks and
 tests. The individual commands remain the portable, authoritative interface.
 
 Ruff handles Python linting and formatting; ty handles static type checking.
-To apply formatting and safe lint fixes, run `uv run ruff check --fix .` and
-`uv run ruff format .`. Update dependencies intentionally with `uv lock --upgrade`
-and commit the resulting `uv.lock` changes with `pyproject.toml` as appropriate.
+To regenerate migrated schemas, run `make generate-contracts`. To apply
+formatting and safe lint fixes, run `make fmt` and
+`uv run ruff check --fix .`. Update dependencies intentionally and commit the
+corresponding lockfile changes.
 
 For VS Code, install the workspace's recommended extensions and select the
 `.venv` interpreter after syncing. The checked-in settings enable Ruff formatting
 and fixes on save, ty language services and type checking, and unittest discovery.
-Prettier formats JSON/YAML/Markdown; Even Better TOML formats TOML. The existing
-autosave extension remains recommended. `.vscode` configuration is shared;
-IntelliJ's root `.idea` directory is ignored.
+Biome formats and lints TypeScript; Prettier formats other supported text files;
+Even Better TOML formats TOML. The existing autosave extension remains
+recommended. `.vscode` configuration is shared; IntelliJ's root `.idea`
+directory is ignored.
 
 Validation checks Draft 2020-12 schemas, declared defaults, all examples,
 date-time formats, catalogue/transport/policy consistency, baseline lifecycle,
@@ -86,7 +102,7 @@ and negative regression cases. Schema IDs identify bundled resources; validation
 does not fetch schemas or artifacts from the internet. Tests verify fixture
 checksums against local bytes.
 
-CI runs these checks and uploads a `perfeng-contracts-0.13.0.tar.gz` candidate
+CI runs these checks and uploads a `perfeng-contracts-0.13.1.tar.gz` candidate
 bundle. That CI artifact is not a published stable release. Until a release
 exists, integrations should pin the merged commit SHA, not a floating branch.
 

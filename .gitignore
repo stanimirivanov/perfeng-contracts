@@ -16,6 +16,9 @@ coverage.xml
 build/
 dist/
 
+# Node.js
+node_modules/
+
 # Local configuration and OS files
 .env
 .env.*

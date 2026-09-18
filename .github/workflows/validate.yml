@@ -13,21 +13,25 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version-file: .python-version
+      - uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
       - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           enable-cache: true
+      - run: pnpm install --frozen-lockfile
       - run: uv sync --locked
-      - run: uv run --locked ruff check .
-      - run: uv run --locked ruff format --check .
-      - run: uv run --locked ty check
-      - run: uv run --locked python scripts/validate.py
-      - run: uv run --locked python scripts/validate_api.py
-      - run: uv run --locked python -m unittest discover -s tests -v
+      - run: make validate
       - name: Assemble candidate contract bundle
         run: |
           mkdir -p dist
-          tar -czf dist/perfeng-contracts-0.13.0.tar.gz contracts.json schemas examples api docs tests/fixtures README.md LICENSE
+          tar -czf dist/perfeng-contracts-0.13.1.tar.gz contracts.json schemas examples api docs tests/fixtures README.md LICENSE
       - uses: actions/upload-artifact@v4
         with:
-          name: perfeng-contracts-0.13.0
-          path: dist/perfeng-contracts-0.13.0.tar.gz
+          name: perfeng-contracts-0.13.1
+          path: dist/perfeng-contracts-0.13.1.tar.gz

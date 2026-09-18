@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.13.0`; it is not a stable release.
+- The current candidate bundle is `0.13.1`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -12,7 +12,17 @@
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
 
-The current candidate bundle is 0.13.0. It extends the existing workload and
+Candidate bundle 0.13.1 changes the authoring source and exact schema bytes for
+`candidate/v1` and `environment/v1` without changing their accepted JSON
+instances, stable IDs, manifest names or paths. Effect Schema is authoritative
+for those two contracts and deterministically generates their Draft 2020-12
+documents. Generated presentation adds descriptive metadata and empty
+`required` arrays for open-key records. Payload producers and readers require
+no migration; consumers that pin exact schema or bundle bytes must update
+deliberately. The other seventeen data contracts and the Run Management API
+retain their previous authority and behavior during the staged migration.
+
+Candidate bundle 0.13.0 extended the existing workload and
 execution-artifact unions without adding a schema generation or changing the
 run-management API. `workload/v1` now accepts `kube-burner` only as an open,
 iteration-budgeted workload. The shared catalogue/raw-result v2 execution

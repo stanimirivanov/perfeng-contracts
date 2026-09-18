@@ -88,3 +88,4 @@ How will assumptions and consequences be verified?
 | ADR | Status | Decision |
 |:--|:--|:--|
 | [0001](0001-native-windows-worker-protocol.md) | Accepted | Use a separate outbound, leased native Windows worker protocol with pre-provisioned identity and scoped direct artifact upload. |
+| [0002](0002-use-effect-schema-at-contract-boundaries.md) | Accepted | Author data contracts with Effect Schema while retaining generated Draft 2020-12 JSON Schema as the language-neutral boundary. |

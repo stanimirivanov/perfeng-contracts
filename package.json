@@ -1,0 +1,27 @@
+{
+  "name": "perfeng-contracts-tooling",
+  "version": "0.13.1",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.19.0",
+  "engines": {
+    "node": ">=24.18.0 <25"
+  },
+  "scripts": {
+    "contracts:generate": "tsx contracts/scripts/generate.ts",
+    "contracts:check": "tsx contracts/scripts/generate.ts --check",
+    "format": "biome check --write contracts/source contracts/scripts package.json tsconfig.json biome.json",
+    "format:check": "biome check contracts/source contracts/scripts package.json tsconfig.json biome.json",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test contracts/source/*.test.ts"
+  },
+  "dependencies": {
+    "effect": "3.22.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.13",
+    "@types/node": "24.12.1",
+    "tsx": "4.23.13",
+    "typescript": "5.9.3"
+  }
+}
