@@ -9,7 +9,8 @@
     {
       "name": "native-worker/v1",
       "definition": "api/native-worker/v1/openapi.json",
-      "conformance": "api/native-worker/v1/conformance.json",
+      "examples": "api/native-worker/v1/examples",
+      "rejections": "api/native-worker/v1/rejections",
       "httpCases": "api/native-worker/v1/http-cases.json"
     }
   ],

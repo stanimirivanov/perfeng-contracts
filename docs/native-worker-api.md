@@ -163,11 +163,14 @@ Implementations must additionally:
 - emit telemetry using worker, Run, attempt and request identifiers, never
   authentication or grant material.
 
-The checked-in fixtures use reserved `.invalid` HTTPS endpoints, explicit fake
-header capabilities and synthetic identifiers. Validation is offline and
-rejects remote schema references, request-selected identity, capacity above
-one, invalid cancellation shapes, missing revision fences, worker-selected
-locations and incomplete terminal reports.
+Checked-in valid payloads live under `api/native-worker/v1/examples`, matching
+the Run Management API layout. Deliberately invalid payloads are isolated under
+`api/native-worker/v1/rejections`, while `http-cases.json` composes the examples
+into request and response exchanges. The fixtures use reserved `.invalid`
+HTTPS endpoints, explicit fake header capabilities and synthetic identifiers.
+Validation is offline and rejects remote schema references, request-selected
+identity, capacity above one, invalid cancellation shapes, missing revision
+fences, worker-selected locations and incomplete terminal reports.
 
 ## Consumer rollout
 

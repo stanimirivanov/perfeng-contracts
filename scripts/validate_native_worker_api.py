@@ -25,29 +25,47 @@ LEASE_OPERATIONS = {
     "reportNativeTerminal",
 }
 OPERATIONS = {"reportWorkerPresence", "acquireNativeLease", *LEASE_OPERATIONS}
-INVALID_CASES = {
-    "request-selected worker identity",
-    "capacity above one",
-    "worker declares qualification",
-    "cancellation missing stop deadline",
-    "deadline without cancellation",
-    "mutation missing revision fence",
-    "worker chooses artifact uri",
-    "completed without registered manifest",
-    "failed without failure classification",
-    "worker chooses object key",
+FIXTURES = {
+    "presence": "WorkerPresence",
+    "presence-status": "PresenceStatus",
+    "acquire": "AcquireLease",
+    "lease": "Lease",
+    "renew": "RenewLease",
+    "renewal": "LeaseRenewal",
+    "release": "ReleaseLease",
+    "upload-request": "UploadGrantRequest",
+    "upload-grant": "UploadGrant",
+    "register-artifact": "RegisterArtifact",
+    "artifact": "ArtifactReference",
+    "terminal-completed": "TerminalReport",
+    "terminal-failed": "TerminalReport",
+    "terminal-ack": "TerminalAck",
+    "terminal-ack-duplicate": "TerminalAck",
+    "lease-gone-error": "Error",
+}
+REJECTIONS = {
+    "request-selected-worker-identity",
+    "capacity-above-one",
+    "worker-declares-qualification",
+    "cancellation-missing-stop-deadline",
+    "deadline-without-cancellation",
+    "mutation-missing-revision-fence",
+    "worker-chooses-artifact-uri",
+    "completed-without-registered-manifest",
+    "failed-without-failure-classification",
+    "worker-chooses-object-key",
 }
 HTTP_CASES = {
-    "presence is interpreted by the server",
-    "compatible work is leased",
-    "no compatible work has bounded retry",
-    "renewal observes cancellation",
-    "an expired lease rejects mutation",
-    "release is idempotent",
-    "exact object upload is granted",
-    "uploaded bytes are registered",
-    "terminal completion is acknowledged",
-    "duplicate terminal completion is idempotent",
+    ("reportWorkerPresence", 200, "presence", "presence-status"),
+    ("acquireNativeLease", 200, "acquire", "lease"),
+    ("acquireNativeLease", 204, "acquire", None),
+    ("renewNativeLease", 200, "renew", "renewal"),
+    ("renewNativeLease", 410, "renew", "lease-gone-error"),
+    ("releaseNativeLease", 204, "release", None),
+    ("createNativeUploadGrant", 201, "upload-request", "upload-grant"),
+    ("registerNativeArtifact", 201, "register-artifact", "artifact"),
+    ("reportNativeTerminal", 200, "terminal-completed", "terminal-ack"),
+    ("reportNativeTerminal", 200, "terminal-completed", "terminal-ack-duplicate"),
 }
 
 
@@ -148,8 +166,10 @@ def check_exact_object_scope(values: dict[str, Any]) -> None:
         raise ValueError("Registered artifact differs from its assigned artifact plan")
 
 
-def check_fixture_safety(conformance: dict[str, Any], cases: list[dict[str, Any]]) -> None:
-    serialized = json.dumps(conformance).lower()
+def check_fixture_safety(
+    examples: dict[str, Any], rejections: dict[str, Any], cases: list[dict[str, Any]]
+) -> None:
+    serialized = json.dumps({"examples": examples, "rejections": rejections}).lower()
     for forbidden in ["password", "authorization", "access_token", "refresh_token"]:
         if forbidden in serialized:
             raise ValueError("Conformance fixtures contain credential-shaped material")
@@ -166,7 +186,8 @@ def check_fixture_safety(conformance: dict[str, Any], cases: list[dict[str, Any]
             if host is None or not host.endswith(".invalid"):
                 raise ValueError("Fixtures must use reserved non-routable HTTPS endpoints")
 
-    visit(conformance)
+    visit(examples)
+    visit(rejections)
     for case in cases:
         for headers_name in ["requestHeaders", "headers"]:
             for name, value in case.get(headers_name, {}).items():
@@ -293,30 +314,34 @@ def check_http(document: dict[str, Any], case: dict[str, Any], values: dict[str,
 def validate_native_worker_api(root: Path = ROOT) -> tuple[int, int, int]:
     document = read_json(root / API_PATH / "openapi.json")
     lint(document)
-    conformance = read_json(root / API_PATH / "conformance.json")
-    valid = conformance["valid"]
-    invalid = conformance["invalid"]
-    values: dict[str, Any] = {}
-    for fixture in valid:
-        if fixture["name"] in values:
-            raise ValueError("Duplicate Native Worker fixture name")
-        schema_validator(document, fixture["schema"]).validate(fixture["value"])
-        values[fixture["name"]] = fixture["value"]
-    if {fixture["name"] for fixture in invalid} != INVALID_CASES:
-        raise ValueError("Native Worker negative fixture inventory changed")
-    for fixture in invalid:
+    examples = root / API_PATH / "examples"
+    if {path.stem for path in examples.glob("*.json")} != set(FIXTURES):
+        raise ValueError("Native Worker example inventory changed without validation coverage")
+    values = {name: read_json(examples / f"{name}.json") for name in FIXTURES}
+    for name, schema in FIXTURES.items():
+        schema_validator(document, schema).validate(values[name])
+
+    rejection_root = root / API_PATH / "rejections"
+    if {path.stem for path in rejection_root.glob("*.json")} != REJECTIONS:
+        raise ValueError("Native Worker rejection inventory changed without validation coverage")
+    rejections = {name: read_json(rejection_root / f"{name}.json") for name in REJECTIONS}
+    for name, fixture in rejections.items():
         if schema_validator(document, fixture["schema"]).is_valid(fixture["value"]):
-            raise ValueError(f"Negative fixture unexpectedly passed: {fixture['name']}")
+            raise ValueError(f"Rejection fixture unexpectedly passed: {name}")
 
     check_times(values)
     check_exact_object_scope(values)
     cases = read_json(root / API_PATH / "http-cases.json")
-    if {case["name"] for case in cases} != HTTP_CASES or len(cases) != len(HTTP_CASES):
+    coverage = {
+        (case["operationId"], case["status"], case.get("request"), case.get("response"))
+        for case in cases
+    }
+    if coverage != HTTP_CASES or len(cases) != len(HTTP_CASES):
         raise ValueError("Native Worker HTTP fixture coverage is incomplete or duplicated")
-    check_fixture_safety(conformance, cases)
+    check_fixture_safety(values, rejections, cases)
     for case in cases:
         check_http(document, case, values)
-    return len(valid), len(invalid), len(cases)
+    return len(values), len(rejections), len(cases)
 
 
 if __name__ == "__main__":

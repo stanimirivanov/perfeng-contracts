@@ -12,8 +12,12 @@ class NativeWorkerApiTests(unittest.TestCase):
     def setUp(self):
         root = native.ROOT / native.API_PATH
         self.document = read_json(root / "openapi.json")
-        self.conformance = read_json(root / "conformance.json")
-        self.values = {fixture["name"]: fixture["value"] for fixture in self.conformance["valid"]}
+        self.values = {
+            name: read_json(root / "examples" / f"{name}.json") for name in native.FIXTURES
+        }
+        self.rejections = {
+            name: read_json(root / "rejections" / f"{name}.json") for name in native.REJECTIONS
+        }
         self.cases = read_json(root / "http-cases.json")
 
     def test_contract_and_conformance_corpus_validate_without_network(self):
@@ -79,16 +83,14 @@ class NativeWorkerApiTests(unittest.TestCase):
                 native.check_exact_object_scope(changed)
 
     def test_lease_mutations_require_capability_attempt_and_revision_fences(self):
-        for schema in [
-            "RenewLease",
-            "ReleaseLease",
-            "UploadGrantRequest",
-            "RegisterArtifact",
-            "TerminalReport",
-        ]:
-            fixture = next(
-                item["value"] for item in self.conformance["valid"] if item["schema"] == schema
-            )
+        fixtures = {
+            "RenewLease": self.values["renew"],
+            "ReleaseLease": self.values["release"],
+            "UploadGrantRequest": self.values["upload-request"],
+            "RegisterArtifact": self.values["register-artifact"],
+            "TerminalReport": self.values["terminal-completed"],
+        }
+        for schema, fixture in fixtures.items():
             for field in ["attemptId", "expectedRunRevision"]:
                 changed = {name: value for name, value in fixture.items() if name != field}
                 self.assertFalse(
@@ -122,24 +124,27 @@ class NativeWorkerApiTests(unittest.TestCase):
         validator = native.schema_validator(self.document, "UploadGrantRequest")
         self.assertFalse(validator.is_valid({**upload_request, "objectKey": "arbitrary/key"}))
 
-        acquire = next(case for case in self.cases if case["name"] == "compatible work is leased")
+        acquire = next(
+            case
+            for case in self.cases
+            if case["operationId"] == "acquireNativeLease" and case["status"] == 200
+        )
         with self.assertRaisesRegex(ValueError, "response header missing"):
             native.check_http(self.document, {**acquire, "headers": {}}, self.values)
 
-        for fixture in self.conformance["valid"]:
-            serialized = str(fixture["value"]).lower()
+        for fixture in self.values.values():
+            serialized = str(fixture).lower()
             self.assertNotIn("example-not-a-real", serialized)
             self.assertNotIn("authorization", serialized)
 
     def test_fixture_endpoints_are_reserved_and_non_routable(self):
-        native.check_fixture_safety(self.conformance, self.cases)
-        changed = copy.deepcopy(self.conformance)
-        presence = next(item for item in changed["valid"] if item["name"] == "presence")
-        presence["value"]["qualificationEvidence"]["runner"]["repository"] = (
+        native.check_fixture_safety(self.values, self.rejections, self.cases)
+        changed = copy.deepcopy(self.values)
+        changed["presence"]["qualificationEvidence"]["runner"]["repository"] = (
             "https://github.com/example/perfeng-playwright.git"
         )
         with self.assertRaisesRegex(ValueError, "non-routable"):
-            native.check_fixture_safety(changed, self.cases)
+            native.check_fixture_safety(changed, self.rejections, self.cases)
 
     def test_cancellation_and_terminal_variants_are_closed(self):
         renewal = self.values["renewal"]
