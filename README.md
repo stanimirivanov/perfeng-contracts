@@ -53,7 +53,7 @@ All nineteen data contracts are authored under `contracts/source` and generated
 into their existing `schemas` paths. The registry in
 `contracts/source/registry.ts` is the complete source-to-artifact ledger.
 Generated files under `schemas` must not be edited directly. The Run Management
-OpenAPI description remains hand-authored. See
+and Native Worker OpenAPI descriptions remain hand-authored. See
 [ADR-0002](docs/decisions/0002-use-effect-schema-at-contract-boundaries.md).
 
 ## Validate
@@ -76,6 +76,7 @@ uv run --locked ruff format --check .
 uv run --locked ty check
 uv run --locked python scripts/validate.py
 uv run --locked python scripts/validate_api.py
+uv run --locked python scripts/validate_native_worker_api.py
 uv run --locked python -m unittest discover -s tests -v
 ```
 
@@ -102,7 +103,7 @@ and negative regression cases. Schema IDs identify bundled resources; validation
 does not fetch schemas or artifacts from the internet. Tests verify fixture
 checksums against local bytes.
 
-CI runs these checks and uploads a `perfeng-contracts-0.14.0.tar.gz` candidate
+CI runs these checks and uploads a `perfeng-contracts-0.15.0.tar.gz` candidate
 bundle. That CI artifact is not a published stable release. Until a release
 exists, integrations should pin the merged commit SHA, not a floating branch.
 
@@ -135,6 +136,11 @@ The [run-management API](docs/run-management-api.md) specifies create/get/cancel
 principal-scoped artifact listing, idempotency, run lifecycle and explicit
 baseline administration. Its self-contained OpenAPI description and fixtures
 are under api/run-management/v1 and included in the candidate bundle.
+The [Native Worker API](docs/native-worker-api.md) defines authenticated worker
+presence, qualification interpretation, leased execution, cancellation,
+exact-object upload grants, immutable artifact registration and terminal
+attempt reporting. Its self-contained OpenAPI description and conformance
+fixtures are under api/native-worker/v1.
 HTTP, persistence and analysis implementations live in their owning repositories;
 this repository defines only their language-neutral interchange boundaries.
 Missing statistical values mean unavailable, never zero.

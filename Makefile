@@ -27,6 +27,7 @@ check: fmt-check
 	uv run --locked ty check
 	uv run --locked python scripts/validate.py
 	uv run --locked python scripts/validate_api.py
+	uv run --locked python scripts/validate_native_worker_api.py
 
 test:
 	pnpm test
