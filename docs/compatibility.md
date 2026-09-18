@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.14.0`; it is not a stable release.
+- The current candidate bundle is `0.15.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,16 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.15.0 adds the independent `native-worker/v1` API without
+changing any data schema or Run Management API operation. Strict bundle readers
+must accept a second API inventory entry. Existing Run Management clients and
+data-contract producers require no payload migration. Native worker clients and
+the control plane must pin the same reviewed bundle and implement the complete
+v1 lease fence: authenticated worker identity, attempt identity, expected Run
+revision and lease capability. A consumer must not treat presence as
+qualification, availability or authorization, and must not send worker,
+lease-capability, upload-capability or object-key choices in JSON requests.
 
 Candidate bundle 0.14.0 completes the Effect Schema authoring migration for all
 nineteen data contracts. The remaining workload, catalogue, artifact,
