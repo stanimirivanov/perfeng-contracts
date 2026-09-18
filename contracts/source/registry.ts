@@ -2,6 +2,8 @@ import type { Schema } from "effect";
 
 import { CandidateV1 } from "./candidate-v1.js";
 import { EnvironmentV1 } from "./environment-v1.js";
+import { ResultV1 } from "./result-v1.js";
+import { ResultV2 } from "./result-v2.js";
 
 export interface GeneratedContract {
   readonly name: string;
@@ -23,5 +25,17 @@ export const GeneratedContracts: ReadonlyArray<GeneratedContract> = [
     id: "https://perfeng.dev/schemas/environment/v1/environment.schema.json",
     output: "schemas/environment/v1/environment.schema.json",
     schema: EnvironmentV1,
+  },
+  {
+    name: "result/v1",
+    id: "https://perfeng.dev/schemas/result/v1/test-result.schema.json",
+    output: "schemas/result/v1/test-result.schema.json",
+    schema: ResultV1,
+  },
+  {
+    name: "result/v2",
+    id: "https://perfeng.dev/schemas/result/v2/test-result.schema.json",
+    output: "schemas/result/v2/test-result.schema.json",
+    schema: ResultV2,
   },
 ];
