@@ -4,6 +4,7 @@ import hashlib
 import json
 import math
 import sys
+import tomllib
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Never, NotRequired, TypedDict
@@ -467,7 +468,18 @@ def check_baseline_consistency(baseline: dict[str, Any]) -> None:
         raise ValueError("Passed qualification must advance the baseline state")
 
 
+def check_bundle_identity(root: Path = ROOT) -> None:
+    """Require one candidate bundle version across both development projects."""
+    bundle_version = read_json(root / "contracts.json")["version"]
+    project_version = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))[
+        "project"
+    ]["version"]
+    if bundle_version != project_version:
+        raise ValueError("contracts.json and pyproject.toml versions differ")
+
+
 def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
+    check_bundle_identity(root)
     contracts, validators = load_contracts(root)
     policies = [
         (

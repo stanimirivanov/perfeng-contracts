@@ -12,6 +12,13 @@
   "python.testing.unittestArgs": ["-v", "-s", "./tests", "-p", "test_*.py"],
   "ruff.importStrategy": "fromEnvironment",
   "ty.importStrategy": "fromEnvironment",
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.biome": "explicit",
+      "source.organizeImports.biome": "explicit"
+    }
+  },
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.codeActionsOnSave": {

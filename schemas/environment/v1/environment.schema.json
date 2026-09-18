@@ -1,40 +1,43 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://perfeng.dev/schemas/environment/v1/environment.schema.json",
-  "title": "Environment Specification",
-  "description": "Performance test environment specification",
   "type": "object",
-  "required": ["cluster", "fingerprint"],
-  "additionalProperties": false,
+  "required": [
+    "cluster",
+    "fingerprint"
+  ],
   "properties": {
     "cluster": {
       "type": "string",
-      "minLength": 1,
-      "description": "Cluster identifier"
+      "description": "Cluster identifier",
+      "title": "minLength(1)",
+      "minLength": 1
     },
     "fingerprint": {
       "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
-      "description": "SHA256 fingerprint of environment characteristics"
+      "description": "SHA256 fingerprint of environment characteristics",
+      "pattern": "^[a-f0-9]{64}$"
     },
     "kubernetes": {
       "type": "object",
-      "additionalProperties": false,
+      "required": [],
       "properties": {
         "version": {
           "type": "string",
-          "pattern": "^v?\\d+\\.\\d+\\.\\d+$",
-          "description": "Kubernetes version"
+          "description": "Kubernetes version",
+          "pattern": "^v?\\d+\\.\\d+\\.\\d+$"
         },
         "nodeCount": {
           "type": "integer",
+          "description": "a number greater than or equal to 1",
+          "title": "greaterThanOrEqualTo(1)",
           "minimum": 1
         },
         "nodePools": {
           "type": "array",
           "items": {
             "type": "object",
-            "additionalProperties": false,
+            "required": [],
             "properties": {
               "name": {
                 "type": "string"
@@ -44,24 +47,33 @@
               },
               "cpuArchitecture": {
                 "type": "string",
-                "enum": ["amd64", "arm64"]
+                "enum": [
+                  "amd64",
+                  "arm64"
+                ]
               },
               "cpuCount": {
                 "type": "integer",
+                "description": "a number greater than or equal to 1",
+                "title": "greaterThanOrEqualTo(1)",
                 "minimum": 1
               },
               "memoryGiB": {
                 "type": "number",
+                "description": "a non-negative number",
+                "title": "greaterThanOrEqualTo(0)",
                 "minimum": 0
               }
-            }
+            },
+            "additionalProperties": false
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "runtime": {
       "type": "object",
-      "additionalProperties": false,
+      "required": [],
       "properties": {
         "containerRuntime": {
           "type": "string"
@@ -75,31 +87,51 @@
         "kernel": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "application": {
       "type": "object",
-      "additionalProperties": false,
+      "required": [],
       "properties": {
         "configurationHash": {
           "type": "string"
         },
         "featureFlags": {
           "type": "object",
+          "required": [],
+          "properties": {},
           "additionalProperties": {
-            "type": ["string", "boolean", "number", "null"]
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "compatibility": {
       "type": "object",
-      "description": "Compatibility evaluation",
-      "additionalProperties": false,
+      "required": [],
       "properties": {
         "status": {
           "type": "string",
-          "enum": ["COMPATIBLE", "PARTIALLY_COMPATIBLE", "INCOMPATIBLE"]
+          "enum": [
+            "COMPATIBLE",
+            "PARTIALLY_COMPATIBLE",
+            "INCOMPATIBLE"
+          ]
         },
         "reasons": {
           "type": "array",
@@ -107,7 +139,12 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": false,
+      "description": "Compatibility evaluation"
     }
-  }
+  },
+  "additionalProperties": false,
+  "description": "Performance test environment specification",
+  "title": "Environment Specification"
 }

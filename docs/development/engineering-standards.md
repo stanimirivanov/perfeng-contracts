@@ -49,6 +49,15 @@ depending on one implementation language or framework.
 
 ## JSON Schema and OpenAPI
 
+- Follow ADR-0002 for source authority during the staged Effect Schema
+  migration. A registry-listed schema MUST be generated and MUST NOT be edited
+  directly; an unlisted schema remains hand-authored until its family moves.
+- Preserve stable IDs and manifest paths when migrating authoring source. Test
+  accepted and rejected instances through Effect and the generated artifact.
+- Strict Effect decoders MUST set `onExcessProperty: "error"` for published
+  closed objects; the default stripping behavior is not contract enforcement.
+- Keep generation deterministic and fail validation on any source/artifact
+  drift.
 - Use the repository's declared JSON Schema draft and self-contained OpenAPI
   version consistently.
 - Give published schemas stable absolute IDs and deterministic local resolution.

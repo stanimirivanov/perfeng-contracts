@@ -1,12 +1,22 @@
 """Consumer-facing constraints, including regressions found in the prototype."""
 
 import copy
+import json
+import tempfile
 import unittest
+from pathlib import Path
 from typing import ClassVar
 
 from jsonschema import Draft202012Validator
 
-from scripts.validate import ROOT, check_defaults, load_contracts, read_json, validate_bundle
+from scripts.validate import (
+    ROOT,
+    check_bundle_identity,
+    check_defaults,
+    load_contracts,
+    read_json,
+    validate_bundle,
+)
 
 
 class ContractsTest(unittest.TestCase):
@@ -18,6 +28,14 @@ class ContractsTest(unittest.TestCase):
 
     def test_all_examples_and_schema_defaults(self) -> None:
         self.assertEqual(validate_bundle(), (19, 33))
+
+    def test_bundle_and_project_versions_must_match(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "contracts.json").write_text(json.dumps({"version": "1.0.0"}), encoding="utf-8")
+            (root / "pyproject.toml").write_text('[project]\nversion = "2.0.0"\n', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "versions differ"):
+                check_bundle_identity(root)
 
     def test_bad_candidate_identity(self) -> None:
         for value in ("1234567", "g" * 40, "a" * 39, "a" * 41):

@@ -190,6 +190,10 @@ authority.
 Run every applicable required check supported by the current environment:
 
 ```sh
+pnpm format:check
+pnpm contracts:check
+pnpm typecheck
+pnpm test
 uv run --locked ruff format --check .
 uv run --locked ruff check .
 uv run --locked ty check
