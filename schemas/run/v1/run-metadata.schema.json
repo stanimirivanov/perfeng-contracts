@@ -1,26 +1,35 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://perfeng.dev/schemas/run/v1/run-metadata.schema.json",
-  "title": "Performance Run Metadata",
-  "description": "Complete metadata for a single performance test run",
   "type": "object",
-  "required": ["run", "test", "candidate", "environment"],
-  "additionalProperties": false,
+  "required": [
+    "run",
+    "test",
+    "candidate",
+    "environment"
+  ],
   "properties": {
     "run": {
       "type": "object",
-      "required": ["id", "suite", "profile", "timestamp", "trigger", "status"],
-      "additionalProperties": false,
+      "required": [
+        "id",
+        "suite",
+        "profile",
+        "timestamp",
+        "trigger",
+        "status"
+      ],
       "properties": {
         "id": {
           "type": "string",
-          "pattern": "^perf-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}$",
-          "description": "Unique performance run identifier"
+          "description": "Unique performance run identifier",
+          "pattern": "^perf-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}$"
         },
         "suite": {
           "type": "string",
-          "minLength": 1,
-          "description": "Test suite name (e.g., checkout-api, search-flow)"
+          "description": "Test suite name (e.g., checkout-api, search-flow)",
+          "title": "minLength(1)",
+          "minLength": 1
         },
         "profile": {
           "type": "string",
@@ -41,7 +50,13 @@
         },
         "trigger": {
           "type": "string",
-          "enum": ["manual", "ci", "schedule", "bisect", "release"],
+          "enum": [
+            "manual",
+            "ci",
+            "schedule",
+            "bisect",
+            "release"
+          ],
           "description": "What triggered this run"
         },
         "status": {
@@ -65,297 +80,656 @@
           "description": "Current run state"
         },
         "policyVersion": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Version of the policy used for evaluation"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Version of the policy used for evaluation",
+          "default": null
         },
         "notes": {
-          "type": ["string", "null"],
-          "default": null,
-          "maxLength": 1000,
-          "description": "Optional notes about this run"
+          "anyOf": [
+            {
+              "type": "string",
+              "description": "a string at most 1000 character(s) long",
+              "title": "maxLength(1000)",
+              "maxLength": 1000
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Optional notes about this run",
+          "default": null
         }
-      }
+      },
+      "additionalProperties": false
     },
     "test": {
       "type": "object",
-      "required": ["type", "tool", "toolVersion", "scenario"],
-      "additionalProperties": false,
+      "required": [
+        "type",
+        "tool",
+        "toolVersion",
+        "scenario"
+      ],
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["api", "browser", "kubernetes", "infrastructure"],
+          "enum": [
+            "api",
+            "browser",
+            "kubernetes",
+            "infrastructure"
+          ],
           "description": "Type of performance test"
         },
         "tool": {
           "type": "string",
-          "enum": ["k6", "playwright", "kube-burner", "benchmark-operator"],
+          "enum": [
+            "k6",
+            "playwright",
+            "kube-burner",
+            "benchmark-operator"
+          ],
           "description": "Tool used for testing"
         },
         "toolVersion": {
           "type": "string",
-          "minLength": 1,
-          "description": "Version of the test tool"
+          "description": "Version of the test tool",
+          "title": "minLength(1)",
+          "minLength": 1
         },
         "scenario": {
           "type": "string",
-          "minLength": 1,
-          "description": "Specific scenario name"
+          "description": "Specific scenario name",
+          "title": "minLength(1)",
+          "minLength": 1
         },
         "workloadVersion": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Version of the workload definition"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Version of the workload definition",
+          "default": null
         },
         "configHash": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Hash of the test configuration"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hash of the test configuration",
+          "default": null
         }
-      }
+      },
+      "additionalProperties": false
     },
     "candidate": {
       "type": "object",
-      "required": ["gitSha"],
-      "additionalProperties": false,
+      "required": [
+        "gitSha"
+      ],
       "properties": {
         "gitSha": {
           "type": "string",
-          "pattern": "^[A-Fa-f0-9]{40}$",
-          "description": "Git commit SHA of the candidate"
+          "description": "Git commit SHA of the candidate",
+          "pattern": "^[A-Fa-f0-9]{40}$"
         },
         "imageDigest": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Container image digest"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Container image digest",
+          "default": null
         },
         "version": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Application version string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Application version string",
+          "default": null
         },
         "branch": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Git branch name"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Git branch name",
+          "default": null
         },
         "configurationHash": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Hash of application configuration"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hash of application configuration",
+          "default": null
         },
         "featureFlags": {
-          "type": ["object", "null"],
-          "default": null,
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [],
+              "properties": {},
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
           "description": "Feature flag settings",
-          "additionalProperties": {
-            "type": ["string", "boolean", "number", "null"]
-          }
+          "default": null
         },
         "databaseMigrationVersion": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Database migration version"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Database migration version",
+          "default": null
         }
-      }
+      },
+      "additionalProperties": false
     },
     "environment": {
       "type": "object",
-      "required": ["cluster", "kubernetesVersion"],
-      "additionalProperties": false,
+      "required": [
+        "cluster",
+        "kubernetesVersion"
+      ],
       "properties": {
         "cluster": {
           "type": "string",
-          "minLength": 1,
-          "description": "Cluster name"
+          "description": "Cluster name",
+          "title": "minLength(1)",
+          "minLength": 1
         },
         "kubernetesVersion": {
           "type": "string",
-          "pattern": "^v?\\d+\\.\\d+\\.\\d+",
-          "description": "Kubernetes version"
+          "description": "Kubernetes version",
+          "pattern": "^v?\\d+\\.\\d+\\.\\d+"
         },
         "nodePool": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Node pool identifier"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Node pool identifier",
+          "default": null
         },
         "nodeModel": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Node hardware model"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Node hardware model",
+          "default": null
         },
         "cpuArchitecture": {
-          "type": ["string", "null"],
-          "default": null,
-          "pattern": "^(amd64|arm64)$",
-          "description": "CPU architecture (e.g., amd64, arm64)"
+          "anyOf": [
+            {
+              "type": "string",
+              "description": "a string matching the pattern ^(amd64|arm64)$",
+              "pattern": "^(amd64|arm64)$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "CPU architecture (e.g., amd64, arm64)",
+          "default": null
         },
         "kernel": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Kernel version"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Kernel version",
+          "default": null
         },
         "containerRuntime": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Container runtime (containerd, cri-o, etc.)"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Container runtime (containerd, cri-o, etc.)",
+          "default": null
         },
         "cni": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Container Network Interface"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Container Network Interface",
+          "default": null
         },
         "storageClass": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Storage class used"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Storage class used",
+          "default": null
         },
         "fingerprint": {
-          "type": ["string", "null"],
-          "default": null,
-          "pattern": "^[a-f0-9]{64}$",
-          "description": "Canonical environment fingerprint"
+          "anyOf": [
+            {
+              "type": "string",
+              "description": "a string matching the pattern ^[a-f0-9]{64}$",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Canonical environment fingerprint",
+          "default": null
         },
         "nodeCount": {
-          "type": ["integer", "null"],
-          "default": null,
-          "minimum": 1,
-          "description": "Number of nodes"
+          "anyOf": [
+            {
+              "type": "integer",
+              "description": "a number greater than or equal to 1",
+              "title": "greaterThanOrEqualTo(1)",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Number of nodes",
+          "default": null
         },
         "region": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Geographic region"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Geographic region",
+          "default": null
         }
-      }
+      },
+      "additionalProperties": false
     },
     "runtime": {
-      "type": ["object", "null"],
-      "default": null,
-      "description": "Runtime resource configuration",
-      "additionalProperties": false,
-      "properties": {
-        "replicas": {
-          "type": ["integer", "null"],
-          "default": null,
-          "minimum": 1,
-          "description": "Number of replicas"
-        },
-        "cpuRequests": {
-          "type": ["string", "null"],
-          "default": null,
-          "pattern": "^\\d+(\\.\\d+)?m?$",
-          "description": "CPU requests (e.g., '500m')"
-        },
-        "cpuLimits": {
-          "type": ["string", "null"],
-          "default": null,
-          "pattern": "^\\d+(\\.\\d+)?m?$",
-          "description": "CPU limits"
-        },
-        "memoryRequests": {
-          "type": ["string", "null"],
-          "default": null,
-          "pattern": "^\\d+(\\.\\d+)?(Ki|Mi|Gi|Ti|K|M|G|T)?$",
-          "description": "Memory requests (e.g., '512Mi')"
-        },
-        "memoryLimits": {
-          "type": ["string", "null"],
-          "default": null,
-          "pattern": "^\\d+(\\.\\d+)?(Ki|Mi|Gi|Ti|K|M|G|T)?$",
-          "description": "Memory limits"
-        },
-        "hpa": {
-          "type": ["object", "null"],
-          "default": null,
-          "description": "Horizontal Pod Autoscaler configuration",
-          "additionalProperties": false,
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [],
           "properties": {
-            "enabled": {
-              "type": ["boolean", "null"],
+            "replicas": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "description": "a number greater than or equal to 1",
+                  "title": "greaterThanOrEqualTo(1)",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Number of replicas",
               "default": null
             },
-            "minReplicas": {
-              "type": ["integer", "null"],
-              "default": null,
-              "minimum": 1
+            "cpuRequests": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "description": "a string matching the pattern ^\\d+(\\.\\d+)?m?$",
+                  "pattern": "^\\d+(\\.\\d+)?m?$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "CPU requests (e.g., '500m')",
+              "default": null
             },
-            "maxReplicas": {
-              "type": ["integer", "null"],
-              "default": null,
-              "minimum": 1
+            "cpuLimits": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "description": "a string matching the pattern ^\\d+(\\.\\d+)?m?$",
+                  "pattern": "^\\d+(\\.\\d+)?m?$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "CPU limits",
+              "default": null
             },
-            "targetCpuUtilization": {
-              "type": ["integer", "null"],
-              "default": null,
-              "minimum": 1,
-              "maximum": 100
+            "memoryRequests": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "description": "a string matching the pattern ^\\d+(\\.\\d+)?(Ki|Mi|Gi|Ti|K|M|G|T)?$",
+                  "pattern": "^\\d+(\\.\\d+)?(Ki|Mi|Gi|Ti|K|M|G|T)?$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Memory requests (e.g., '512Mi')",
+              "default": null
+            },
+            "memoryLimits": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "description": "a string matching the pattern ^\\d+(\\.\\d+)?(Ki|Mi|Gi|Ti|K|M|G|T)?$",
+                  "pattern": "^\\d+(\\.\\d+)?(Ki|Mi|Gi|Ti|K|M|G|T)?$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Memory limits",
+              "default": null
+            },
+            "hpa": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "required": [],
+                  "properties": {
+                    "enabled": {
+                      "anyOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "minReplicas": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "description": "a number greater than or equal to 1",
+                          "title": "greaterThanOrEqualTo(1)",
+                          "minimum": 1
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "maxReplicas": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "description": "a number greater than or equal to 1",
+                          "title": "greaterThanOrEqualTo(1)",
+                          "minimum": 1
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "targetCpuUtilization": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "description": "a number between 1 and 100",
+                          "title": "between(1, 100)",
+                          "minimum": 1,
+                          "maximum": 100
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Horizontal Pod Autoscaler configuration",
+              "default": null
             }
-          }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
         }
-      }
+      ],
+      "description": "Runtime resource configuration",
+      "default": null
     },
     "data": {
-      "type": ["object", "null"],
-      "default": null,
-      "description": "Test data information",
-      "additionalProperties": false,
-      "properties": {
-        "datasetId": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Dataset identifier"
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "datasetId": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Dataset identifier",
+              "default": null
+            },
+            "datasetVersion": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Dataset version",
+              "default": null
+            },
+            "databaseSize": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "description": "a string matching the pattern ^\\d+(\\.\\d+)?(KB|MB|GB|TB|KiB|MiB|GiB|TiB)$",
+                  "pattern": "^\\d+(\\.\\d+)?(KB|MB|GB|TB|KiB|MiB|GiB|TiB)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Database size (e.g., '10GB')",
+              "default": null
+            },
+            "seedVersion": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Data seed version",
+              "default": null
+            }
+          },
+          "additionalProperties": false
         },
-        "datasetVersion": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Dataset version"
-        },
-        "databaseSize": {
-          "type": ["string", "null"],
-          "default": null,
-          "pattern": "^\\d+(\\.\\d+)?(KB|MB|GB|TB|KiB|MiB|GiB|TiB)$",
-          "description": "Database size (e.g., '10GB')"
-        },
-        "seedVersion": {
-          "type": ["string", "null"],
-          "default": null,
-          "description": "Data seed version"
+        {
+          "type": "null"
         }
-      }
+      ],
+      "description": "Test data information",
+      "default": null
     },
     "phases": {
-      "type": ["object", "null"],
-      "default": null,
-      "description": "Timing information for different phases",
-      "additionalProperties": false,
-      "properties": {
-        "provisionStart": {
-          "type": ["string", "null"],
-          "default": null,
-          "format": "date-time"
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "provisionStart": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "warmupStart": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "measurementStart": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "measurementEnd": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "cooldownEnd": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "additionalProperties": false
         },
-        "warmupStart": {
-          "type": ["string", "null"],
-          "default": null,
-          "format": "date-time"
-        },
-        "measurementStart": {
-          "type": ["string", "null"],
-          "default": null,
-          "format": "date-time"
-        },
-        "measurementEnd": {
-          "type": ["string", "null"],
-          "default": null,
-          "format": "date-time"
-        },
-        "cooldownEnd": {
-          "type": ["string", "null"],
-          "default": null,
-          "format": "date-time"
+        {
+          "type": "null"
         }
-      }
+      ],
+      "description": "Timing information for different phases",
+      "default": null
     }
-  }
+  },
+  "additionalProperties": false,
+  "description": "Complete metadata for a single performance test run",
+  "title": "Performance Run Metadata"
 }
