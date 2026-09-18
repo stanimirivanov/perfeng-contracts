@@ -75,6 +75,10 @@ them.
 
 ### Staged migration
 
+The staged data-contract migration was completed in candidate bundle `0.14.0`.
+All nineteen data contracts are now listed in the generated registry; the
+following paragraphs record the transition strategy used to reach that state.
+
 The TypeScript generated-contract registry is the transition ledger. A data
 contract listed there is Effect-authored; a contract not yet listed continues
 to use its existing hand-authored JSON Schema as the authority. No schema path

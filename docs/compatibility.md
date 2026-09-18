@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.13.3`; it is not a stable release.
+- The current candidate bundle is `0.14.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -12,7 +12,18 @@
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
 
-Candidate bundle 0.13.3 changes the authoring source and exact schema bytes for
+Candidate bundle 0.14.0 completes the Effect Schema authoring migration for all
+nineteen data contracts. The remaining workload, catalogue, artifact,
+transport, Playwright, browser, policy, analysis and baseline families now
+generate their existing Draft 2020-12 artifacts from typed sources. Runtime
+refinements and generated constraints retain conditional, uniqueness,
+timestamp, provenance and closed-object behavior. Published IDs, manifest
+names, paths and externally referenced fragments are unchanged. Existing
+positive and negative compatibility suites pass without producer or reader
+migration. Exact-byte consumers must update deliberately. The Run Management
+OpenAPI description remains hand-authored under the separate API workflow.
+
+Candidate bundle 0.13.3 changed the authoring source and exact schema bytes for
 `run/v1` without changing accepted run-metadata documents. Effect Schema now
 owns the legacy inline candidate and environment shapes as well as run, test,
 runtime, data and phase metadata. The inline shapes intentionally remain
