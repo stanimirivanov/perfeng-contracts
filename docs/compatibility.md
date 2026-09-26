@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.15.0`; it is not a stable release.
+- The current candidate bundle is `0.16.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -12,6 +12,19 @@
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
 
+Candidate bundle 0.16.0 corrects the not-yet-implemented native artifact upload
+authorization selected by
+[ADR-0003](decisions/0003-use-s3-presigned-put-for-native-artifacts.md). The
+upload-grant response now carries a short-lived S3 SigV4 presigned `PUT` URL and
+a closed set of exact signed headers instead of a custom
+`X-Perfeng-Upload-Grant` header paired with a credential-free gateway URL. The
+URL and signed headers are secret delivery material and must be redacted and
+never persisted as evidence. Presence, acquisition, renewal, release,
+registration and terminal-reporting semantics are unchanged. Control-plane and
+Playwright consumers must repin together before enabling upload grants and must
+not mix the 0.15.0 header shape with direct object-store upload. There is no
+persisted upload-grant data to migrate.
+
 Candidate bundle 0.15.0 adds the independent `native-worker/v1` API without
 changing any data schema or Run Management API operation. Strict bundle readers
 must accept a second API inventory entry. Existing Run Management clients and
@@ -20,7 +33,9 @@ the control plane must pin the same reviewed bundle and implement the complete
 v1 lease fence: authenticated worker identity, attempt identity, expected Run
 revision and lease capability. A consumer must not treat presence as
 qualification, availability or authorization, and must not send worker,
-lease-capability, upload-capability or object-key choices in JSON requests.
+lease-capability, upload-capability or object-key choices in JSON requests. Its
+custom upload-capability transport is retained only as candidate history and
+must not be implemented after 0.16.0.
 
 Candidate bundle 0.14.0 completes the Effect Schema authoring migration for all
 nineteen data contracts. The remaining workload, catalogue, artifact,

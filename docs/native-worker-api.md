@@ -33,10 +33,11 @@ Credential Manager or an equivalent OS-protected store.
 
 Every request uses the worker credential as an HTTPS bearer credential. The
 authenticated principal is the worker identity. Request bodies therefore have
-no `workerId`, principal, credential or token property. Lease and upload
-capabilities are narrower authorization material and are carried only in the
-documented headers. None of these values belongs in logs, evidence, URLs,
-diagnostics or persisted fixture data.
+no `workerId`, principal, credential or token property. The narrower lease
+capability is carried only in the documented header. Upload authorization is a
+short-lived presigned URL plus a closed set of exact signed request headers in
+the upload-grant response body. These values are delivery material only: they
+do not belong in logs, evidence, diagnostics or persistent storage.
 
 | Operation | Purpose | Success |
 | --- | --- | --- |
@@ -44,7 +45,7 @@ diagnostics or persisted fixture data.
 | `acquireNativeLease` | Long-poll briefly for one compatible assignment | `200` plus `X-Perfeng-Lease`, or `204` plus `Retry-After` |
 | `renewNativeLease` | Extend the lease and observe cancellation | `200` with authoritative server times |
 | `releaseNativeLease` | Stop without claiming ordinary completion | idempotent `204` |
-| `createNativeUploadGrant` | Request one bounded exact-object upload | `201` plus `X-Perfeng-Upload-Grant` |
+| `createNativeUploadGrant` | Request one bounded exact-object upload | `201` with a presigned `PUT` URL and exact signed headers |
 | `registerNativeArtifact` | Verify uploaded bytes and register their immutable reference | `201` |
 | `reportNativeTerminal` | Report completed or failed execution | `200`, including identical duplicate acknowledgement |
 
@@ -114,22 +115,35 @@ release does not make partial artifacts authoritative.
 The lease contains an artifact plan with server-selected slots, kinds, media
 types, formats, maximum byte counts and required status. For a completed local
 file, the worker computes exact size and SHA-256 and requests a grant for the
-assigned slot. It does not send an object key. The control plane returns safe
-grant metadata in JSON and the opaque upload authorization in
-`X-Perfeng-Upload-Grant`.
+assigned slot. It does not send an object key. The control plane returns the
+server-selected key, a short-lived S3 Signature Version 4 presigned `PUT` URL
+and the exact headers the worker must reproduce. The URL query is a bearer
+credential. The whole grant response must therefore be handled as sensitive
+delivery material even though its non-secret identity fields are later stored.
 
-The response includes a credential-free object-store HTTPS endpoint whose path
-maps to the returned exact key:
+The object-store URL path ends with the returned exact key:
 
 ```text
 runs/{runId}/attempts/{attemptId}/{slot}
 ```
 
-The grant permits only the required `PUT`, exact key, declared digest and
-bounded size, expires no later than the execution lease, and grants no bucket
-listing, deletion or cross-Run access. After upload, the worker registers the
-grant, slot, size and digest. The server verifies the object before returning
-an immutable reference. The worker cannot choose the authoritative URI.
+The closed `uploadHeaders` object contains lowercase canonical names for the
+signed `content-type` and `x-amz-checksum-sha256` values. The worker sends those
+values unchanged and must not add an alternative payload checksum or content
+type. The signature also binds `host`; the HTTP client derives it from the
+presigned URL rather than receiving it as an explicit header value. The signed
+full-object checksum fixes the exact payload bytes. The provider or ingress may
+apply an additional request-size ceiling, and registration independently
+verifies the declared size and checksum.
+
+The grant permits only the required `PUT`, exact key, declared digest and exact
+size, expires no later than the execution lease, and grants no bucket listing,
+reading, deletion or cross-Run access. An identical upload may be retried until
+expiry; this is not an exactly-once guarantee. After upload, the worker
+registers the grant, slot, size and digest. The server independently verifies
+the stored object before returning an immutable reference. The worker cannot
+choose the authoritative URI, and object-store acceptance alone never makes
+uploaded bytes evidence.
 
 Required evidence is registered first and the manifest is registered last.
 Only then may `COMPLETED` name the registered manifest artifact. This ordering
@@ -155,6 +169,8 @@ Implementations must additionally:
 
 - require TLS and validate the service identity;
 - bind the bearer principal and lease capability before processing payloads;
+- redact complete presigned URLs, query strings and signed upload headers from
+  logs, traces, metrics, errors and crash reports;
 - enforce request-size, collection-size, artifact-count and artifact-byte
   limits before expensive work;
 - compare digests and identifiers exactly rather than normalizing evidence;
@@ -167,10 +183,12 @@ Checked-in valid payloads live under `api/native-worker/v1/examples`, matching
 the Run Management API layout. Deliberately invalid payloads are isolated under
 `api/native-worker/v1/rejections`, while `http-cases.json` composes the examples
 into request and response exchanges. The fixtures use reserved `.invalid`
-HTTPS endpoints, explicit fake header capabilities and synthetic identifiers.
-Validation is offline and rejects remote schema references, request-selected
-identity, capacity above one, invalid cancellation shapes, missing revision
-fences, worker-selected locations and incomplete terminal reports.
+HTTPS endpoints, explicit fake lease capabilities, non-secret presigning
+placeholders and synthetic identifiers. Validation is offline and rejects
+remote schema references, request-selected identity, capacity above one,
+invalid cancellation shapes, missing revision fences, worker-selected
+locations, mismatched presigned upload material and incomplete terminal
+reports.
 
 ## Consumer rollout
 
@@ -184,8 +202,15 @@ connectivity and identity, but does not own the Windows process or commit its
 credential. Analysis consumes only registered immutable evidence and remains
 independent of this transport.
 
-This additive API does not change Run Management or any existing data schema.
-Strict bundle readers must recognize the second API inventory entry before
-moving from bundle 0.14.0 to 0.15.0. There is no conversion of old local
-captures into leased attempts; new authoritative evidence begins with a v1
-lease and attempt identity.
+Bundle `0.15.0` introduced this additive API but described upload authorization
+as a custom response header paired with a credential-free endpoint. No producer
+or consumer implemented that candidate upload shape. Bundle `0.16.0` corrects
+only that transport to standard S3 SigV4 presigned `PUT`; presence, acquisition,
+renewal and release semantics are unchanged. The control plane and Playwright
+worker must repin to `0.16.0` together before enabling upload grants and must not
+mix the old header shape with direct object-store upload.
+
+Run Management and every existing data schema remain unchanged. There is no
+conversion of old local captures into leased attempts and no persisted upload
+grant data to migrate. New authoritative evidence begins with a v1 lease and
+attempt identity.

@@ -103,7 +103,7 @@ and negative regression cases. Schema IDs identify bundled resources; validation
 does not fetch schemas or artifacts from the internet. Tests verify fixture
 checksums against local bytes.
 
-CI runs these checks and uploads a `perfeng-contracts-0.15.0.tar.gz` candidate
+CI runs these checks and uploads a `perfeng-contracts-0.16.0.tar.gz` candidate
 bundle. That CI artifact is not a published stable release. Until a release
 exists, integrations should pin the merged commit SHA, not a floating branch.
 
@@ -138,9 +138,9 @@ baseline administration. Its self-contained OpenAPI description and fixtures
 are under api/run-management/v1 and included in the candidate bundle.
 The [Native Worker API](docs/native-worker-api.md) defines authenticated worker
 presence, qualification interpretation, leased execution, cancellation,
-exact-object upload grants, immutable artifact registration and terminal
-attempt reporting. Its self-contained OpenAPI description and conformance
-fixtures are under api/native-worker/v1.
+exact-object S3 presigned upload grants, immutable artifact registration and
+terminal attempt reporting. Its self-contained OpenAPI description and
+conformance fixtures are under api/native-worker/v1.
 HTTP, persistence and analysis implementations live in their owning repositories;
 this repository defines only their language-neutral interchange boundaries.
 Missing statistical values mean unavailable, never zero.
