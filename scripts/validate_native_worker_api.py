@@ -1,10 +1,11 @@
 """Offline Native Worker OpenAPI and conformance validation."""
 
+import base64
 import json
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlsplit
+from urllib.parse import parse_qsl, urlsplit
 
 from openapi_spec_validator import OpenAPIV31SpecValidator
 
@@ -25,6 +26,20 @@ LEASE_OPERATIONS = {
     "reportNativeTerminal",
 }
 OPERATIONS = {"reportWorkerPresence", "acquireNativeLease", *LEASE_OPERATIONS}
+SIGNED_UPLOAD_HEADERS = {
+    "content-type",
+    "host",
+    "x-amz-checksum-sha256",
+}
+REQUIRED_PRESIGN_PARAMETERS = {
+    "X-Amz-Algorithm",
+    "X-Amz-Credential",
+    "X-Amz-Date",
+    "X-Amz-Expires",
+    "X-Amz-SignedHeaders",
+    "X-Amz-Signature",
+}
+OPTIONAL_PRESIGN_PARAMETERS = {"X-Amz-Security-Token", "x-id"}
 FIXTURES = {
     "presence": "WorkerPresence",
     "presence-status": "PresenceStatus",
@@ -53,6 +68,7 @@ REJECTIONS = {
     "worker-chooses-artifact-uri",
     "completed-without-registered-manifest",
     "failed-without-failure-classification",
+    "upload-grant-missing-signed-headers",
     "worker-chooses-object-key",
 }
 HTTP_CASES = {
@@ -137,15 +153,46 @@ def check_exact_object_scope(values: dict[str, Any]) -> None:
     if request["size"] > grant["maximumBytes"]:
         raise ValueError("Upload grant is smaller than the declared artifact")
     upload = urlsplit(grant["uploadUrl"])
-    if (
-        upload.username is not None
-        or upload.password is not None
-        or upload.query
-        or upload.fragment
-    ):
-        raise ValueError("Upload endpoint contains credential or mutable URL state")
-    if upload.path != "/upload/" + expected_key:
+    if upload.username is not None or upload.password is not None or upload.fragment:
+        raise ValueError("Upload endpoint contains forbidden URL state")
+    if not upload.path.endswith("/" + expected_key):
         raise ValueError("Upload endpoint differs from the exact server-selected object key")
+    query_items = parse_qsl(upload.query, keep_blank_values=True, strict_parsing=True)
+    if len(query_items) != len({name for name, _ in query_items}):
+        raise ValueError("Presigned upload URL contains duplicate query parameters")
+    query = dict(query_items)
+    if not REQUIRED_PRESIGN_PARAMETERS <= set(query) or not set(query) <= (
+        REQUIRED_PRESIGN_PARAMETERS | OPTIONAL_PRESIGN_PARAMETERS
+    ):
+        raise ValueError("Presigned upload URL has an unexpected parameter set")
+    if query["X-Amz-Algorithm"] != "AWS4-HMAC-SHA256":
+        raise ValueError("Upload grant does not use S3 Signature Version 4")
+    if query.get("x-id", "PutObject") != "PutObject":
+        raise ValueError("Presigned upload URL does not authorize PutObject")
+    try:
+        presign_seconds = int(query["X-Amz-Expires"])
+    except ValueError as error:
+        raise ValueError("Presigned upload expiry is not an integer") from error
+    if not 1 <= presign_seconds <= 300:
+        raise ValueError("Presigned upload expiry is outside the protocol bound")
+    if query["X-Amz-SignedHeaders"] != ";".join(sorted(SIGNED_UPLOAD_HEADERS)):
+        raise ValueError("Presigned upload URL does not bind the exact required headers")
+    try:
+        presign_issued = datetime.strptime(query["X-Amz-Date"], "%Y%m%dT%H%M%SZ").replace(
+            tzinfo=UTC
+        )
+    except ValueError as error:
+        raise ValueError("Presigned upload issue time is not an AWS basic timestamp") from error
+    grant_expiry = datetime.fromisoformat(grant["expiresAt"])
+    if presign_issued + timedelta(seconds=presign_seconds) != grant_expiry:
+        raise ValueError("Presigned upload expiry differs from the declared grant expiry")
+
+    expected_headers = {
+        "content-type": request["mediaType"],
+        "x-amz-checksum-sha256": base64.b64encode(bytes.fromhex(request["sha256"])).decode(),
+    }
+    if grant["uploadHeaders"] != expected_headers:
+        raise ValueError("Presigned upload headers differ from the declared artifact")
 
     plan = next(
         (item for item in values["lease"]["artifactPlan"] if item["slot"] == grant["slot"]),
@@ -182,16 +229,25 @@ def check_fixture_safety(
             for child in value:
                 visit(child)
         elif isinstance(value, str) and value.startswith(("http://", "https://")):
-            host = urlsplit(value).hostname
+            parsed = urlsplit(value)
+            host = parsed.hostname
             if host is None or not host.endswith(".invalid"):
                 raise ValueError("Fixtures must use reserved non-routable HTTPS endpoints")
+            query = dict(parse_qsl(parsed.query, keep_blank_values=True, strict_parsing=True))
+            if "X-Amz-Credential" in query and (
+                not query["X-Amz-Credential"].startswith("EXAMPLE-NOT-A-REAL-")
+                or query.get("X-Amz-Signature") != "0" * 64
+            ):
+                raise ValueError(
+                    "Presigned upload fixture must contain explicit non-secret placeholders"
+                )
 
     visit(examples)
     visit(rejections)
     for case in cases:
         for headers_name in ["requestHeaders", "headers"]:
             for name, value in case.get(headers_name, {}).items():
-                if name in {"X-Perfeng-Lease", "X-Perfeng-Upload-Grant"} and (
+                if name == "X-Perfeng-Lease" and (
                     not isinstance(value, str) or not value.startswith("example-not-a-real-")
                 ):
                     raise ValueError("HTTP fixtures may contain only explicit fake capabilities")
@@ -248,13 +304,30 @@ def lint(document: dict[str, Any]) -> None:
         raise ValueError("Worker identity or credentials cannot be request-selected")
     if "objectKey" in schemas["UploadGrantRequest"]["properties"]:
         raise ValueError("Worker cannot select an upload object key")
+    if "UploadCapability" in schemas:
+        raise ValueError("Native upload authorization cannot use a custom capability header")
+    if set(schemas["UploadGrant"]["required"]) != {
+        "grantId",
+        "leaseId",
+        "attemptId",
+        "runId",
+        "slot",
+        "objectKey",
+        "uploadUrl",
+        "uploadHeaders",
+        "method",
+        "expiresAt",
+        "maximumBytes",
+        "sha256",
+    }:
+        raise ValueError("Upload grant must require exact presigned PUT delivery material")
 
     _, acquire = operation(document, "acquireNativeLease")
     if set(acquire["responses"]["200"]["headers"]) != {"X-Perfeng-Lease"}:
         raise ValueError("Lease capability must be returned only in its response header")
     _, grant = operation(document, "createNativeUploadGrant")
-    if set(grant["responses"]["201"]["headers"]) != {"X-Perfeng-Upload-Grant"}:
-        raise ValueError("Upload capability must be returned only in its response header")
+    if grant["responses"]["201"].get("headers"):
+        raise ValueError("Upload authorization must be returned only in the response body")
 
 
 def check_http(document: dict[str, Any], case: dict[str, Any], values: dict[str, Any]) -> None:

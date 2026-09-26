@@ -22,7 +22,7 @@ class NativeWorkerApiTests(unittest.TestCase):
 
     def test_contract_and_conformance_corpus_validate_without_network(self):
         with patch("socket.create_connection", side_effect=AssertionError("network")):
-            self.assertEqual(native.validate_native_worker_api(), (16, 10, 10))
+            self.assertEqual(native.validate_native_worker_api(), (16, 11, 10))
 
     def test_presence_cannot_select_identity_qualification_or_parallel_capacity(self):
         validator = native.schema_validator(self.document, "WorkerPresence")
@@ -73,6 +73,27 @@ class NativeWorkerApiTests(unittest.TestCase):
             ("upload-grant", "objectKey", "runs/other/attempts/other/measurements"),
             ("upload-grant", "sha256", "a" * 64),
             ("upload-grant", "maximumBytes", 1024),
+            (
+                "upload-grant",
+                "uploadUrl",
+                "https://objects.perfeng.invalid/perfeng-artifacts/runs/other?X-Amz-Algorithm=AWS4-HMAC-SHA256",
+            ),
+            (
+                "upload-grant",
+                "uploadHeaders",
+                {
+                    "content-type": "text/plain",
+                    "x-amz-checksum-sha256": "//////////////////////////////////////////8=",
+                },
+            ),
+            (
+                "upload-grant",
+                "uploadHeaders",
+                {
+                    "content-type": "application/json",
+                    "x-amz-checksum-sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+                },
+            ),
             ("artifact", "uri", "s3://perfeng/runs/other/measurements"),
             ("artifact", "size", 4097),
         ]
@@ -81,6 +102,13 @@ class NativeWorkerApiTests(unittest.TestCase):
             changed[name][field] = value
             with self.assertRaises(ValueError):
                 native.check_exact_object_scope(changed)
+
+        changed = copy.deepcopy(self.values)
+        changed["upload-grant"]["uploadUrl"] = changed["upload-grant"]["uploadUrl"].replace(
+            "X-Amz-Expires=120", "X-Amz-Expires=121"
+        )
+        with self.assertRaisesRegex(ValueError, "declared grant expiry"):
+            native.check_exact_object_scope(changed)
 
     def test_lease_mutations_require_capability_attempt_and_revision_fences(self):
         fixtures = {
@@ -119,7 +147,7 @@ class NativeWorkerApiTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "lost-lease"):
             native.lint(document)
 
-    def test_upload_locations_are_server_selected_and_capabilities_are_header_only(self):
+    def test_upload_locations_are_server_selected_and_presigned(self):
         upload_request = self.values["upload-request"]
         validator = native.schema_validator(self.document, "UploadGrantRequest")
         self.assertFalse(validator.is_valid({**upload_request, "objectKey": "arbitrary/key"}))
@@ -132,9 +160,26 @@ class NativeWorkerApiTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "response header missing"):
             native.check_http(self.document, {**acquire, "headers": {}}, self.values)
 
+        _, grant_operation = native.operation(self.document, "createNativeUploadGrant")
+        self.assertNotIn("headers", grant_operation["responses"]["201"])
+        self.assertNotIn("UploadCapability", self.document["components"]["schemas"])
+        upload_grant = self.values["upload-grant"]
+        self.assertIn("X-Amz-Signature=", upload_grant["uploadUrl"])
+        self.assertEqual(
+            set(upload_grant["uploadHeaders"]),
+            {"content-type", "x-amz-checksum-sha256"},
+        )
+
+        document = copy.deepcopy(self.document)
+        _, changed_grant = native.operation(document, "createNativeUploadGrant")
+        changed_grant["responses"]["201"]["headers"] = {
+            "X-Perfeng-Upload-Grant": {"schema": {"type": "string"}}
+        }
+        with self.assertRaisesRegex(ValueError, "response body"):
+            native.lint(document)
+
         for fixture in self.values.values():
             serialized = str(fixture).lower()
-            self.assertNotIn("example-not-a-real", serialized)
             self.assertNotIn("authorization", serialized)
 
     def test_fixture_endpoints_are_reserved_and_non_routable(self):
@@ -144,6 +189,13 @@ class NativeWorkerApiTests(unittest.TestCase):
             "https://github.com/example/perfeng-playwright.git"
         )
         with self.assertRaisesRegex(ValueError, "non-routable"):
+            native.check_fixture_safety(changed, self.rejections, self.cases)
+
+        changed = copy.deepcopy(self.values)
+        changed["upload-grant"]["uploadUrl"] = changed["upload-grant"]["uploadUrl"].replace(
+            "EXAMPLE-NOT-A-REAL-ACCESS-KEY", "AKIAIOSFODNN7EXAMPLE"
+        )
+        with self.assertRaisesRegex(ValueError, "non-secret placeholders"):
             native.check_fixture_safety(changed, self.rejections, self.cases)
 
     def test_cancellation_and_terminal_variants_are_closed(self):

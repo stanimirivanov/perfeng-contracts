@@ -1,10 +1,10 @@
 # ADR-0003: Use S3 presigned PUT for native artifact upload
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-09-26
 - Milestone: M03 — Native Browser Decision Loop
 - Deciders: Repository owner
-- Supersedes: Artifact-upload authorization aspects of [ADR-0001](0001-native-windows-worker-protocol.md), if accepted
+- Supersedes: Artifact-upload authorization aspects of [ADR-0001](0001-native-windows-worker-protocol.md)
 - Superseded by: None
 
 ## TL;DR
