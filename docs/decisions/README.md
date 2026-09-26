@@ -89,3 +89,4 @@ How will assumptions and consequences be verified?
 |:--|:--|:--|
 | [0001](0001-native-windows-worker-protocol.md) | Accepted | Use a separate outbound, leased native Windows worker protocol with pre-provisioned identity and scoped direct artifact upload. |
 | [0002](0002-use-effect-schema-at-contract-boundaries.md) | Accepted | Author data contracts with Effect Schema while retaining generated Draft 2020-12 JSON Schema as the language-neutral boundary. |
+| [0003](0003-use-s3-presigned-put-for-native-artifacts.md) | Proposed | Use short-lived S3 SigV4 presigned PUT requests for direct native artifact upload. |
