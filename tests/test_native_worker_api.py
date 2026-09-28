@@ -67,6 +67,26 @@ class NativeWorkerApiTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 native.check_times(changed)
 
+    def test_artifact_plan_uses_canonical_contract_formats(self):
+        native.check_artifact_formats(self.values)
+        self.assertEqual(
+            {item["slot"]: item["format"] for item in self.values["lease"]["artifactPlan"]},
+            {
+                "measurements": "playwright-measurements/v2",
+                "manifest": "raw-result/v2",
+            },
+        )
+
+        changed = copy.deepcopy(self.values)
+        changed["lease"]["artifactPlan"][0]["format"] = "playwright-measurements-v2"
+        with self.assertRaisesRegex(ValueError, "canonical contract formats"):
+            native.check_artifact_formats(changed)
+
+        validator = native.schema_validator(self.document, "ArtifactPlan")
+        invalid = copy.deepcopy(self.values["lease"]["artifactPlan"][0])
+        invalid["format"] = "../playwright-measurements/v2"
+        self.assertFalse(validator.is_valid(invalid))
+
     def test_artifact_publication_is_attempt_scoped_and_byte_exact(self):
         native.check_exact_object_scope(self.values)
         changes = [

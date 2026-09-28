@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.16.0`; it is not a stable release.
+- The current candidate bundle is `0.17.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,17 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.17.0 corrects Native Worker artifact-plan `format` values to
+use the registered data-contract names `playwright-measurements/v2` and
+`raw-result/v2`. The previous hyphenated placeholders did not identify bundled
+contracts and could not be consumed by strict analysis readers. The field now
+uses the artifact-format grammar, which permits the slash in a versioned
+contract name without weakening ordinary identifiers. No data schema or API
+operation changes. The control plane and Playwright worker must repin together,
+replace the hyphenated values, and recreate any dormant native assignments made
+from an earlier candidate. Native execution has not been activated, so there is
+no authoritative evidence to migrate.
 
 Candidate bundle 0.16.0 corrects the not-yet-implemented native artifact upload
 authorization selected by

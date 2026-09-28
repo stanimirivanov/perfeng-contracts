@@ -113,8 +113,10 @@ release does not make partial artifacts authoritative.
 ## Artifact publication and terminal reporting
 
 The lease contains an artifact plan with server-selected slots, kinds, media
-types, formats, maximum byte counts and required status. For a completed local
-file, the worker computes exact size and SHA-256 and requests a grant for the
+types, formats, maximum byte counts and required status. A format is the exact
+registered data-contract name, including its generation; Native Worker v1 uses
+`playwright-measurements/v2` and `raw-result/v2`. For a completed local file,
+the worker computes exact size and SHA-256 and requests a grant for the
 assigned slot. It does not send an object key. The control plane returns the
 server-selected key, a short-lived S3 Signature Version 4 presigned `PUT` URL
 and the exact headers the worker must reproduce. The URL query is a bearer
@@ -209,6 +211,12 @@ only that transport to standard S3 SigV4 presigned `PUT`; presence, acquisition,
 renewal and release semantics are unchanged. The control plane and Playwright
 worker must repin to `0.16.0` together before enabling upload grants and must not
 mix the old header shape with direct object-store upload.
+
+Bundle `0.17.0` corrects the artifact-plan formats from hyphenated placeholders
+to the registered slash-form contract names. Control-plane assignments and
+workers must repin together and use those names before native execution is
+enabled. Dormant assignments created with an earlier candidate must be
+recreated; they do not identify a consumable evidence contract.
 
 Run Management and every existing data schema remain unchanged. There is no
 conversion of old local captures into leased attempts and no persisted upload
