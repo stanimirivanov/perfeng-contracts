@@ -40,6 +40,10 @@ REQUIRED_PRESIGN_PARAMETERS = {
     "X-Amz-Signature",
 }
 OPTIONAL_PRESIGN_PARAMETERS = {"X-Amz-Security-Token", "x-id"}
+CANONICAL_ARTIFACT_FORMATS = {
+    "measurements": "playwright-measurements/v2",
+    "manifest": "raw-result/v2",
+}
 FIXTURES = {
     "presence": "WorkerPresence",
     "presence-status": "PresenceStatus",
@@ -140,6 +144,13 @@ def check_times(values: dict[str, Any]) -> None:
     grant_expiry = datetime.fromisoformat(values["upload-grant"]["expiresAt"])
     if not issued < grant_expiry <= expires:
         raise ValueError("Upload grant outlives its execution lease")
+
+
+def check_artifact_formats(values: dict[str, Any]) -> None:
+    """Require assigned slots to name the canonical data contracts they carry."""
+    actual = {item["slot"]: item["format"] for item in values["lease"]["artifactPlan"]}
+    if actual != CANONICAL_ARTIFACT_FORMATS:
+        raise ValueError("Native artifact plan does not use the canonical contract formats")
 
 
 def check_exact_object_scope(values: dict[str, Any]) -> None:
@@ -295,6 +306,10 @@ def lint(document: dict[str, Any]) -> None:
         raise ValueError("Unexpected Native Worker operation inventory")
 
     schemas = document["components"]["schemas"]
+    if schemas["ArtifactPlan"]["properties"]["format"] != {
+        "$ref": "#/components/schemas/ArtifactFormat"
+    }:
+        raise ValueError("Artifact plans must use the artifact-format contract")
     capacity = schemas["WorkerCapabilities"]["properties"]["capacity"]
     if capacity.get("const") != 1:
         raise ValueError("Native Worker v1 must expose exactly one measurement slot")
@@ -403,6 +418,7 @@ def validate_native_worker_api(root: Path = ROOT) -> tuple[int, int, int]:
             raise ValueError(f"Rejection fixture unexpectedly passed: {name}")
 
     check_times(values)
+    check_artifact_formats(values)
     check_exact_object_scope(values)
     cases = read_json(root / API_PATH / "http-cases.json")
     coverage = {
