@@ -10,8 +10,8 @@
   checked-in Draft 2020-12 JSON Schema for every consumer.
 - Contract changes require positive and negative validation plus explicit
   compatibility and consumer-migration effects.
-- Use `make validate` or the listed `pnpm` and `uv` commands for the complete
-  offline validation suite.
+- Use `make verify` for the complete offline validation suite and
+  `make validate` when current supply-chain data is available.
 - Candidate bundles are not stable releases; consumers pin reviewed immutable
   revisions.
 
@@ -59,7 +59,10 @@ and Native Worker OpenAPI descriptions remain hand-authored. See
 ## Validate
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/), Node.js
-and pnpm, then run the commands below from the repository root. The checked-in
+and pnpm, then run the commands below from the repository root. Use
+`make bootstrap` once, `make verify` for the offline development loop and
+`make validate` for complete acceptance including current supply-chain data.
+The checked-in
 `.python-version`, `.node-version`, `uv.lock` and `pnpm-lock.yaml` select the
 toolchains and dependencies. These projects are development tooling; consumers
 in Go, TypeScript and Python use the same generated JSON schemas.
@@ -80,7 +83,7 @@ uv run --locked python scripts/validate_native_worker_api.py
 uv run --locked python -m unittest discover -s tests -v
 ```
 
-On systems with Make, `make validate` runs the same non-mutating checks and
+On systems with Make, the stable targets run the same non-mutating checks and
 tests. The individual commands remain the portable, authoritative interface.
 
 Ruff handles Python linting and formatting; ty handles static type checking.
@@ -153,7 +156,10 @@ Start with these repository sources of truth:
 
 - [Repository working agreement](AGENTS.md)
 - [Contributor workflow](CONTRIBUTING.md)
+- [Documentation map](docs/README.md)
+- [Coding harness](docs/development/harness.md)
 - [Contract engineering standards](docs/development/engineering-standards.md)
+- [Dependency policy](docs/development/dependency-policy.md)
 - [Architecture decisions](docs/decisions/README.md)
 - [Security policy](SECURITY.md)
 - [Code of conduct](CODE_OF_CONDUCT.md)
