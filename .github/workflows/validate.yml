@@ -2,7 +2,8 @@ name: Validate contracts
 
 on:
   pull_request:
-
+  push:
+    branches: [main]
 permissions:
   contents: read
 
@@ -31,7 +32,7 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
-      - uses: astral-sh/setup-uv@v9
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
         with:
           enable-cache: true
       - run: make bootstrap
@@ -65,7 +66,7 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
-      - uses: astral-sh/setup-uv@v9
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
         with:
           enable-cache: true
       - name: Install GNU Make
@@ -94,7 +95,7 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
-      - uses: astral-sh/setup-uv@v9
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
         with:
           enable-cache: true
       - run: make bootstrap
