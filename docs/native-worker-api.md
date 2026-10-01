@@ -81,6 +81,14 @@ assignment. The assigned catalogue test, workload, profile, browser,
 diagnostic mode and execution artifact come from reviewed server policy. The
 worker cannot substitute a repository revision, archive or arbitrary command.
 
+V1 identifies reviewed work but does not carry every input required by the
+current Playwright runner, including repetition and cache policy, complete
+workload and environment identity, and browser presentation settings. A worker
+must not derive those values from local defaults or advertise executable
+availability on the strength of a v1 lease alone. The proposed
+[ADR-0004](decisions/0004-version-native-worker-execution-recipes.md) describes
+the versioned execution-recipe decision to review before enabling the loop.
+
 ## Lease and attempt fencing
 
 A lease is an opaque, expiring capability bound to one authenticated worker,
