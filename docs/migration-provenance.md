@@ -1,5 +1,14 @@
 # Extraction provenance
 
+## TL;DR
+
+- This document records the source revision and history-preserving extraction
+  used to seed the contract repository.
+- The provenance record does not transfer current contract authority back to
+  the prototype repository.
+- Use the root contract inventory, compatibility guide and accepted ADRs for
+  current behavior and migration decisions.
+
 Source repository: https://github.com/stanimirivanov/performance-platform
 
 Source revision: `57c1b5074898d4d86476e8b4f99c19eff3a77018`.

@@ -27,7 +27,10 @@ silently create another normative level.
 |:--|:--|
 | Contributor workflow, issue timing, escalation and completion | This document |
 | Concise contributor and agent entry point | [AGENTS.md](AGENTS.md) |
+| Task-oriented documentation routing | [docs/README.md](docs/README.md) |
+| Coding harness and verification tiers | [docs/development/harness.md](docs/development/harness.md) |
 | Contract engineering standards | [docs/development/engineering-standards.md](docs/development/engineering-standards.md) |
+| Dependency admission and supply-chain checks | [docs/development/dependency-policy.md](docs/development/dependency-policy.md) |
 | Architecture decisions | [docs/decisions](docs/decisions/README.md) |
 | Cross-repository milestones | [perfeng-environment roadmap](https://github.com/stanimirivanov/perfeng-environment/blob/main/docs/roadmap/milestones.md) |
 | Contract inventory and exact commands | [README.md](README.md) |
@@ -187,7 +190,26 @@ authority.
 
 ## Verification and constrained environments
 
-Run every applicable required check supported by the current environment:
+Resolve locked dependencies once after checkout or dependency changes:
+
+```sh
+make bootstrap
+```
+
+Run the network-independent inner loop before handoff:
+
+```sh
+make verify
+```
+
+Run the complete non-publishing acceptance aggregate when current advisory data
+is available:
+
+```sh
+make validate
+```
+
+The stable targets wrap these exact checks:
 
 ```sh
 pnpm format:check
@@ -203,7 +225,10 @@ uv run --locked python scripts/validate_native_worker_api.py
 uv run --locked python -m unittest discover -s tests -v
 ```
 
-`make validate` is the convenience wrapper for this non-mutating suite.
+`make verify` wraps deterministic generation, source and test checks and is
+offline after `make bootstrap`. `make validate` adds the network-dependent
+supply-chain checks. The command ownership and timing tiers are recorded in the
+[harness guide](docs/development/harness.md).
 
 When a check cannot run because of sandbox restrictions, network, credentials,
 missing tools or another environmental constraint, report the exact check as

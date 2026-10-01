@@ -12,6 +12,7 @@
     "contracts:check": "tsx contracts/scripts/generate.ts --check",
     "format": "biome check --write contracts/source contracts/scripts package.json tsconfig.json biome.json",
     "format:check": "biome check contracts/source contracts/scripts package.json tsconfig.json biome.json",
+    "licenses:check": "tsx contracts/scripts/check-licenses.ts",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test contracts/source/*.test.ts"
   },
