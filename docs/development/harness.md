@@ -45,7 +45,7 @@ check. The constrained-environment protocol in CONTRIBUTING always applies.
 | `make doctor` | The effective Git, uv, Python, Node, pnpm and Make toolchain is visible. |
 | `make generate-contracts` | Checked-in JSON Schema is regenerated from authoritative Effect Schema. |
 | `make fmt` | Repository-owned Python and TypeScript are formatted; inspect the diff. |
-| `make docs-check` | Local links, TL;DR policy, ADR bookkeeping, templates and workflow action references satisfy mechanical policy. |
+| `make docs-check` | Local links, TL;DR policy, ADR bookkeeping and templates satisfy mechanical policy. |
 | `make check` | Generation drift, formatting, policy, locks, types and offline validators pass. |
 | `make test` | TypeScript boundary tests and Python semantic tests pass. |
 | `make verify` | Checks and tests pass without network after bootstrap. |
@@ -86,9 +86,9 @@ candidate-bundle assembly. Windows verification proves ADR-0002's cross-platform
 generation requirement. Supply-chain feedback runs separately because current
 advisory data has different availability and failure characteristics.
 
-GitHub Action references use semantic major tags. Contract checksums, pinned
-consumer revisions and artifact identities remain immutable values and are not
-replaced by floating tags.
+GitHub Action references may use reviewed release tags or commit SHAs; the
+repository policy validator does not prescribe one style. Contract checksums,
+pinned consumer revisions and artifact identities remain immutable values.
 
 ## Maintaining the harness
 
@@ -96,4 +96,3 @@ Harness changes are normal reviewed changes. Update this guide, the
 documentation map, Make targets and CI together whenever command ownership or
 feedback timing changes. Review false positives, runtime, repeated suppressions
 and escaped compatibility defects.
-

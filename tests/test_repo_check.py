@@ -157,21 +157,15 @@ Context.
     def test_accepts_consistent_repository(self) -> None:
         self.assertEqual([], check_repository(self.root))
 
-    def test_reports_links_tldr_and_action_hashes(self) -> None:
+    def test_reports_links_and_tldr(self) -> None:
         self._write(
             "docs/migration-guide.md",
             "# Migration\n\n## Steps\n\n[Missing](absent.md)\n",
         )
-        self._write(
-            ".github/workflows/validate.yml",
-            "name: Validate\njobs:\n  validate:\n    steps:\n      - uses: actions/checkout@abcdef\n",
-        )
-
         rules = [violation.rule for violation in check_repository(self.root)]
 
         self.assertIn("docs.internal-link", rules)
         self.assertIn("docs.tldr", rules)
-        self.assertIn("workflow.action-version", rules)
 
     def test_reports_adr_and_template_drift(self) -> None:
         issue = self.root / ".github/ISSUE_TEMPLATE/work-item.md"
@@ -191,27 +185,14 @@ Context.
         self.assertIn("adr.index", rules)
         self.assertIn("template.issue", rules)
 
-    def test_action_policy_handles_quotes_blocks_and_composites(self) -> None:
+    def test_accepts_commit_pinned_actions(self) -> None:
         self._write(
             ".github/workflows/validate.yml",
-            "steps:\n"
-            '  - uses: "actions/checkout@v7" # readable major\n'
-            "  - run: |\n"
-            "      echo 'uses: owner/not-an-action@abcdef'\n",
-        )
-        self._write(
-            ".github/actions/example/action.yml",
-            "runs:\n  using: composite\n  steps:\n    - uses: owner/action@abcdef\n",
+            "name: Validate\njobs:\n  validate:\n    steps:\n"
+            "      - uses: actions/checkout@0123456789abcdef0123456789abcdef01234567\n",
         )
 
-        action_violations = [
-            violation
-            for violation in check_repository(self.root)
-            if violation.rule == "workflow.action-version"
-        ]
-
-        self.assertEqual(1, len(action_violations))
-        self.assertEqual(".github/actions/example/action.yml", action_violations[0].path)
+        self.assertEqual([], check_repository(self.root))
 
     def test_issue_repository_identity_is_enforced(self) -> None:
         issue = self.root / ".github/ISSUE_TEMPLATE/work-item.md"

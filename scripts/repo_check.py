@@ -36,8 +36,6 @@ ADR_INDEX = re.compile(
     r"^\|\s*\[(?:ADR-)?(\d{4})\]\(([^)]+)\)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|"
 )
 MILESTONE = re.compile(r"^M\d{2} — \S.*$")
-ACTION_USE = re.compile(r"^\s*(?:-\s*)?uses:\s*(.*?)\s*$")
-YAML_BLOCK_SCALAR = re.compile(r"^\s*(?:-\s*)?[^:#]+:\s*[|>][+-]?\d*\s*(?:#.*)?$")
 ADR_STATUSES = {"Proposed", "Accepted", "Rejected", "Deprecated", "Superseded"}
 ADR_FIELDS = ("Status", "Date", "Milestone", "Deciders", "Supersedes", "Superseded by")
 PR_HEADINGS = (
@@ -655,63 +653,6 @@ def _check_templates(documents: dict[str, Document]) -> list[Violation]:
     return violations
 
 
-def _action_references(text: str) -> list[tuple[str, int]]:
-    """Return actual YAML uses values while ignoring block-scalar content."""
-    references: list[tuple[str, int]] = []
-    block_indent: int | None = None
-    for line_number, line in enumerate(text.splitlines(), start=1):
-        stripped = line.lstrip(" ")
-        indent = len(line) - len(stripped)
-        if block_indent is not None:
-            if not stripped or indent > block_indent:
-                continue
-            block_indent = None
-        if YAML_BLOCK_SCALAR.match(line):
-            block_indent = indent
-            continue
-        match = ACTION_USE.match(line)
-        if not match:
-            continue
-        raw = match.group(1).strip()
-        if raw.startswith(('"', "'")):
-            quote = raw[0]
-            closing = raw.find(quote, 1)
-            reference = raw[1:closing] if closing >= 0 else raw
-        else:
-            reference = raw.split("#", 1)[0].strip()
-        references.append((reference, line_number))
-    return references
-
-
-def _check_actions(root: Path) -> list[Violation]:
-    violations: list[Violation] = []
-    workflow_root = root / ".github" / "workflows"
-    action_root = root / ".github" / "actions"
-    paths: set[Path] = set()
-    if workflow_root.exists():
-        paths.update((*workflow_root.glob("*.yml"), *workflow_root.glob("*.yaml")))
-    if action_root.exists():
-        paths.update((*action_root.rglob("action.yml"), *action_root.rglob("action.yaml")))
-    for path in sorted(paths):
-        for reference, line_number in _action_references(path.read_text(encoding="utf-8")):
-            if reference.startswith(("./", "docker://")):
-                continue
-            _, separator, version = reference.rpartition("@")
-            if separator and re.fullmatch(r"v\d+", version):
-                continue
-            violations.append(
-                Violation(
-                    path.relative_to(root).as_posix(),
-                    line_number,
-                    "workflow.action-version",
-                    f'action "{reference}" is not a semantic major tag',
-                    "use `owner/action@vN`",
-                    "docs/development/dependency-policy.md#locking-and-updates",
-                )
-            )
-    return violations
-
-
 def check_repository(root: Path) -> list[Violation]:
     documents = _documents(root)
     return sorted(
@@ -720,7 +661,6 @@ def check_repository(root: Path) -> list[Violation]:
             *_check_tldr(documents),
             *_check_adrs(documents),
             *_check_templates(documents),
-            *_check_actions(root),
         )
     )
 

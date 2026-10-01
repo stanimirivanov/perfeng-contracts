@@ -50,6 +50,8 @@ Dependabot may propose grouped GitHub Actions updates. Python and pnpm 11
 dependency updates remain manual, lockfile-aware workflows until hosted
 updaters support the pinned toolchains reliably. Every proposal still requires
 ordinary compatibility, generation and conformance review.
+Workflow action references may use reviewed release tags or commit SHAs; the
+repository policy validator does not enforce a single reference style.
 
 ## Vulnerabilities and licenses
 
