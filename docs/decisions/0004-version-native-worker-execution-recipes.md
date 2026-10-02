@@ -1,6 +1,6 @@
 # ADR-0004: Version complete Native Worker execution recipes
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-10-01
 - Milestone: M03 — Native Browser Decision Loop
 - Deciders: Repository owner and affected consumer maintainers
@@ -32,6 +32,8 @@ Propose a Native Worker API v2 lease assignment with a complete, immutable execu
 - the already reviewed target URL and execution-artifact identity, without caller- or worker-selected substitutions.
 
 The contract PR will define closed shapes and bounded values, including which diagnostic settings are absent for modes that do not use them. The control plane will persist the exact recipe with the lease and return that same recipe on acquisition. The worker will reject an unsupported journey, mismatched local source or environment evidence, unsupported browser/mode, or any incomplete recipe before browser execution. It will not fill a missing field from a worker-local default.
+
+The first v2 candidate covers only the repository-owned search journey in baseline mode with Chromium and a source-checkout runner. That mode needs measurements and a manifest but no separate diagnostic capture. V1's diagnostic names do not map one-to-one to the current runner modes or their artifact outputs. Trace, memory, smoothness, branded browsers and release archives therefore need separate contract review rather than being advertised as executable by this initial generation.
 
 V1 remains independently valid for existing presence and protocol clients; it is not silently reinterpreted as an executable assignment. V2 acquisition and lease-scoped operations will use an explicit API generation so strict v1 readers cannot mistake a v2 response for v1. The exact endpoint inventory and conformance fixtures belong to the follow-up contract implementation.
 

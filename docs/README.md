@@ -21,6 +21,7 @@
 | Compatibility, generations or consumer migration | [Compatibility guide](compatibility.md), [schema versioning](architecture/schema-versioning.md) | Affected producers, consumers and ADRs |
 | Run Management API | [Run Management API guide](run-management-api.md) | API fixtures and offline validator |
 | Native Worker API or native artifact upload | [Native Worker API guide](native-worker-api.md), relevant [ADRs](decisions/README.md) | API fixtures, rejection cases and HTTP cases |
+| Native Worker v2 baseline recipe | [Native Worker API v2 candidate](native-worker-api-v2.md), [ADR-0004](decisions/0004-version-native-worker-execution-recipes.md) | v2 OpenAPI, examples, rejection and HTTP cases |
 | Workloads, catalogues or metric naming | [Workloads and catalogues](workloads-and-catalogues.md), [metric naming](architecture/metric-naming.md) | Registry, examples and semantic tests |
 | Artifact, result, browser or policy contracts | [Artifact and result transport](artifact-and-result-transport.md), [browser diagnostics](browser-diagnostics.md), [Playwright measurements](playwright-measurements.md), [performance policies](performance-policies.md) | Contract-specific fixtures and tests |
 | Build, CI, repository policy or developer experience | [Harness guide](development/harness.md) | [Dependency policy](development/dependency-policy.md), `make docs-check`, `make verify` |
@@ -46,4 +47,3 @@ canonical source or creates a recurring task without a clear route. Keep this
 page focused on routing rather than duplicating contract meaning.
 `make docs-check` validates local links and documentation structure; semantic
 accuracy and consumer impact still require review.
-

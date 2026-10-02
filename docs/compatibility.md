@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.17.0`; it is not a stable release.
+- The current candidate bundle is `0.18.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,19 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.18.0 adds `native-worker/v2` as an independent candidate API
+generation with a complete baseline Chromium execution recipe. V1 paths,
+examples, fixtures and meaning are unchanged. Strict bundle readers must
+recognize the additional API entry; v1 workers and control planes do not become
+v2-compatible merely by updating the bundle. V2 initially admits only the
+repository-owned search journey, baseline mode, Chromium and source-checkout
+runner artifact. No native execution is enabled by this bundle. Control plane
+and Playwright worker must pin one reviewed revision and implement the v2 lease
+and runner projection together. Existing v1 assignments are not converted;
+trace, memory, smoothness, branded browsers and release archives remain deferred.
+See the [v2 guide](native-worker-api-v2.md) and accepted
+[ADR-0004](decisions/0004-version-native-worker-execution-recipes.md).
 
 Candidate bundle 0.17.0 corrects Native Worker artifact-plan `format` values to
 use the registered data-contract names `playwright-measurements/v2` and
