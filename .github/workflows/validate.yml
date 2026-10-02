@@ -42,7 +42,7 @@ jobs:
         run: |
           mkdir -p dist
           tar -czf dist/perfeng-contracts-0.18.0.tar.gz contracts.json schemas examples api docs tests/fixtures README.md LICENSE
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: perfeng-contracts-0.18.0
           path: dist/perfeng-contracts-0.18.0.tar.gz
