@@ -1,5 +1,5 @@
 {
-  "version": "0.17.0",
+  "version": "0.18.0",
   "apis": [
     {
       "name": "run-management/v1",
@@ -12,6 +12,13 @@
       "examples": "api/native-worker/v1/examples",
       "rejections": "api/native-worker/v1/rejections",
       "httpCases": "api/native-worker/v1/http-cases.json"
+    },
+    {
+      "name": "native-worker/v2",
+      "definition": "api/native-worker/v2/openapi.json",
+      "examples": "api/native-worker/v2/examples",
+      "rejections": "api/native-worker/v2/rejections",
+      "httpCases": "api/native-worker/v2/http-cases.json"
     }
   ],
   "contracts": [

@@ -299,6 +299,13 @@ def validate_api(root: Path = ROOT) -> int:
             "rejections": "api/native-worker/v1/rejections",
             "httpCases": "api/native-worker/v1/http-cases.json",
         },
+        {
+            "name": "native-worker/v2",
+            "definition": "api/native-worker/v2/openapi.json",
+            "examples": "api/native-worker/v2/examples",
+            "rejections": "api/native-worker/v2/rejections",
+            "httpCases": "api/native-worker/v2/http-cases.json",
+        },
     ]:
         raise ValueError("Unexpected API manifest")
     document = read_json(root / API_PATH / "openapi.json")
