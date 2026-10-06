@@ -222,7 +222,6 @@ uv run --locked ty check
 uv run --locked python scripts/validate.py
 uv run --locked python scripts/validate_api.py
 uv run --locked python scripts/validate_native_worker_api.py
-uv run --locked python scripts/validate_native_worker_api_v2.py
 uv run --locked python -m unittest discover -s tests -v
 ```
 

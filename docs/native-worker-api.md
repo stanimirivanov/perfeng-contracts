@@ -1,4 +1,4 @@
-# Native Worker API v1
+# Native Worker API
 
 ## TL;DR
 
@@ -12,21 +12,23 @@
   attempt and expected Run revision.
 - Artifact bytes go directly to object storage through short-lived exact-key
   grants; verified references are registered before the manifest is completed.
+- A lease includes a complete server-reviewed baseline Chromium execution
+  recipe; the worker must not supply missing measurement settings from defaults.
 - Implementers must use the OpenAPI description and positive, rejection and
-  HTTP fixtures under `api/native-worker/v1` as the conformance boundary.
+  HTTP fixtures under `api/native-worker/v2` as the conformance boundary.
 
 The Native Worker API dispatches existing reviewed Playwright journeys to a
 representative Windows laptop without exposing an inbound listener,
 Kubernetes identity, permanent object-store credentials or caller-selected
 commands. [ADR-0001](decisions/0001-native-windows-worker-protocol.md) owns the
-architecture decision. This document explains the interoperable v1 behavior;
+architecture decision. This document explains the supported v2 behavior;
 the self-contained OpenAPI document is authoritative for wire shape.
 
 ## API boundary
 
 Native Worker API credentials have a different audience from user-facing Run
 Management credentials. A deployment may serve both APIs from one process, but
-it must authenticate and authorize them independently. V1 has no enrollment,
+it must authenticate and authorize them independently. The API has no enrollment,
 credential issuance or rotation endpoint. Operators provision a distinct
 revocable credential to each installation and the agent stores it in Windows
 Credential Manager or an equivalent OS-protected store.
@@ -71,7 +73,7 @@ Presence reports four different concepts without collapsing them:
 The presence response reports the server's qualification decision and
 acquisition authorization independently. A worker can be healthy but stale,
 capable but unauthorized, or qualified but draining. Implementations must not
-infer one dimension from another. Native Worker v1 fixes browser measurement
+infer one dimension from another. Native Worker v2 fixes browser measurement
 capacity at exactly one so host contention does not silently weaken evidence
 comparability.
 
@@ -81,13 +83,47 @@ assignment. The assigned catalogue test, workload, profile, browser,
 diagnostic mode and execution artifact come from reviewed server policy. The
 worker cannot substitute a repository revision, archive or arbitrary command.
 
-V1 identifies reviewed work but does not carry every input required by the
-current Playwright runner, including repetition and cache policy, complete
-workload and environment identity, and browser presentation settings. A worker
-must not derive those values from local defaults or advertise executable
-availability on the strength of a v1 lease alone. Accepted
-[ADR-0004](decisions/0004-version-native-worker-execution-recipes.md) requires
-a versioned execution recipe before enabling the loop.
+Presence and acquisition require `protocolVersion: 2`; capabilities require
+`runnerContract: 2`. A lease capability is valid only for this API generation.
+The current contract supports the repository-owned `search` journey in
+`baseline` mode, Chromium, and a source-checkout runner artifact. Trace,
+memory, smoothness, branded browsers and release archives need separate
+contract review before workers advertise those combinations.
+
+## Reviewed execution recipe
+
+The lease assignment includes the reviewed catalogue test, workload and
+profile, SUT target, browser, diagnostic mode, execution artifact and artifact
+plan. Its required `recipe` supplies journey ID, workload version and SHA-256,
+cache and page-reuse policy, warm-up and measurement counts, qualified host
+profile/version/fingerprint and evidence SHA-256, and headless/viewport/device
+scale settings. Both artifact slots are required. The worker must not derive
+missing fields from local defaults or accept an unsupported journey.
+
+The projection to Playwright `RunnerConfiguration` is exact:
+
+| Runner field | Reviewed lease source |
+| --- | --- |
+| `schemaVersion` | `2` |
+| `runId`, `testId` | `runId`, `assignment.catalogueTestId` |
+| `workload.id`, `.profile` | `assignment.workloadId`, `.profile` |
+| `workload.version`, `.sha256` | `assignment.recipe.workloadVersion`, `.workloadSha256` |
+| `scenario` | `assignment.recipe.scenario` |
+| `diagnosticMode` | `assignment.diagnosticMode` (`baseline`) |
+| `environment.profile.id`, `.version` | `assignment.recipe.environment.profileId`, `.profileVersion` |
+| `environment.fingerprint` | `assignment.recipe.environment.fingerprint` |
+| `target.baseUrl` | `assignment.target.baseUrl` |
+| `browser` | `assignment.recipe.browserSettings` |
+
+The worker must compare the recipe's host profile ID and evidence SHA-256 with
+its current qualification evidence, and compare the assigned execution
+artifact with its qualified runner identity. The SUT target environment ID is
+separate from the Windows host profile. Capabilities must cover the assigned
+browser, diagnostic mode and artifact kinds before browser launch. `journeyId`
+selects repository-owned code, never a caller-supplied command. See
+[ADR-0004](decisions/0004-version-native-worker-execution-recipes.md) for the
+recipe decision and [ADR-0005](decisions/0005-retire-native-worker-v1.md) for
+the supported-generation decision.
 
 ## Lease and attempt fencing
 
@@ -122,7 +158,7 @@ release does not make partial artifacts authoritative.
 
 The lease contains an artifact plan with server-selected slots, kinds, media
 types, formats, maximum byte counts and required status. A format is the exact
-registered data-contract name, including its generation; Native Worker v1 uses
+registered data-contract name, including its generation; Native Worker v2 uses
 `playwright-measurements/v2` and `raw-result/v2`. For a completed local file,
 the worker computes exact size and SHA-256 and requests a grant for the
 assigned slot. It does not send an object key. The control plane returns the
@@ -189,9 +225,9 @@ Implementations must additionally:
 - emit telemetry using worker, Run, attempt and request identifiers, never
   authentication or grant material.
 
-Checked-in valid payloads live under `api/native-worker/v1/examples`, matching
+Checked-in valid payloads live under `api/native-worker/v2/examples`, matching
 the Run Management API layout. Deliberately invalid payloads are isolated under
-`api/native-worker/v1/rejections`, while `http-cases.json` composes the examples
+`api/native-worker/v2/rejections`, while `http-cases.json` composes the examples
 into request and response exchanges. The fixtures use reserved `.invalid`
 HTTPS endpoints, explicit fake lease capabilities, non-secret presigning
 placeholders and synthetic identifiers. Validation is offline and rejects
@@ -212,21 +248,13 @@ connectivity and identity, but does not own the Windows process or commit its
 credential. Analysis consumes only registered immutable evidence and remains
 independent of this transport.
 
-Bundle `0.15.0` introduced this additive API but described upload authorization
-as a custom response header paired with a credential-free endpoint. No producer
-or consumer implemented that candidate upload shape. Bundle `0.16.0` corrects
-only that transport to standard S3 SigV4 presigned `PUT`; presence, acquisition,
-renewal and release semantics are unchanged. The control plane and Playwright
-worker must repin to `0.16.0` together before enabling upload grants and must not
-mix the old header shape with direct object-store upload.
-
-Bundle `0.17.0` corrects the artifact-plan formats from hyphenated placeholders
-to the registered slash-form contract names. Control-plane assignments and
-workers must repin together and use those names before native execution is
-enabled. Dormant assignments created with an earlier candidate must be
-recreated; they do not identify a consumable evidence contract.
-
-Run Management and every existing data schema remain unchanged. There is no
-conversion of old local captures into leased attempts and no persisted upload
-grant data to migrate. New authoritative evidence begins with a v1 lease and
-attempt identity.
+Candidate bundle `0.19.0` retains only this v2 Native Worker API. Consumers
+must move to one reviewed bundle revision and remove v1 routes and payload
+handling in coordinated control-plane and Playwright changes. Do not deploy a
+v2-only worker against a v1-only control plane or enable acquisition during a
+mixed rollout. Native Worker v1 was never deployed, so there is no production
+wire traffic or authoritative evidence to convert. Review dormant local v1
+assignments before enabling execution; recreate them under the v2 recipe
+rather than translating incomplete assignments. Run Management and the data
+schema inventory are unchanged. See the [compatibility ledger](compatibility.md)
+for historical candidate changes.

@@ -1,17 +1,10 @@
 {
-  "version": "0.18.0",
+  "version": "0.19.0",
   "apis": [
     {
       "name": "run-management/v1",
       "definition": "api/run-management/v1/openapi.json",
       "transitions": "api/run-management/v1/transitions.json"
-    },
-    {
-      "name": "native-worker/v1",
-      "definition": "api/native-worker/v1/openapi.json",
-      "examples": "api/native-worker/v1/examples",
-      "rejections": "api/native-worker/v1/rejections",
-      "httpCases": "api/native-worker/v1/http-cases.json"
     },
     {
       "name": "native-worker/v2",
