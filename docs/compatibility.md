@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.18.0`; it is not a stable release.
+- The current candidate bundle is `0.19.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,21 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.19.0 retires the never-deployed `native-worker/v1` API from
+the active manifest, OpenAPI corpus and validators. `native-worker/v2` is the
+sole supported Native Worker API; its wire path, `protocolVersion: 2`, runner
+contract and fixtures retain their meaning. Run Management v1 and all nineteen
+data contracts are unchanged. Strict bundle readers must stop expecting the
+v1 API entry. Control-plane and Playwright consumers must repin together,
+remove v1 routes and payload handling, and prove v2 conformance before enabling
+acquisition. Do not mix a v2-only worker with a v1-only control plane. Historical
+candidate bundles remain available from earlier Git revisions, but v1 is not
+retained in current source or release artifacts. Dormant local v1 assignments
+must be reviewed and recreated under the complete v2 recipe; there is no
+production traffic or authoritative evidence to migrate. See the
+[Native Worker guide](native-worker-api.md) and
+[ADR-0005](decisions/0005-retire-native-worker-v1.md).
 
 Candidate bundle 0.18.0 adds `native-worker/v2` as an independent candidate API
 generation with a complete baseline Chromium execution recipe. V1 paths,
@@ -22,7 +37,7 @@ runner artifact. No native execution is enabled by this bundle. Control plane
 and Playwright worker must pin one reviewed revision and implement the v2 lease
 and runner projection together. Existing v1 assignments are not converted;
 trace, memory, smoothness, branded browsers and release archives remain deferred.
-See the [v2 guide](native-worker-api-v2.md) and accepted
+See the [Native Worker guide](native-worker-api.md) and accepted
 [ADR-0004](decisions/0004-version-native-worker-execution-recipes.md).
 
 Candidate bundle 0.17.0 corrects Native Worker artifact-plan `format` values to

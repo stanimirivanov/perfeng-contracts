@@ -53,7 +53,6 @@ check: fmt-check docs-check
 	$(UV_RUN) python scripts/validate.py
 	$(UV_RUN) python scripts/validate_api.py
 	$(UV_RUN) python scripts/validate_native_worker_api.py
-	$(UV_RUN) python scripts/validate_native_worker_api_v2.py
 
 test:
 	pnpm test

@@ -293,13 +293,6 @@ def validate_api(root: Path = ROOT) -> int:
             "transitions": API_PATH + "/transitions.json",
         },
         {
-            "name": "native-worker/v1",
-            "definition": "api/native-worker/v1/openapi.json",
-            "examples": "api/native-worker/v1/examples",
-            "rejections": "api/native-worker/v1/rejections",
-            "httpCases": "api/native-worker/v1/http-cases.json",
-        },
-        {
             "name": "native-worker/v2",
             "definition": "api/native-worker/v2/openapi.json",
             "examples": "api/native-worker/v2/examples",
@@ -308,6 +301,13 @@ def validate_api(root: Path = ROOT) -> int:
         },
     ]:
         raise ValueError("Unexpected API manifest")
+    native_generations = {
+        path.name
+        for path in (root / "api/native-worker").iterdir()
+        if path.is_dir() and any(item.is_file() for item in path.rglob("*"))
+    }
+    if native_generations != {"v2"}:
+        raise ValueError("Unexpected Native Worker API generation in candidate bundle")
     document = read_json(root / API_PATH / "openapi.json")
     transitions = read_json(root / API_PATH / "transitions.json")
     lint(document, transitions)

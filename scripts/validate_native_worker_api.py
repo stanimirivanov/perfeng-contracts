@@ -1,4 +1,4 @@
-"""Offline Native Worker OpenAPI and conformance validation."""
+"""Offline validation of the supported Native Worker API and conformance corpus."""
 
 import base64
 import json
@@ -16,7 +16,8 @@ else:
     from validate import ROOT, read_json
     from validate_api import check_local_references, parse_request, schema_validator
 
-API_PATH = "api/native-worker/v1"
+API_PATH = "api/native-worker/v2"
+WORKLOAD_PROFILES = {"smoke", "average", "regression", "stress", "capacity", "soak"}
 STANDARD_ERRORS = {"400", "401", "403", "429", "500", "503"}
 LEASE_OPERATIONS = {
     "renewNativeLease",
@@ -74,6 +75,10 @@ REJECTIONS = {
     "failed-without-failure-classification",
     "upload-grant-missing-signed-headers",
     "worker-chooses-object-key",
+    "recipe-missing-workload-sha256",
+    "recipe-unsupported-journey",
+    "recipe-invalid-cache-reuse",
+    "recipe-invalid-browser-settings",
 }
 HTTP_CASES = {
     ("reportWorkerPresence", 200, "presence", "presence-status"),
@@ -151,6 +156,35 @@ def check_artifact_formats(values: dict[str, Any]) -> None:
     actual = {item["slot"]: item["format"] for item in values["lease"]["artifactPlan"]}
     if actual != CANONICAL_ARTIFACT_FORMATS:
         raise ValueError("Native artifact plan does not use the canonical contract formats")
+
+
+def check_recipe(values: dict[str, Any]) -> None:
+    """Check identities spanning presence, assignment and the runner projection."""
+    assignment = values["lease"]["assignment"]
+    recipe = assignment["recipe"]
+    presence = values["presence"]
+    evidence = presence["qualificationEvidence"]
+    if assignment["profile"] not in WORKLOAD_PROFILES:
+        raise ValueError("Assigned workload profile is not a Playwright runner profile")
+    if (
+        recipe["environment"]["profileId"] != evidence["environmentId"]
+        or recipe["environment"]["evidenceSha256"] != evidence["environmentSha256"]
+    ):
+        raise ValueError("Execution recipe differs from the qualified host evidence")
+    if assignment["executionArtifact"] != evidence["runner"]:
+        raise ValueError("Execution artifact differs from the qualified runner")
+    capabilities = presence["capabilities"]
+    if (
+        assignment["browser"] not in capabilities["browsers"]
+        or assignment["diagnosticMode"] not in capabilities["diagnosticModes"]
+        or any(
+            slot["kind"] not in capabilities["artifactKinds"]
+            for slot in values["lease"]["artifactPlan"]
+        )
+    ):
+        raise ValueError("Execution recipe exceeds the worker's claimed capabilities")
+    if any(not slot["required"] for slot in values["lease"]["artifactPlan"]):
+        raise ValueError("The baseline measurements and manifest must both be required")
 
 
 def check_exact_object_scope(values: dict[str, Any]) -> None:
@@ -281,7 +315,7 @@ def lint(document: dict[str, Any]) -> None:
             if method == "parameters":
                 continue
             if method != "post":
-                raise ValueError("Native Worker v1 is an outbound-pull POST-only protocol")
+                raise ValueError("Native Worker is an outbound-pull POST-only protocol")
             operation_id = candidate["operationId"]
             if operation_id in identifiers:
                 raise ValueError("Duplicate operation ID")
@@ -312,7 +346,7 @@ def lint(document: dict[str, Any]) -> None:
         raise ValueError("Artifact plans must use the artifact-format contract")
     capacity = schemas["WorkerCapabilities"]["properties"]["capacity"]
     if capacity.get("const") != 1:
-        raise ValueError("Native Worker v1 must expose exactly one measurement slot")
+        raise ValueError("Native Worker must expose exactly one measurement slot")
     if {"workerId", "principal", "credential", "token"} & set(
         schemas["WorkerPresence"]["properties"]
     ):
@@ -343,6 +377,40 @@ def lint(document: dict[str, Any]) -> None:
     _, grant = operation(document, "createNativeUploadGrant")
     if grant["responses"]["201"].get("headers"):
         raise ValueError("Upload authorization must be returned only in the response body")
+
+    if document["info"]["version"] != "2.0.0" or not all(
+        path.startswith("/native-worker/v2/") for path in document["paths"]
+    ):
+        raise ValueError("Native Worker paths and version must identify protocol v2")
+    if (
+        schemas["WorkerPresence"]["properties"]["protocolVersion"] != {"const": 2}
+        or schemas["AcquireLease"]["properties"]["protocolVersion"] != {"const": 2}
+        or schemas["WorkerCapabilities"]["properties"]["runnerContract"] != {"const": 2}
+    ):
+        raise ValueError("Native Worker protocol and runner generation must be explicit")
+    assignment = schemas["Lease"]["properties"]["assignment"]
+    if "recipe" not in assignment["required"] or assignment["properties"]["recipe"] != {
+        "$ref": "#/components/schemas/ExecutionRecipe"
+    }:
+        raise ValueError("Native Worker lease must require the reviewed execution recipe")
+    if assignment["properties"]["browser"] != {"const": "chromium"} or assignment["properties"][
+        "diagnosticMode"
+    ] != {"const": "baseline"}:
+        raise ValueError("Initial execution slice must remain baseline Chromium only")
+    recipe = schemas["ExecutionRecipe"]
+    if (
+        set(recipe["required"])
+        != {
+            "journeyId",
+            "workloadVersion",
+            "workloadSha256",
+            "scenario",
+            "environment",
+            "browserSettings",
+        }
+        or recipe["properties"]["journeyId"].get("const") != "search"
+    ):
+        raise ValueError("Native Worker recipe is incomplete or selects an unknown journey")
 
 
 def check_http(document: dict[str, Any], case: dict[str, Any], values: dict[str, Any]) -> None:
@@ -400,6 +468,7 @@ def check_http(document: dict[str, Any], case: dict[str, Any], values: dict[str,
 
 
 def validate_native_worker_api(root: Path = ROOT) -> tuple[int, int, int]:
+    """Validate the sole supported API, examples, rejections and HTTP cases."""
     document = read_json(root / API_PATH / "openapi.json")
     lint(document)
     examples = root / API_PATH / "examples"
@@ -420,6 +489,7 @@ def validate_native_worker_api(root: Path = ROOT) -> tuple[int, int, int]:
     check_times(values)
     check_artifact_formats(values)
     check_exact_object_scope(values)
+    check_recipe(values)
     cases = read_json(root / API_PATH / "http-cases.json")
     coverage = {
         (case["operationId"], case["status"], case.get("request"), case.get("response"))

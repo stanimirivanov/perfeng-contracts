@@ -20,8 +20,7 @@
 | Effect Schema source or generated JSON Schema | [Contract engineering standards](development/engineering-standards.md), [ADR-0002](decisions/0002-use-effect-schema-at-contract-boundaries.md) | Root [README](../README.md), `pnpm contracts:check` |
 | Compatibility, generations or consumer migration | [Compatibility guide](compatibility.md), [schema versioning](architecture/schema-versioning.md) | Affected producers, consumers and ADRs |
 | Run Management API | [Run Management API guide](run-management-api.md) | API fixtures and offline validator |
-| Native Worker API or native artifact upload | [Native Worker API guide](native-worker-api.md), relevant [ADRs](decisions/README.md) | API fixtures, rejection cases and HTTP cases |
-| Native Worker v2 baseline recipe | [Native Worker API v2 candidate](native-worker-api-v2.md), [ADR-0004](decisions/0004-version-native-worker-execution-recipes.md) | v2 OpenAPI, examples, rejection and HTTP cases |
+| Native Worker API, baseline recipe or native artifact upload | [Native Worker API guide](native-worker-api.md), [ADR-0004](decisions/0004-version-native-worker-execution-recipes.md), [ADR-0005](decisions/0005-retire-native-worker-v1.md) | v2 OpenAPI, examples, rejection and HTTP cases |
 | Workloads, catalogues or metric naming | [Workloads and catalogues](workloads-and-catalogues.md), [metric naming](architecture/metric-naming.md) | Registry, examples and semantic tests |
 | Artifact, result, browser or policy contracts | [Artifact and result transport](artifact-and-result-transport.md), [browser diagnostics](browser-diagnostics.md), [Playwright measurements](playwright-measurements.md), [performance policies](performance-policies.md) | Contract-specific fixtures and tests |
 | Build, CI, repository policy or developer experience | [Harness guide](development/harness.md) | [Dependency policy](development/dependency-policy.md), `make docs-check`, `make verify` |
