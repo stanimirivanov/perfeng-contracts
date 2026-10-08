@@ -14,6 +14,8 @@
   grants; verified references are registered before the manifest is completed.
 - A lease includes a complete server-reviewed baseline Chromium execution
   recipe; the worker must not supply missing measurement settings from defaults.
+- A read-only attempt inspection can support operator reconciliation after interruption, but
+  neither local evidence nor a server snapshot restores lease authority.
 - Implementers must use the OpenAPI description and positive, rejection and
   HTTP fixtures under `api/native-worker/v2` as the conformance boundary.
 
@@ -50,6 +52,7 @@ do not belong in logs, evidence, diagnostics or persistent storage.
 | `createNativeUploadGrant` | Request one bounded exact-object upload | `201` with a presigned `PUT` URL and exact signed headers |
 | `registerNativeArtifact` | Verify uploaded bytes and register their immutable reference | `201` |
 | `reportNativeTerminal` | Report completed or failed execution | `200`, including identical duplicate acknowledgement |
+| `inspectNativeAttempt` | Observe one known attempt owned by the authenticated worker | `200` with ACTIVE, INACTIVE or TERMINAL, or indistinguishable `404` |
 
 The API is outbound-pull and POST-only. `maxWaitSeconds` is capped at 30 and
 server-provided heartbeat and retry intervals are bounded. A worker should add
@@ -203,6 +206,29 @@ same attempt and resulting Run revision. A different terminal claim for an
 accepted attempt is a duplicate conflict. This makes uncertain HTTP responses
 safe to retry without weakening attempt fencing.
 
+## Read-only attempt inspection
+
+An interrupted worker may hold a retained attempt directory but no in-memory lease capability.
+`inspectNativeAttempt` accepts one exact Run/attempt pair using the worker-audience credential;
+the caller cannot choose a worker identity. The server returns a consistent observation at its
+reported `serverTime` and only for a record belonging to that authenticated worker:
+
+- `TERMINAL` means a first terminal report was durably accepted; its accepted kind and resulting
+  Run revision are supplied. It takes precedence over a matching retained lease row.
+- `ACTIVE` means the matching v2 lease row was not released and had not expired at `serverTime`.
+  Its lease ID and expiry are non-secret identifiers, not a replacement capability.
+- `INACTIVE` means that matching row remains but was released or expired without an accepted
+  terminal report. It does not identify the cause or prove that partial uploads are complete.
+- `404 ATTEMPT_NOT_FOUND` covers both unknown and foreign-owned attempts. A superseded expired
+  lease may no longer have a retained row and can also produce 404; callers must not interpret it
+  as proof that the attempt never existed.
+
+No result authorizes resuming execution, deleting local files or owner markers, or advertising
+availability. An `ACTIVE` result may become stale immediately, and inspection supplies no lease
+capability. Acquisition with a lost response before the attempt ID became known and automatic
+restart recovery remain unresolved. See
+[ADR-0006](decisions/0006-inspect-native-attempt-without-restoring-authority.md).
+
 ## Errors, security and operational limits
 
 All operations define structural, authentication, authorization, rate-limit,
@@ -248,7 +274,8 @@ connectivity and identity, but does not own the Windows process or commit its
 credential. Analysis consumes only registered immutable evidence and remains
 independent of this transport.
 
-Candidate bundle `0.19.0` retains only this v2 Native Worker API. Consumers
+Candidate bundle `0.20.0` retains only this v2 Native Worker API and adds the
+read-only inspection operation. Consumers
 must move to one reviewed bundle revision and remove v1 routes and payload
 handling in coordinated control-plane and Playwright changes. Do not deploy a
 v2-only worker against a v1-only control plane or enable acquisition during a

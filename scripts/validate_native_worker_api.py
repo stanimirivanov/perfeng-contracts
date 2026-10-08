@@ -26,7 +26,12 @@ LEASE_OPERATIONS = {
     "registerNativeArtifact",
     "reportNativeTerminal",
 }
-OPERATIONS = {"reportWorkerPresence", "acquireNativeLease", *LEASE_OPERATIONS}
+OPERATIONS = {
+    "reportWorkerPresence",
+    "acquireNativeLease",
+    "inspectNativeAttempt",
+    *LEASE_OPERATIONS,
+}
 SIGNED_UPLOAD_HEADERS = {
     "content-type",
     "host",
@@ -62,6 +67,11 @@ FIXTURES = {
     "terminal-ack": "TerminalAck",
     "terminal-ack-duplicate": "TerminalAck",
     "lease-gone-error": "Error",
+    "inspect-attempt": "InspectAttempt",
+    "attempt-active": "AttemptInspection",
+    "attempt-inactive": "AttemptInspection",
+    "attempt-terminal": "AttemptInspection",
+    "attempt-not-found-error": "Error",
 }
 REJECTIONS = {
     "request-selected-worker-identity",
@@ -79,6 +89,10 @@ REJECTIONS = {
     "recipe-unsupported-journey",
     "recipe-invalid-cache-reuse",
     "recipe-invalid-browser-settings",
+    "inspect-selects-worker",
+    "active-attempt-missing-expiry",
+    "inactive-attempt-leaks-capability",
+    "terminal-attempt-missing-kind",
 }
 HTTP_CASES = {
     ("reportWorkerPresence", 200, "presence", "presence-status"),
@@ -91,6 +105,10 @@ HTTP_CASES = {
     ("registerNativeArtifact", 201, "register-artifact", "artifact"),
     ("reportNativeTerminal", 200, "terminal-completed", "terminal-ack"),
     ("reportNativeTerminal", 200, "terminal-completed", "terminal-ack-duplicate"),
+    ("inspectNativeAttempt", 200, "inspect-attempt", "attempt-active"),
+    ("inspectNativeAttempt", 200, "inspect-attempt", "attempt-inactive"),
+    ("inspectNativeAttempt", 200, "inspect-attempt", "attempt-terminal"),
+    ("inspectNativeAttempt", 404, "inspect-attempt", "attempt-not-found-error"),
 }
 
 
@@ -335,11 +353,60 @@ def lint(document: dict[str, Any]) -> None:
                 if not {"409", "410"} <= set(candidate["responses"]):
                     raise ValueError("Lease mutation lacks stale-revision and lost-lease outcomes")
             elif names:
-                raise ValueError("Presence and acquisition cannot accept a lease capability")
+                raise ValueError("Unscoped worker operations cannot accept a lease capability")
     if identifiers != OPERATIONS:
         raise ValueError("Unexpected Native Worker operation inventory")
 
     schemas = document["components"]["schemas"]
+    inspection_path = document["paths"].get("/native-worker/v2/attempts/inspect")
+    if (
+        not isinstance(inspection_path, dict)
+        or "post" not in inspection_path
+        or inspection_path["post"]["operationId"] != "inspectNativeAttempt"
+    ):
+        raise ValueError("Native attempt inspection must use its reviewed path")
+    inspect_request = schemas["InspectAttempt"]
+    if (
+        inspect_request.get("additionalProperties") is not False
+        or set(inspect_request["required"]) != {"protocolVersion", "runId", "attemptId"}
+        or set(inspect_request["properties"]) != {"protocolVersion", "runId", "attemptId"}
+    ):
+        raise ValueError("Attempt inspection request can select only one v2 Run and attempt")
+    inspection_shapes = {
+        "ACTIVE": {
+            "runId",
+            "attemptId",
+            "state",
+            "serverTime",
+            "leaseId",
+            "expiresAt",
+            "runRevision",
+        },
+        "INACTIVE": {"runId", "attemptId", "state", "serverTime"},
+        "TERMINAL": {
+            "runId",
+            "attemptId",
+            "state",
+            "serverTime",
+            "terminalKind",
+            "runRevision",
+            "acceptedAt",
+        },
+    }
+    variants = schemas["AttemptInspection"]["oneOf"]
+    if (
+        len(variants) != len(inspection_shapes)
+        or any(
+            variant.get("additionalProperties") is not False
+            or (state := variant["properties"]["state"].get("const")) not in inspection_shapes
+            or set(variant["required"]) != inspection_shapes[state]
+            or set(variant["properties"]) != inspection_shapes[state]
+            for variant in variants
+        )
+        or {variant["properties"]["state"]["const"] for variant in variants}
+        != set(inspection_shapes)
+    ):
+        raise ValueError("Attempt inspection response must be closed and contain no authority")
     if schemas["ArtifactPlan"]["properties"]["format"] != {
         "$ref": "#/components/schemas/ArtifactFormat"
     }:
@@ -378,13 +445,14 @@ def lint(document: dict[str, Any]) -> None:
     if grant["responses"]["201"].get("headers"):
         raise ValueError("Upload authorization must be returned only in the response body")
 
-    if document["info"]["version"] != "2.0.0" or not all(
+    if document["info"]["version"] != "2.1.0" or not all(
         path.startswith("/native-worker/v2/") for path in document["paths"]
     ):
         raise ValueError("Native Worker paths and version must identify protocol v2")
     if (
         schemas["WorkerPresence"]["properties"]["protocolVersion"] != {"const": 2}
         or schemas["AcquireLease"]["properties"]["protocolVersion"] != {"const": 2}
+        or schemas["InspectAttempt"]["properties"]["protocolVersion"] != {"const": 2}
         or schemas["WorkerCapabilities"]["properties"]["runnerContract"] != {"const": 2}
     ):
         raise ValueError("Native Worker protocol and runner generation must be explicit")
@@ -465,6 +533,23 @@ def check_http(document: dict[str, Any], case: dict[str, Any], values: dict[str,
         values[case["request"]]["attemptId"] != values[case["response"]]["attemptId"]
     ):
         raise ValueError("Terminal acknowledgement changed execution attempt")
+    if operation_id == "inspectNativeAttempt":
+        request = values[case["request"]]
+        if case["status"] == 404:
+            if values[case["response"]]["code"] != "ATTEMPT_NOT_FOUND":
+                raise ValueError("Unknown inspection must not disclose foreign attempt state")
+        else:
+            observed = values[case["response"]]
+            if any(observed[field] != request[field] for field in ("runId", "attemptId")):
+                raise ValueError("Attempt inspection changed the requested identity")
+            if observed["state"] == "ACTIVE" and datetime.fromisoformat(
+                observed["expiresAt"]
+            ) <= datetime.fromisoformat(observed["serverTime"]):
+                raise ValueError("Active attempt inspection has an expired lease")
+            if observed["state"] == "TERMINAL" and datetime.fromisoformat(
+                observed["acceptedAt"]
+            ) > datetime.fromisoformat(observed["serverTime"]):
+                raise ValueError("Terminal inspection precedes acceptance")
 
 
 def validate_native_worker_api(root: Path = ROOT) -> tuple[int, int, int]:
