@@ -22,7 +22,82 @@ class NativeWorkerApiTests(unittest.TestCase):
 
     def test_contract_and_conformance_corpus_validate_without_network(self):
         with patch("socket.create_connection", side_effect=AssertionError("network")):
-            self.assertEqual(native.validate_native_worker_api(), (16, 15, 10))
+            self.assertEqual(native.validate_native_worker_api(), (21, 19, 14))
+
+    def test_attempt_inspection_is_worker_scoped_and_never_restores_authority(self):
+        request = self.values["inspect-attempt"]
+        request_validator = native.schema_validator(self.document, "InspectAttempt")
+        request_validator.validate(request)
+        for changed in [
+            {**request, "protocolVersion": 1},
+            {**request, "workerId": "caller-selected"},
+            {**request, "leaseCapability": "example-not-a-real-lease-capability-0001"},
+        ]:
+            self.assertFalse(request_validator.is_valid(changed))
+
+        response_validator = native.schema_validator(self.document, "AttemptInspection")
+        for name in ["attempt-active", "attempt-inactive", "attempt-terminal"]:
+            response_validator.validate(self.values[name])
+            self.assertNotIn("leaseCapability", self.values[name])
+            self.assertNotIn("workerId", self.values[name])
+        active = copy.deepcopy(self.values["attempt-active"])
+        active["leaseCapability"] = "example-not-a-real-lease-capability-0001"
+        self.assertFalse(response_validator.is_valid(active))
+        terminal = copy.deepcopy(self.values["attempt-terminal"])
+        terminal["state"] = "INACTIVE"
+        self.assertFalse(response_validator.is_valid(terminal))
+
+    def test_attempt_inspection_http_cases_preserve_identity_and_time_order(self):
+        inspection = next(
+            case
+            for case in self.cases
+            if case["operationId"] == "inspectNativeAttempt"
+            and case["response"] == "attempt-active"
+        )
+        native.check_http(self.document, inspection, self.values)
+        changed = copy.deepcopy(self.values)
+        changed["attempt-active"]["attemptId"] = "33333333-3333-4333-8333-333333333333"
+        with self.assertRaisesRegex(ValueError, "requested identity"):
+            native.check_http(self.document, inspection, changed)
+        changed = copy.deepcopy(self.values)
+        changed["attempt-active"]["expiresAt"] = "2026-09-18T12:00:00Z"
+        with self.assertRaisesRegex(ValueError, "expired lease"):
+            native.check_http(self.document, inspection, changed)
+
+        terminal = next(
+            case
+            for case in self.cases
+            if case["operationId"] == "inspectNativeAttempt"
+            and case["response"] == "attempt-terminal"
+        )
+        changed = copy.deepcopy(self.values)
+        changed["attempt-terminal"]["acceptedAt"] = "2026-09-18T12:04:00Z"
+        with self.assertRaisesRegex(ValueError, "precedes acceptance"):
+            native.check_http(self.document, terminal, changed)
+
+        not_found = next(
+            case
+            for case in self.cases
+            if case["operationId"] == "inspectNativeAttempt" and case["status"] == 404
+        )
+        changed = copy.deepcopy(self.values)
+        changed["attempt-not-found-error"]["code"] = "NOT_AUTHORIZED"
+        with self.assertRaises(ValidationError):
+            native.check_http(self.document, not_found, changed)
+
+    def test_inspection_path_and_closed_response_cannot_drift(self):
+        changed = copy.deepcopy(self.document)
+        inspection = changed["paths"].pop("/native-worker/v2/attempts/inspect")
+        changed["paths"]["/native-worker/v2/attempts/search"] = inspection
+        with self.assertRaisesRegex(ValueError, "reviewed path"):
+            native.lint(changed)
+
+        changed = copy.deepcopy(self.document)
+        changed["components"]["schemas"]["AttemptInspection"]["oneOf"][0]["properties"][
+            "leaseCapability"
+        ] = {"type": "string"}
+        with self.assertRaisesRegex(ValueError, "contain no authority"):
+            native.lint(changed)
 
     def test_previous_protocol_generation_is_rejected(self):
         presence = copy.deepcopy(self.values["presence"])

@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.19.0`; it is not a stable release.
+- The current candidate bundle is `0.20.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,16 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.20.0 adds `inspectNativeAttempt` to Native Worker API v2
+as an authenticated, read-only operation. Existing v2 requests and responses,
+Run Management and data schemas are unchanged. Strict API clients must opt in
+to the new `2.1.0` OpenAPI operation and `ATTEMPT_NOT_FOUND` error code;
+consumers pinned to 0.19.0 continue using the earlier `2.0.0` API. The control
+plane must implement worker-scoped snapshots before the Playwright worker can
+use the operation. An inspection result never restores a lease capability,
+permits evidence deletion or authorizes unattended acquisition. See
+[ADR-0006](decisions/0006-inspect-native-attempt-without-restoring-authority.md).
 
 Candidate bundle 0.19.0 retires the never-deployed `native-worker/v1` API from
 the active manifest, OpenAPI corpus and validators. `native-worker/v2` is the
