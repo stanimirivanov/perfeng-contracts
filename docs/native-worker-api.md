@@ -16,6 +16,8 @@
   recipe; the worker must not supply missing measurement settings from defaults.
 - A read-only attempt inspection can support operator reconciliation after interruption, but
   neither local evidence nor a server snapshot restores lease authority.
+- Current-slot discovery handles an unknown attempt ID without listing history;
+  stop the old process and withdraw availability before manual recovery.
 - Implementers must use the OpenAPI description and positive, rejection and
   HTTP fixtures under `api/native-worker/v2` as the conformance boundary.
 
@@ -53,6 +55,7 @@ do not belong in logs, evidence, diagnostics or persistent storage.
 | `registerNativeArtifact` | Verify uploaded bytes and register their immutable reference | `201` |
 | `reportNativeTerminal` | Report completed or failed execution | `200`, including identical duplicate acknowledgement |
 | `inspectNativeAttempt` | Observe one known attempt owned by the authenticated worker | `200` with ACTIVE, INACTIVE or TERMINAL, or indistinguishable `404` |
+| `discoverNativeAttempt` | Observe recorded availability and this worker's single current measurement slot | `200` with NONE or FOUND, always `Cache-Control: no-store` |
 
 The API is outbound-pull and POST-only. `maxWaitSeconds` is capped at 30 and
 server-provided heartbeat and retry intervals are bounded. A worker should add
@@ -225,9 +228,74 @@ reported `serverTime` and only for a record belonging to that authenticated work
 
 No result authorizes resuming execution, deleting local files or owner markers, or advertising
 availability. An `ACTIVE` result may become stale immediately, and inspection supplies no lease
-capability. Acquisition with a lost response before the attempt ID became known and automatic
-restart recovery remain unresolved. See
+capability. Use current-slot discovery below when an acquisition response was
+lost before the attempt ID became known. Automatic restart recovery remains
+out of scope. See
 [ADR-0006](decisions/0006-inspect-native-attempt-without-restoring-authority.md).
+
+## Read-only current-slot discovery
+
+`POST /native-worker/v2/attempts/discover` accepts only `protocolVersion: 2`.
+The worker bearer principal scopes the lookup; no Run, attempt, worker, request
+ID, time range, history cursor or lease capability can be supplied. Acquisition
+is not made idempotent by this endpoint and its existing request/response shape
+is unchanged.
+
+The response includes `serverTime`, stored `availability`, and one closed state:
+
+- `NONE`: no unreleased v2 lease owned by this worker has `expiresAt > serverTime`.
+  Expiry exactly at `serverTime` is inactive. Expired or released leases and
+  historical terminal reports are not listed. This does not prove that an
+  earlier request failed, that no evidence exists, or that acquisition is safe.
+- `FOUND`: exactly one such lease occupies the measurement slot. `slotExpiresAt`
+  is its exclusive expiry. The nested `attempt` reuses the known-attempt
+  inspection shape with exactly the same observation time. `ACTIVE` includes
+  non-secret Run, attempt and lease identifiers, expiry and Run revision.
+  `TERMINAL` takes precedence when that worker's first terminal report was
+  accepted, even though the lease still occupies capacity. In that case the
+  accepted kind, time and resulting Run revision are returned. INACTIVE is not
+  a discovery result; use exact inspection for a retained known attempt.
+
+`availability` reports the stored AVAILABLE, DRAINING or UNAVAILABLE intent,
+not presence freshness, qualification, acquisition authorization or permission.
+UNREPORTED means no presence record exists and is valid only with NONE. A
+missing presence record alongside a current slot, multiple occupying slots or
+inconsistent stored identities is a server integrity failure: fail closed with
+500/503, not a truncated result or fabricated NONE. Do not leak foreign worker
+existence through response bodies or error text. Every successful response has
+`Cache-Control: no-store` and no lease-capability response header.
+
+### Consistency and late acquisition
+
+Discovery must serialize its observation with this worker's acquisition and
+presence replacement. Read `serverTime` after any serialization wait, then
+observe availability, occupying lease, Run revision and terminal acceptance
+consistently. A stale pre-wait snapshot cannot prove NONE. Acquisitions must
+recheck current availability before committing; one that observed AVAILABLE
+earlier cannot commit from that stale observation after withdrawal. These are
+consumer obligations, not properties that JSON Schema alone can verify.
+
+For manual recovery, stop the old agent and its browser process tree, exclude
+any other process using this worker identity, then report UNAVAILABLE through
+the existing presence operation and obtain acknowledgement before discovery.
+Do not rely on local wall-clock time or sleeping for `maxWaitSeconds` to prove
+that a lost HTTP request can no longer commit. A prior acquisition that commits
+before withdrawal is discoverable until release or expiry; an earlier request
+that has not committed must not acquire after the acknowledged withdrawal.
+Concurrent new AVAILABLE reports can invalidate this observation immediately.
+
+If discovery finds ACTIVE, retain the owner marker/evidence and wait for the
+server to observe expiry; do not renew, release, publish, complete or execute
+without the original in-memory capability. If it finds TERMINAL, retain the
+files and compare any known local attempt identity with exact inspection; the
+slot may still occupy capacity. NONE after withdrawal only settles current
+capacity. It never settles unknown historical acceptance or byte integrity.
+Clearing an owner marker, archiving evidence and explicitly starting another
+run require the separately implemented manual recovery procedure; no discovery
+response is itself cleanup or acquisition permission. Unreported identity,
+errors, mismatches or uncertain withdrawal fail closed and retain local state.
+
+See [ADR-0007](decisions/0007-discover-native-worker-slot-without-restoring-authority.md).
 
 ## Errors, security and operational limits
 
@@ -274,8 +342,15 @@ connectivity and identity, but does not own the Windows process or commit its
 credential. Analysis consumes only registered immutable evidence and remains
 independent of this transport.
 
-Candidate bundle `0.20.0` retains only this v2 Native Worker API and adds the
-read-only inspection operation. Consumers
+Candidate bundle `0.21.0` retains only this v2 Native Worker API and adds
+read-only current-slot discovery to OpenAPI `2.2.0`. Deploy the implementing
+control plane before enabling discovery in the worker. Existing acquisition,
+inspection and lease mutation payloads do not change, and discovery requires
+no new data schema or evidence conversion. The control-plane batch must prove
+worker isolation, withdrawal versus late acquisition, exclusive expiry,
+terminal precedence, integrity failure and no mutation with live PostgreSQL
+tests. The Playwright batch must prove process exclusion and conservative
+manual reconciliation of retained files. Consumers
 must move to one reviewed bundle revision and remove v1 routes and payload
 handling in coordinated control-plane and Playwright changes. Do not deploy a
 v2-only worker against a v1-only control plane or enable acquisition during a

@@ -30,6 +30,7 @@ OPERATIONS = {
     "reportWorkerPresence",
     "acquireNativeLease",
     "inspectNativeAttempt",
+    "discoverNativeAttempt",
     *LEASE_OPERATIONS,
 }
 SIGNED_UPLOAD_HEADERS = {
@@ -72,6 +73,12 @@ FIXTURES = {
     "attempt-inactive": "AttemptInspection",
     "attempt-terminal": "AttemptInspection",
     "attempt-not-found-error": "Error",
+    "discover-attempt": "DiscoverAttempt",
+    "discovery-none": "AttemptDiscovery",
+    "discovery-available": "AttemptDiscovery",
+    "discovery-unreported": "AttemptDiscovery",
+    "discovery-active": "AttemptDiscovery",
+    "discovery-terminal": "AttemptDiscovery",
 }
 REJECTIONS = {
     "request-selected-worker-identity",
@@ -93,6 +100,14 @@ REJECTIONS = {
     "active-attempt-missing-expiry",
     "inactive-attempt-leaks-capability",
     "terminal-attempt-missing-kind",
+    "discovery-selects-worker",
+    "discovery-selects-run",
+    "discovery-none-with-attempt",
+    "discovery-missing-expiry",
+    "discovery-inactive",
+    "discovery-leaks-capability",
+    "discovery-lists-attempts",
+    "discovery-unreported-with-slot",
 }
 HTTP_CASES = {
     ("reportWorkerPresence", 200, "presence", "presence-status"),
@@ -109,6 +124,11 @@ HTTP_CASES = {
     ("inspectNativeAttempt", 200, "inspect-attempt", "attempt-inactive"),
     ("inspectNativeAttempt", 200, "inspect-attempt", "attempt-terminal"),
     ("inspectNativeAttempt", 404, "inspect-attempt", "attempt-not-found-error"),
+    ("discoverNativeAttempt", 200, "discover-attempt", "discovery-none"),
+    ("discoverNativeAttempt", 200, "discover-attempt", "discovery-available"),
+    ("discoverNativeAttempt", 200, "discover-attempt", "discovery-unreported"),
+    ("discoverNativeAttempt", 200, "discover-attempt", "discovery-active"),
+    ("discoverNativeAttempt", 200, "discover-attempt", "discovery-terminal"),
 }
 
 
@@ -316,6 +336,111 @@ def check_fixture_safety(
                     raise ValueError("HTTP fixtures may contain only explicit fake capabilities")
 
 
+def check_discovery_contract(document: dict[str, Any]) -> None:
+    """Guard the bounded read-only discovery boundary against contract drift."""
+    path = document["paths"].get("/native-worker/v2/attempts/discover")
+    if not isinstance(path, dict) or path.get("post", {}).get("operationId") != (
+        "discoverNativeAttempt"
+    ):
+        raise ValueError("Native attempt discovery must use its reviewed path")
+    candidate = path["post"]
+    if request_schema(candidate) != {"$ref": "#/components/schemas/DiscoverAttempt"}:
+        raise ValueError("Discovery must use its closed worker-scoped request")
+    response, schema = response_schema(document, candidate, 200)
+    if schema != {"$ref": "#/components/schemas/AttemptDiscovery"} or response.get("headers") != {
+        "Cache-Control": {"required": True, "schema": {"const": "no-store"}}
+    }:
+        raise ValueError("Discovery must return only its non-cached observation")
+    schemas = document["components"]["schemas"]
+    if schemas["DiscoverAttempt"] != {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["protocolVersion"],
+        "properties": {"protocolVersion": {"const": 2}},
+    }:
+        raise ValueError("Discovery request cannot select identity, history or authority")
+    if schemas["DiscoveryAvailability"].get("enum") != [
+        "UNREPORTED",
+        "AVAILABLE",
+        "DRAINING",
+        "UNAVAILABLE",
+    ]:
+        raise ValueError("Discovery must distinguish absent and recorded availability")
+    common = {
+        "serverTime": {"$ref": "#/components/schemas/Timestamp"},
+        "availability": {"$ref": "#/components/schemas/DiscoveryAvailability"},
+    }
+    variants = schemas["AttemptDiscovery"]["oneOf"]
+    expected = {
+        "NONE": {**common, "state": {"const": "NONE"}},
+        "FOUND": {
+            **common,
+            "state": {"const": "FOUND"},
+            "availability": {
+                "allOf": [
+                    {"$ref": "#/components/schemas/DiscoveryAvailability"},
+                    {"not": {"const": "UNREPORTED"}},
+                ]
+            },
+            "slotExpiresAt": {"$ref": "#/components/schemas/Timestamp"},
+            "attempt": {
+                "allOf": [
+                    {"$ref": "#/components/schemas/AttemptInspection"},
+                    {"not": {"properties": {"state": {"const": "INACTIVE"}}}},
+                ]
+            },
+        },
+    }
+    states: set[str] = set()
+    for variant in variants:
+        state = variant["properties"]["state"].get("const")
+        if (
+            state not in expected
+            or state in states
+            or variant.get("type") != "object"
+            or variant.get("additionalProperties") is not False
+            or set(variant["required"]) != set(expected[state])
+            or set(variant["properties"]) != set(expected[state])
+        ):
+            raise ValueError("Discovery response must be closed and bounded to one current slot")
+        for name, definition in variant["properties"].items():
+            structural = {key: value for key, value in definition.items() if key != "description"}
+            if structural != expected[state][name]:
+                raise ValueError("Discovery cannot change slot identity, scope or authority")
+        states.add(state)
+    if states != set(expected):
+        raise ValueError("Discovery must distinguish NONE and FOUND")
+
+
+def check_inspection_time(observed: dict[str, Any]) -> None:
+    """Check server-time ordering after structural attempt validation."""
+    server_time = datetime.fromisoformat(observed["serverTime"])
+    if observed["state"] == "ACTIVE" and datetime.fromisoformat(observed["expiresAt"]) <= (
+        server_time
+    ):
+        raise ValueError("Active attempt inspection has an expired lease")
+    if observed["state"] == "TERMINAL" and datetime.fromisoformat(observed["acceptedAt"]) > (
+        server_time
+    ):
+        raise ValueError("Terminal inspection precedes acceptance")
+
+
+def check_discovery_time(observed: dict[str, Any]) -> None:
+    """Enforce one clock and exclusive slot expiry in a discovery observation."""
+    if observed["state"] == "NONE":
+        return
+    server_time = datetime.fromisoformat(observed["serverTime"])
+    slot_expiry = datetime.fromisoformat(observed["slotExpiresAt"])
+    attempt = observed["attempt"]
+    if server_time != datetime.fromisoformat(attempt["serverTime"]):
+        raise ValueError("Discovery and attempt must share one server observation time")
+    if slot_expiry <= server_time:
+        raise ValueError("Discovery cannot return an expired measurement slot")
+    check_inspection_time(attempt)
+    if attempt["state"] == "ACTIVE" and slot_expiry != datetime.fromisoformat(attempt["expiresAt"]):
+        raise ValueError("Discovery slot expiry differs from the active attempt")
+
+
 def lint(document: dict[str, Any]) -> None:
     check_local_references(document, document)
     errors = list(OpenAPIV31SpecValidator(document).iter_errors())
@@ -356,6 +481,7 @@ def lint(document: dict[str, Any]) -> None:
                 raise ValueError("Unscoped worker operations cannot accept a lease capability")
     if identifiers != OPERATIONS:
         raise ValueError("Unexpected Native Worker operation inventory")
+    check_discovery_contract(document)
 
     schemas = document["components"]["schemas"]
     inspection_path = document["paths"].get("/native-worker/v2/attempts/inspect")
@@ -445,7 +571,7 @@ def lint(document: dict[str, Any]) -> None:
     if grant["responses"]["201"].get("headers"):
         raise ValueError("Upload authorization must be returned only in the response body")
 
-    if document["info"]["version"] != "2.1.0" or not all(
+    if document["info"]["version"] != "2.2.0" or not all(
         path.startswith("/native-worker/v2/") for path in document["paths"]
     ):
         raise ValueError("Native Worker paths and version must identify protocol v2")
@@ -542,14 +668,11 @@ def check_http(document: dict[str, Any], case: dict[str, Any], values: dict[str,
             observed = values[case["response"]]
             if any(observed[field] != request[field] for field in ("runId", "attemptId")):
                 raise ValueError("Attempt inspection changed the requested identity")
-            if observed["state"] == "ACTIVE" and datetime.fromisoformat(
-                observed["expiresAt"]
-            ) <= datetime.fromisoformat(observed["serverTime"]):
-                raise ValueError("Active attempt inspection has an expired lease")
-            if observed["state"] == "TERMINAL" and datetime.fromisoformat(
-                observed["acceptedAt"]
-            ) > datetime.fromisoformat(observed["serverTime"]):
-                raise ValueError("Terminal inspection precedes acceptance")
+            check_inspection_time(observed)
+    if operation_id == "discoverNativeAttempt" and case["status"] == 200:
+        if {"x-perfeng-lease", "x-perfeng-upload-grant"} & set(response_headers):
+            raise ValueError("Discovery cannot return capability response headers")
+        check_discovery_time(values[case["response"]])
 
 
 def validate_native_worker_api(root: Path = ROOT) -> tuple[int, int, int]:
