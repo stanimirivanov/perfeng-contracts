@@ -22,7 +22,7 @@ class NativeWorkerApiTests(unittest.TestCase):
 
     def test_contract_and_conformance_corpus_validate_without_network(self):
         with patch("socket.create_connection", side_effect=AssertionError("network")):
-            self.assertEqual(native.validate_native_worker_api(), (21, 19, 14))
+            self.assertEqual(native.validate_native_worker_api(), (27, 27, 19))
 
     def test_attempt_inspection_is_worker_scoped_and_never_restores_authority(self):
         request = self.values["inspect-attempt"]

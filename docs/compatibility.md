@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.20.0`; it is not a stable release.
+- The current candidate bundle is `0.21.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,25 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.21.0 adds `discoverNativeAttempt` to Native Worker API v2
+(OpenAPI `2.2.0`) for acquisition responses lost before the worker learns the
+attempt ID. The request has only `protocolVersion: 2`; the bearer principal
+scopes a bounded observation of recorded availability and the single current
+measurement slot. NONE is not proof that acquisition never succeeded. FOUND
+reuses ACTIVE/TERMINAL inspection without capability or assignment material;
+terminal acceptance takes precedence while the retained lease occupies capacity.
+The new availability union distinguishes UNREPORTED from actual reports.
+Existing operation shapes, error codes, Run Management and all nineteen
+Effect-authored data schemas are unchanged. Strict clients must opt in to the
+new operation and response union; 0.20.0 clients retain the earlier API.
+The control plane must implement consistent worker-scoped discovery serialized
+with acquisition and presence replacement before workers call it. Manual
+recovery must stop the old process and withdraw availability; discovery does not
+restore execution authority or permit clearing evidence. Bundle promotion and
+unattended restart remain separate work. See
+[ADR-0007](decisions/0007-discover-native-worker-slot-without-restoring-authority.md)
+and the [Native Worker guide](native-worker-api.md#read-only-current-slot-discovery).
 
 Candidate bundle 0.20.0 adds `inspectNativeAttempt` to Native Worker API v2
 as an authenticated, read-only operation. Existing v2 requests and responses,
