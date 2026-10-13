@@ -14,6 +14,11 @@ from jsonschema import Draft202012Validator, FormatChecker
 from referencing import Registry, Resource
 from referencing.exceptions import NoSuchResource, Unresolvable
 
+try:
+    from .kubernetes_evidence import check_kubernetes_benchmark_evidence
+except ImportError:
+    from kubernetes_evidence import check_kubernetes_benchmark_evidence
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -534,6 +539,8 @@ def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
                     raise ValueError(f"{example['path']}[{index}]: {errors[0].message}")
                 if entry["name"] in {"catalogue/v1", "catalogue/v2"}:
                     check_catalogue_consistency(instance)
+                if entry["name"] == "kubernetes-benchmark-evidence/v1":
+                    check_kubernetes_benchmark_evidence(instance)
                 if entry["name"] == "artifact/v1":
                     check_artifact_reference(instance)
                 if entry["name"] in {

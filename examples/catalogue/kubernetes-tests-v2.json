@@ -1,0 +1,49 @@
+{
+  "apiVersion": "performance.perfeng.io/v2",
+  "kind": "TestCatalogue",
+  "metadata": {"name": "kubernetes-example-tests", "version": "1.0.0"},
+  "tests": [
+    {
+      "id": "pod-startup-k8s",
+      "name": "Bounded warm-image Pod startup",
+      "owner": "platform-team",
+      "criticality": "medium",
+      "description": "Synthetic OCI admission fixture; not a promoted image or workload.",
+      "tool": {"name": "kube-burner", "version": "2.8.5"},
+      "source": {
+        "repository": "https://github.com/stanimirivanov/perfeng-k8s",
+        "gitSha": "3333333333333333333333333333333333333333",
+        "entrypoint": "workloads/pod-startup-oci/config.yml"
+      },
+      "artifact": {
+        "kind": "oci-image",
+        "image": "quay.io/kube-burner/kube-burner@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      },
+      "workloads": [
+        {
+          "schemaVersion": 1,
+          "id": "pod-startup-oci-smoke",
+          "version": "1.0.0",
+          "tool": "kube-burner",
+          "profile": "smoke",
+          "model": "open",
+          "configuration": {
+            "path": "workloads/pod-startup-oci/config.yml",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "phases": {"unit": "iterations", "warmup": 0, "measurement": 10, "cooldown": 0},
+          "dataset": {"kind": "none"}
+        }
+      ],
+      "schedule": {"pr": "smoke"},
+      "metrics": [
+        {
+          "name": "k8s.pod.ready.duration",
+          "direction": "lower-is-better",
+          "type": "latency",
+          "unit": "ms"
+        }
+      ]
+    }
+  ]
+}

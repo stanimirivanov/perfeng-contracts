@@ -12,6 +12,12 @@
   ambiguous or mutable provenance.
 - Cluster execution and result adapters remain outside this repository.
 
+Catalogue v2 now admits kube-burner OCI images and verified release archives;
+catalogue v1 continues admitting only k6 and Playwright. The complete
+[Kubernetes benchmark admission/evidence guide](kubernetes-benchmark-evidence.md)
+defines mounted-input verification, qualification, unknown observations and
+consumer obligations. The executable image is not the benchmark software candidate.
+
 These contracts implement the workload/catalogue slice of proposal sections
 16-17, 30, 63, and 78. They describe k6, Playwright, and kube-burner workloads.
 Cluster execution and result adapters remain consumer work. They do not change

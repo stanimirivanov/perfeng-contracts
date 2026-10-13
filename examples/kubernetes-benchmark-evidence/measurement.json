@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "kind": "KubernetesBenchmarkEvidence",
+  "scope": {
+    "kind": "measurement",
+    "runId": "perf-20261013-120000-a1b2c3d4",
+    "testId": "pod-startup-k8s",
+    "workload": {
+      "id": "pod-startup-oci-smoke",
+      "version": "1.0.0",
+      "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    }
+  },
+  "profile": {
+    "id": "local-kind-integration",
+    "version": "1.0.0",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "purpose": "integration"
+  },
+  "environment": {
+    "id": "local-kind",
+    "version": "1.0.0",
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  },
+  "target": {"clusterId": "perfeng-local", "kubeSystemUid": "11111111-1111-4111-8111-111111111111"},
+  "captureWindow": {"start": "2026-10-13T12:00:00Z", "end": "2026-10-13T12:00:10Z"},
+  "status": "REJECTED",
+  "checks": [
+    {"id": "cluster-identity", "status": "PASS", "reason": "Matches the reviewed target identity."},
+    {"id": "node-readiness", "status": "PASS", "reason": "All selected nodes are Ready."},
+    {"id": "placement", "status": "PASS", "reason": "Selected nodes have the reviewed placement."},
+    {"id": "capacity", "status": "PASS", "reason": "Allocatable resources satisfy the integration budget."},
+    {"id": "resource-pressure", "status": "FAIL", "reason": "DiskPressure was observed during measurement."},
+    {"id": "interference", "status": "UNKNOWN", "reason": "Usage metrics were unavailable during measurement."}
+  ],
+  "nodes": [
+    {
+      "name": "perfeng-local-worker",
+      "uid": "22222222-2222-4222-8222-222222222222",
+      "kubernetesVersion": "v1.35.0",
+      "containerRuntimeVersion": "containerd://2.2.0",
+      "architecture": "amd64",
+      "allocatable": {"cpuMilliCores": 4000, "memoryBytes": 8589934592}
+    }
+  ],
+  "samples": [
+    {
+      "nodeUid": "22222222-2222-4222-8222-222222222222",
+      "observedAt": "2026-10-13T12:00:10Z",
+      "conditions": {"ready": "TRUE", "memoryPressure": "FALSE", "diskPressure": "TRUE", "pidPressure": "FALSE"},
+      "usage": {"source": "unavailable", "reason": "Metrics API unavailable; no zero values inferred."}
+    }
+  ]
+}
