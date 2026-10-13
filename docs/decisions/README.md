@@ -94,3 +94,4 @@ How will assumptions and consequences be verified?
 | [0005](0005-retire-native-worker-v1.md) | Accepted | Retire the never-deployed Native Worker v1 candidate and retain v2 as the sole supported generation. |
 | [0006](0006-inspect-native-attempt-without-restoring-authority.md) | Proposed | Add worker-scoped read-only attempt inspection without recovering lease authority. |
 | [0007](0007-discover-native-worker-slot-without-restoring-authority.md) | Proposed | Discover the authenticated worker's current measurement slot after uncertain acquisition without restoring authority or enumerating history. |
+| [0008](0008-separate-kubernetes-benchmark-evidence.md) | Proposed | Admit Kubernetes benchmarks in catalogue v2 and separate stable comparison identity from preflight and Run observation evidence. |

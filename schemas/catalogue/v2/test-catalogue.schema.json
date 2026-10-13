@@ -225,7 +225,8 @@
                 "type": "string",
                 "enum": [
                   "k6",
-                  "playwright"
+                  "playwright",
+                  "kube-burner"
                 ]
               },
               "version": {
@@ -586,7 +587,36 @@
             "$ref": "#/$defs/executionArtifact"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "tool": {
+                  "properties": {
+                    "name": {
+                      "const": "kube-burner"
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "artifact": {
+                  "properties": {
+                    "kind": {
+                      "enum": [
+                        "oci-image",
+                        "release-archive"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
       },
       "uniqueItems": true,
       "description": "an array of at least 1 item(s)",

@@ -26,6 +26,7 @@ performance policies with independent quality, SLO, and regression outcomes.
 | --- | --- | --- |
 | `candidate/v1` | [candidate](schemas/candidate/v1/candidate.schema.json) | Software identity |
 | `environment/v1` | [environment](schemas/environment/v1/environment.schema.json) | Standalone environment descriptor |
+| `kubernetes-benchmark-evidence/v1` | [Kubernetes evidence](schemas/kubernetes-benchmark-evidence/v1/kubernetes-benchmark-evidence.schema.json) | Scoped preflight/Run qualification and pressure observations, distinct from baseline identity |
 | `run/v1` | [run metadata](schemas/run/v1/run-metadata.schema.json) | Execution identity, phases, and context |
 | `result/v1` | [legacy test result](schemas/result/v1/test-result.schema.json) | Original metric record requiring a sample count |
 | `result/v2` | [test result](schemas/result/v2/test-result.schema.json) | Metric record supporting unavailable sample counts |
@@ -49,7 +50,7 @@ the bundle version. The original normalized-result array remains a legacy
 fixture, validated one metric at a time. New producers use the normalized-result
 envelope containing `result/v2` records and references to raw evidence.
 
-All nineteen data contracts are authored under `contracts/source` and generated
+All twenty data contracts are authored under `contracts/source` and generated
 into their existing `schemas` paths. The registry in
 `contracts/source/registry.ts` is the complete source-to-artifact ledger.
 Generated files under `schemas` must not be edited directly. The Run Management
@@ -106,7 +107,7 @@ and negative regression cases. Schema IDs identify bundled resources; validation
 does not fetch schemas or artifacts from the internet. Tests verify fixture
 checksums against local bytes.
 
-CI runs these checks and uploads a `perfeng-contracts-0.21.0.tar.gz` candidate
+CI runs these checks and uploads a `perfeng-contracts-0.22.0.tar.gz` candidate
 bundle. That CI artifact is not a published stable release. Until a release
 exists, integrations should pin the merged commit SHA, not a floating branch.
 

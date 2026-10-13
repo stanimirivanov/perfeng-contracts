@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.21.0`; it is not a stable release.
+- The current candidate bundle is `0.22.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,19 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.22.0 adds `kubernetes-benchmark-evidence/v1` and admits
+`kube-burner` in catalogue v2 with OCI-image or release-archive provenance.
+Catalogue v1's tool union and all other existing schemas/APIs remain unchanged.
+Strict catalogue and bundle-inventory readers must opt in; archive-only analysis
+readers must explicitly implement verified OCI provenance. The new evidence
+contract separates immutable profile/environment identities from changing
+preflight/Run observations and distinguishes UNKNOWN from PASS/zero. It does
+not qualify a cluster, authorize execution or approve a baseline. Consumers
+must verify content, trusted capture policy and comparable evidence before
+promotion. No runtime release or historical evidence is rewritten. See
+[Kubernetes evidence](kubernetes-benchmark-evidence.md) and
+[ADR-0008](decisions/0008-separate-kubernetes-benchmark-evidence.md).
 
 Candidate bundle 0.21.0 adds `discoverNativeAttempt` to Native Worker API v2
 (OpenAPI `2.2.0`) for acquisition responses lost before the worker learns the

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "kind": "KubernetesBenchmarkEvidence",
+  "scope": {"kind": "preflight"},
+  "profile": {
+    "id": "local-kind-integration",
+    "version": "1.0.0",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "purpose": "integration"
+  },
+  "environment": {
+    "id": "local-kind",
+    "version": "1.0.0",
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  },
+  "target": {"clusterId": "perfeng-local", "kubeSystemUid": "11111111-1111-4111-8111-111111111111"},
+  "captureWindow": {"start": "2026-10-13T12:00:00Z", "end": "2026-10-13T12:00:10Z"},
+  "status": "UNKNOWN",
+  "checks": [
+    {"id": "cluster-identity", "status": "UNKNOWN", "reason": "Could not verify the expected cluster identity."},
+    {"id": "node-readiness", "status": "UNKNOWN", "reason": "Node observations unavailable."},
+    {"id": "placement", "status": "UNKNOWN", "reason": "Node observations unavailable."},
+    {"id": "capacity", "status": "UNKNOWN", "reason": "Node observations unavailable."},
+    {"id": "resource-pressure", "status": "UNKNOWN", "reason": "Node observations unavailable."},
+    {"id": "interference", "status": "UNKNOWN", "reason": "Interference observations unavailable."}
+  ],
+  "nodes": [],
+  "samples": []
+}
