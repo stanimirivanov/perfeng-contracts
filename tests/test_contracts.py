@@ -37,6 +37,75 @@ class ContractsTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "versions differ"):
                 check_bundle_identity(root)
 
+    def test_manifest_schema_path_rejects_traversal_absolute_and_wrong_root(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "bundle"
+            root.mkdir()
+            outside = Path(directory) / "outside.json"
+            outside.write_text("{", encoding="utf-8")
+            manifest = {
+                "contracts": [{"name": "test", "schema": "", "examples": []}],
+            }
+            for schema_path in ("../outside.json", str(outside), "examples/test.json"):
+                with self.subTest(schema_path=schema_path):
+                    manifest["contracts"][0]["schema"] = schema_path
+                    (root / "contracts.json").write_text(json.dumps(manifest), encoding="utf-8")
+                    with self.assertRaisesRegex(ValueError, "Invalid manifest schemas path"):
+                        load_contracts(root)
+
+    def test_manifest_example_path_rejects_traversal_before_read(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "bundle"
+            self._write_minimal_bundle(root, "../outside.json")
+            (Path(directory) / "outside.json").write_text("{", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Invalid manifest examples path"):
+                validate_bundle(root)
+
+    def test_manifest_path_rejects_symlink_escape(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            outside = Path(directory) / "outside.json"
+            outside.write_text("{", encoding="utf-8")
+            for collection in ("schemas", "examples"):
+                with self.subTest(collection=collection):
+                    root = Path(directory) / f"bundle-{collection}"
+                    self._write_minimal_bundle(root, "examples/test.json")
+                    member = root / collection / "test.json"
+                    member.unlink(missing_ok=True)
+                    try:
+                        member.symlink_to(outside)
+                    except OSError as error:
+                        self.skipTest(f"symlinks unavailable: {error}")
+                    if collection == "schemas":
+                        with self.assertRaisesRegex(ValueError, "Manifest schemas path escapes"):
+                            load_contracts(root)
+                    else:
+                        with self.assertRaisesRegex(ValueError, "Manifest examples path escapes"):
+                            validate_bundle(root)
+
+    @staticmethod
+    def _write_minimal_bundle(root: Path, example_path: str) -> None:
+        (root / "schemas").mkdir(parents=True)
+        (root / "examples").mkdir()
+        (root / "pyproject.toml").write_text('[project]\nversion = "0.1.0"\n', encoding="utf-8")
+        manifest = {
+            "version": "0.1.0",
+            "contracts": [
+                {
+                    "name": "test",
+                    "schema": "schemas/test.json",
+                    "examples": [{"path": example_path}],
+                }
+            ],
+        }
+        (root / "contracts.json").write_text(json.dumps(manifest), encoding="utf-8")
+        schema = {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://perfeng.dev/schemas/test.json",
+            "type": "object",
+        }
+        (root / "schemas/test.json").write_text(json.dumps(schema), encoding="utf-8")
+        (root / "examples/test.json").write_text("{}", encoding="utf-8")
+
     def test_every_published_schema_reference_resolves(self) -> None:
         contracts, _ = load_contracts()
         original = read_json(ROOT / contracts[0]["schema"])

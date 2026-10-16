@@ -52,6 +52,24 @@ def read_json(path: Path) -> Any:
     )
 
 
+def manifest_member(root: Path, relative: str, collection: str) -> Path:
+    """Resolve a declared file without allowing it outside its repository collection."""
+    if (
+        not isinstance(relative, str)
+        or "\\" in relative
+        or (parts := relative.split("/"))[0] != collection
+        or len(parts) < 2
+        or any(part in {"", ".", ".."} for part in parts)
+    ):
+        raise ValueError(f"Invalid manifest {collection} path: {relative!r}")
+    root_path = root.resolve(strict=True)
+    collection_path = (root / collection).resolve(strict=True)
+    path = (root / relative).resolve(strict=True)
+    if not path.is_relative_to(root_path) or not path.is_relative_to(collection_path):
+        raise ValueError(f"Manifest {collection} path escapes its collection: {relative!r}")
+    return path
+
+
 def no_network(uri: str) -> Never:
     raise NoSuchResource(ref=uri)
 
@@ -70,7 +88,10 @@ def load_contracts(
     root: Path = ROOT,
 ) -> tuple[list[ContractDefinition], dict[str, Draft202012Validator]]:
     contracts: list[ContractDefinition] = read_json(root / "contracts.json")["contracts"]
-    schemas = {entry["name"]: read_json(root / entry["schema"]) for entry in contracts}
+    schemas = {
+        entry["name"]: read_json(manifest_member(root, entry["schema"], "schemas"))
+        for entry in contracts
+    }
     if len(schemas) != len(contracts):
         raise ValueError("Duplicate contract names")
     ids = [schema["$id"] for schema in schemas.values()]
@@ -504,15 +525,12 @@ def check_bundle_identity(root: Path = ROOT) -> None:
 def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
     check_bundle_identity(root)
     contracts, validators = load_contracts(root)
-    policies = [
-        (
-            read_json(root / example["path"]),
-            hashlib.sha256((root / example["path"]).read_bytes()).hexdigest(),
-        )
-        for entry in contracts
-        if entry["name"] == "policy/v1"
-        for example in entry["examples"]
-    ]
+    policies = []
+    for entry in contracts:
+        if entry["name"] == "policy/v1":
+            for example in entry["examples"]:
+                path = manifest_member(root, example["path"], "examples")
+                policies.append((read_json(path), hashlib.sha256(path.read_bytes()).hexdigest()))
     schema_paths = {entry["schema"] for entry in contracts}
     actual_schemas = {p.relative_to(root).as_posix() for p in (root / "schemas").rglob("*.json")}
     if schema_paths != actual_schemas or len(schema_paths) != len(contracts):
@@ -526,7 +544,7 @@ def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
             raise ValueError(f"No examples for {entry['name']}")
         for example in entry["examples"]:
             example_paths.add(example["path"])
-            data = read_json(root / example["path"])
+            data = read_json(manifest_member(root, example["path"], "examples"))
             if example.get("items"):
                 if not isinstance(data, list) or not data:
                     raise ValueError(f"Expected a nonempty example array: {example['path']}")
