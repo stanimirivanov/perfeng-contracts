@@ -77,7 +77,8 @@ depending on one implementation language or framework.
 - `contracts.json`, the project version, documentation and CI artifact name MUST
   identify the same candidate bundle.
 - Every declared contract and executable example MUST resolve within the
-  repository and be included where consumers expect it.
+  repository and be included where consumers expect it. The offline validator
+  checks manifest paths before reading files, including resolved symlink targets.
 - Checksums refer to exact bytes. Do not normalize or regenerate referenced
   fixtures without updating the identity and all consumers deliberately.
 - Candidate CI artifacts are not stable releases. Consumers pin a reviewed
