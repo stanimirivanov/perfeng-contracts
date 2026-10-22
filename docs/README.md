@@ -6,7 +6,7 @@
   use this page to load only the contract sources relevant to the task.
 - Effect Schema is authoritative for data contracts; generated JSON Schema is
   the language-neutral consumer boundary. OpenAPI remains explicitly
-  hand-authored.
+  hand-authored for existing APIs; integration OpenAPI is generated from Effect.
 - Compatibility, examples, rejection fixtures and consumer migration guidance
   change together.
 - Update this map when a canonical source moves or a recurring task lacks a
@@ -20,6 +20,7 @@
 | Effect Schema source or generated JSON Schema | [Contract engineering standards](development/engineering-standards.md), [ADR-0002](decisions/0002-use-effect-schema-at-contract-boundaries.md) | Root [README](../README.md), `pnpm contracts:check` |
 | Compatibility, generations or consumer migration | [Compatibility guide](compatibility.md), [schema versioning](architecture/schema-versioning.md) | Affected producers, consumers and ADRs |
 | Run Management API | [Run Management API guide](run-management-api.md) | API fixtures and offline validator |
+| Integration identity, admission, retry and cancellation | [Performance integration](performance-integration.md), [ADR-0009](decisions/0009-share-integration-identity-and-lifecycle.md) | Generated OpenAPI, exchange fixtures and offline conformance tests |
 | Native Worker API, baseline recipe or native artifact upload | [Native Worker API guide](native-worker-api.md), [ADR-0004](decisions/0004-version-native-worker-execution-recipes.md), [ADR-0005](decisions/0005-retire-native-worker-v1.md) | v2 OpenAPI, examples, rejection and HTTP cases |
 | Lost acquisition response or manual native recovery | [Native Worker API guide](native-worker-api.md#read-only-current-slot-discovery), [ADR-0006](decisions/0006-inspect-native-attempt-without-restoring-authority.md), [ADR-0007](decisions/0007-discover-native-worker-slot-without-restoring-authority.md) | Discovery and inspection conformance tests; consumer race and retention tests |
 | Workloads, catalogues or metric naming | [Workloads and catalogues](workloads-and-catalogues.md), [metric naming](architecture/metric-naming.md) | Registry, examples and semantic tests |

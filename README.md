@@ -42,6 +42,7 @@ performance policies with independent quality, SLO, and regression outcomes.
 | `catalogue/v1` | [test catalogue](schemas/catalogue/v1/test-catalogue.schema.json) | Test ownership, pinned tools/source/images, and scheduling |
 | `catalogue/v2` | [execution-aware test catalogue](schemas/catalogue/v2/test-catalogue.schema.json) | Test catalogue supporting container and native runner artifacts |
 | `policy/v1` | [performance policy](schemas/policy/v1/performance-policy.schema.json) | Explicit metric thresholds and versioned baseline selection |
+| `performance-integration/v1` | [integration identity and lifecycle](schemas/performance-integration/v1/performance-integration.schema.json) | Immutable request correlation, admission and cancellation |
 | `analysis/v1` | [analysis result](schemas/analysis/v1/analysis-result.schema.json) | Independent quality, SLO, and regression outcomes with evidence references |
 | `baseline/v1` | [performance baseline](schemas/baseline/v1/baseline.schema.json) | Versioned normalized-result anchor, qualification, environment identity, and approval history |
 
@@ -50,11 +51,13 @@ the bundle version. The original normalized-result array remains a legacy
 fixture, validated one metric at a time. New producers use the normalized-result
 envelope containing `result/v2` records and references to raw evidence.
 
-All twenty data contracts are authored under `contracts/source` and generated
+All twenty-one data contracts are authored under `contracts/source` and generated
 into their existing `schemas` paths. The registry in
 `contracts/source/registry.ts` is the complete source-to-artifact ledger.
 Generated files under `schemas` must not be edited directly. The Run Management
-and Native Worker OpenAPI descriptions remain hand-authored. See
+and Native Worker OpenAPI descriptions remain hand-authored. Integration OpenAPI
+is generated from the same Effect schemas; see the
+[integration guide](docs/performance-integration.md) and
 [ADR-0002](docs/decisions/0002-use-effect-schema-at-contract-boundaries.md).
 
 ## Validate
@@ -107,7 +110,7 @@ and negative regression cases. Schema IDs identify bundled resources; validation
 does not fetch schemas or artifacts from the internet. Tests verify fixture
 checksums against local bytes.
 
-CI runs these checks and uploads a `perfeng-contracts-0.22.0.tar.gz` candidate
+CI runs these checks and uploads a `perfeng-contracts-0.23.0.tar.gz` candidate
 bundle. That CI artifact is not a published stable release. Until a release
 exists, integrations should pin the merged commit SHA, not a floating branch.
 

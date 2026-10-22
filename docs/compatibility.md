@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.22.0`; it is not a stable release.
+- The current candidate bundle is `0.23.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,13 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.23.0 adds `performance-integration/v1` and its generated
+self-contained OpenAPI contract. Existing schema generations and native APIs
+remain byte-identical. No runtime endpoint is activated. Integration consumers
+must pin a released bundle after review and implement the identity, admission,
+retry and cancellation obligations in the [integration guide](performance-integration.md).
+There is no migration for existing consumers unless they opt into this boundary.
 
 Candidate bundle 0.22.0 adds `kubernetes-benchmark-evidence/v1` and admits
 `kube-burner` in catalogue v2 with OCI-image or release-archive provenance.
