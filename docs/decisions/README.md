@@ -96,3 +96,4 @@ How will assumptions and consequences be verified?
 | [0007](0007-discover-native-worker-slot-without-restoring-authority.md) | Proposed | Discover the authenticated worker's current measurement slot after uncertain acquisition without restoring authority or enumerating history. |
 | [0008](0008-separate-kubernetes-benchmark-evidence.md) | Proposed | Admit Kubernetes benchmarks in catalogue v2 and separate stable comparison identity from preflight and Run observation evidence. |
 | [0009](0009-share-integration-identity-and-lifecycle.md) | Proposed | Share immutable integration identity, admission, retry and cancellation contracts without coupling consumer toolchains. |
+| [0010](0010-project-safe-performance-catalog-snapshots.md) | Proposed | Publish safe current resource metadata in complete, principal-scoped catalog snapshots with exact supported selections. |

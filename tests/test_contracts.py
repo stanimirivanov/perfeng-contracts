@@ -27,7 +27,7 @@ class ContractsTest(unittest.TestCase):
         _, cls.validators = load_contracts()
 
     def test_all_examples_and_schema_defaults(self) -> None:
-        self.assertEqual(validate_bundle(), (21, 48))
+        self.assertEqual(validate_bundle(), (22, 51))
 
     def test_bundle_and_project_versions_must_match(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

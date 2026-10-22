@@ -16,9 +16,11 @@ from referencing.exceptions import NoSuchResource, Unresolvable
 
 try:
     from .kubernetes_evidence import check_kubernetes_benchmark_evidence
+    from .performance_catalog import check_page, check_snapshot
     from .performance_integration import check_context
 except ImportError:
     from kubernetes_evidence import check_kubernetes_benchmark_evidence
+    from performance_catalog import check_page, check_snapshot
     from performance_integration import check_context
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -563,6 +565,8 @@ def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
                     check_kubernetes_benchmark_evidence(instance)
                 if entry["name"] == "performance-integration/v1":
                     check_context(instance)
+                if entry["name"] == "performance-catalog/v1":
+                    check_page(instance)
                 if entry["name"] == "artifact/v1":
                     check_artifact_reference(instance)
                 if entry["name"] in {
@@ -598,6 +602,13 @@ def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
                 if entry["name"] == "baseline/v1":
                     check_baseline_consistency(instance)
                 count += 1
+            if entry["name"] == "performance-catalog/v1":
+                check_snapshot(
+                    instances,
+                    observed_at=datetime.fromisoformat("2026-10-22T12:00:00+00:00"),
+                    principal={"issuer": "https://auth.example/tenant", "id": "argus-service"},
+                    issuer="https://provider.example/identity",
+                )
     actual_examples = {p.relative_to(root).as_posix() for p in (root / "examples").rglob("*.json")}
     if example_paths != actual_examples:
         raise ValueError("Manifest must cover every example")
