@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.23.0`; it is not a stable release.
+- The current candidate bundle is `0.24.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,15 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.24.0 adds `performance-catalog/v1`: authorized resource metadata,
+exact supported profile bindings, baseline lifecycle and complete fresh snapshot
+pagination. Existing schemas and APIs remain byte-identical. Consumers opt in
+through pinned reviewed artifacts and must verify scope, reference closure,
+completeness and freshness before replacing eligibility views. There is no
+existing-consumer migration or deployed endpoint. See the
+[catalog guide](performance-catalog.md) and proposed
+[ADR-0010](decisions/0010-project-safe-performance-catalog-snapshots.md).
 
 Candidate bundle 0.23.0 adds `performance-integration/v1` and its generated
 self-contained OpenAPI contract. Existing schema generations and native APIs
