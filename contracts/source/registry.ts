@@ -11,6 +11,7 @@ import { CatalogueV2 } from "./catalogue-v2.js";
 import { EnvironmentV1 } from "./environment-v1.js";
 import { KubernetesBenchmarkEvidenceV1 } from "./kubernetes-benchmark-evidence-v1.js";
 import { NormalizedResultV1 } from "./normalized-result-v1.js";
+import { PerformanceIntegrationV1 } from "./performance-integration-v1.js";
 import { PlaywrightMeasurementsV1 } from "./playwright-measurements-v1.js";
 import { PlaywrightMeasurementsV2 } from "./playwright-measurements-v2.js";
 import { PolicyV1 } from "./policy-v1.js";
@@ -30,6 +31,12 @@ export interface GeneratedContract {
 
 /** Complete registry of Effect-authored data contracts and generated artifacts. */
 export const GeneratedContracts: ReadonlyArray<GeneratedContract> = [
+  {
+    name: "performance-integration/v1",
+    id: "https://perfeng.dev/schemas/performance-integration/v1/performance-integration.schema.json",
+    output: "schemas/performance-integration/v1/performance-integration.schema.json",
+    schema: PerformanceIntegrationV1,
+  },
   {
     name: "kubernetes-benchmark-evidence/v1",
     id: "https://perfeng.dev/schemas/kubernetes-benchmark-evidence/v1/kubernetes-benchmark-evidence.schema.json",

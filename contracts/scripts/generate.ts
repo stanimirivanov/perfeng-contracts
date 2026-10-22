@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { JSONSchema } from "effect";
 
 import { GeneratedContracts } from "../source/registry.js";
+import { integrationOpenAPI } from "./integration-openapi.js";
 
 const repositoryRoot = fileURLToPath(new URL("../../", import.meta.url));
 const check = process.argv.includes("--check");
@@ -53,6 +54,16 @@ for (const contract of GeneratedContracts) {
   } else {
     await writeFile(output, expected, "utf8");
   }
+}
+
+const apiOutput = new URL("../../api/performance-integration/v1/openapi.json", import.meta.url);
+const apiExpected = `${JSON.stringify(integrationOpenAPI(), undefined, 2)}\n`;
+if (check) {
+  if ((await readFile(apiOutput, "utf8")) !== apiExpected) {
+    throw new Error("Performance integration OpenAPI is stale; run pnpm contracts:generate");
+  }
+} else {
+  await writeFile(apiOutput, apiExpected, "utf8");
 }
 
 console.log(

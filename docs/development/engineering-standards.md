@@ -52,7 +52,8 @@ depending on one implementation language or framework.
 - Follow ADR-0002 for source authority. Every data schema MUST be listed in the
   generated registry, generated from Effect Schema and never edited directly.
   The hand-authored Run Management and Native Worker OpenAPI descriptions are
-  the documented exceptions.
+  the documented exceptions. Performance integration OpenAPI and its schema
+  components are generated from Effect; `pnpm contracts:check` verifies drift.
 - Preserve stable IDs and manifest paths when migrating authoring source. Test
   accepted and rejected instances through Effect and the generated artifact.
 - Strict Effect decoders MUST set `onExcessProperty: "error"` for published

@@ -1,5 +1,5 @@
 {
-  "version": "0.22.0",
+  "version": "0.23.0",
   "apis": [
     {
       "name": "run-management/v1",
@@ -12,9 +12,31 @@
       "examples": "api/native-worker/v2/examples",
       "rejections": "api/native-worker/v2/rejections",
       "httpCases": "api/native-worker/v2/http-cases.json"
+    },
+    {
+      "name": "performance-integration/v1",
+      "definition": "api/performance-integration/v1/openapi.json"
     }
   ],
   "contracts": [
+    {
+      "name": "performance-integration/v1",
+      "schema": "schemas/performance-integration/v1/performance-integration.schema.json",
+      "examples": [
+        {
+          "path": "examples/performance-integration/completed.json",
+          "items": true
+        },
+        {
+          "path": "examples/performance-integration/cancelled.json",
+          "items": true
+        },
+        {
+          "path": "examples/performance-integration/rejected.json",
+          "items": true
+        }
+      ]
+    },
     {
       "name": "kubernetes-benchmark-evidence/v1",
       "schema": "schemas/kubernetes-benchmark-evidence/v1/kubernetes-benchmark-evidence.schema.json",

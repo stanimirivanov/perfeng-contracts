@@ -27,7 +27,7 @@ class ContractsTest(unittest.TestCase):
         _, cls.validators = load_contracts()
 
     def test_all_examples_and_schema_defaults(self) -> None:
-        self.assertEqual(validate_bundle(), (20, 37))
+        self.assertEqual(validate_bundle(), (21, 48))
 
     def test_bundle_and_project_versions_must_match(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -187,11 +187,21 @@ class ContractsTest(unittest.TestCase):
         for entry in contracts:
             data = read_json(ROOT / entry["examples"][0]["path"])
             validator = self.validators[entry["name"]]
-            for key in validator.schema["required"]:
-                with self.subTest(contract=entry["name"], field=key):
-                    self.assertFalse(
-                        validator.is_valid({k: v for k, v in data.items() if k != key})
-                    )
+            instances = data if entry["examples"][0].get("items") else [data]
+            for instance in instances:
+                branches = validator.schema.get("anyOf", [validator.schema])
+                required = {
+                    key
+                    for branch in branches
+                    if validator.evolve(schema=branch).is_valid(instance)
+                    for key in branch.get("required", [])
+                }
+                self.assertTrue(required, entry["name"])
+                for key in required:
+                    with self.subTest(contract=entry["name"], field=key):
+                        self.assertFalse(
+                            validator.is_valid({k: v for k, v in instance.items() if k != key})
+                        )
 
     def test_invalid_default_is_detected(self) -> None:
         with self.assertRaisesRegex(ValueError, "Invalid schema default"):

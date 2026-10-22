@@ -299,6 +299,10 @@ def validate_api(root: Path = ROOT) -> int:
             "rejections": "api/native-worker/v2/rejections",
             "httpCases": "api/native-worker/v2/http-cases.json",
         },
+        {
+            "name": "performance-integration/v1",
+            "definition": "api/performance-integration/v1/openapi.json",
+        },
     ]:
         raise ValueError("Unexpected API manifest")
     native_generations = {
