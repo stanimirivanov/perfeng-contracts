@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.24.0`; it is not a stable release.
+- The current candidate bundle is `0.25.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,14 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.25.0 adds `performance-analysis/v1` as a separate closed family.
+Existing schemas and APIs remain byte-identical, including the integration union.
+Opt-in producers must retain authenticated admission/native bindings and publish
+immutable exact-byte references; consumers must implement scope, association and
+policy checks before activating ingestion. No HTTP operation, release or deployment
+is added. See [analysis publications](performance-analysis.md) and proposed
+[ADR-0011](decisions/0011-bind-analysis-publications-to-retained-admission.md).
 
 Candidate bundle 0.24.0 adds `performance-catalog/v1`: authorized resource metadata,
 exact supported profile bindings, baseline lifecycle and complete fresh snapshot

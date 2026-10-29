@@ -97,3 +97,4 @@ How will assumptions and consequences be verified?
 | [0008](0008-separate-kubernetes-benchmark-evidence.md) | Proposed | Admit Kubernetes benchmarks in catalogue v2 and separate stable comparison identity from preflight and Run observation evidence. |
 | [0009](0009-share-integration-identity-and-lifecycle.md) | Proposed | Share immutable integration identity, admission, retry and cancellation contracts without coupling consumer toolchains. |
 | [0010](0010-project-safe-performance-catalog-snapshots.md) | Proposed | Publish safe current resource metadata in complete, principal-scoped catalog snapshots with exact supported selections. |
+| [0011](0011-bind-analysis-publications-to-retained-admission.md) | Proposed | Bind immutable analysis publications to authenticated retained admission and explicit native resource associations. |
