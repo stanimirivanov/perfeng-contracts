@@ -1,5 +1,5 @@
 {
-  "version": "0.24.0",
+  "version": "0.25.0",
   "apis": [
     {
       "name": "run-management/v1",
@@ -19,6 +19,15 @@
     }
   ],
   "contracts": [
+    {
+      "name": "performance-analysis/v1",
+      "schema": "schemas/performance-analysis/v1/performance-analysis.schema.json",
+      "examples": [
+        {
+          "path": "examples/performance-analysis/published.json"
+        }
+      ]
+    },
     {
       "name": "performance-catalog/v1",
       "schema": "schemas/performance-catalog/v1/performance-catalog.schema.json",

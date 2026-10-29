@@ -16,10 +16,12 @@ from referencing.exceptions import NoSuchResource, Unresolvable
 
 try:
     from .kubernetes_evidence import check_kubernetes_benchmark_evidence
+    from .performance_analysis import check_reference
     from .performance_catalog import check_page, check_snapshot
     from .performance_integration import check_context
 except ImportError:
     from kubernetes_evidence import check_kubernetes_benchmark_evidence
+    from performance_analysis import check_reference
     from performance_catalog import check_page, check_snapshot
     from performance_integration import check_context
 
@@ -565,6 +567,8 @@ def validate_bundle(root: Path = ROOT) -> tuple[int, int]:
                     check_kubernetes_benchmark_evidence(instance)
                 if entry["name"] == "performance-integration/v1":
                     check_context(instance)
+                if entry["name"] == "performance-analysis/v1":
+                    check_reference(instance)
                 if entry["name"] == "performance-catalog/v1":
                     check_page(instance)
                 if entry["name"] == "artifact/v1":

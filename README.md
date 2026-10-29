@@ -43,6 +43,7 @@ performance policies with independent quality, SLO, and regression outcomes.
 | `catalogue/v2` | [execution-aware test catalogue](schemas/catalogue/v2/test-catalogue.schema.json) | Test catalogue supporting container and native runner artifacts |
 | `policy/v1` | [performance policy](schemas/policy/v1/performance-policy.schema.json) | Explicit metric thresholds and versioned baseline selection |
 | `performance-integration/v1` | [integration identity and lifecycle](schemas/performance-integration/v1/performance-integration.schema.json) | Immutable request correlation, admission and cancellation |
+| `performance-analysis/v1` | [request-linked analysis publication](schemas/performance-analysis/v1/performance-analysis.schema.json) | Immutable artifact and explicit retained native associations; [consumer obligations](docs/performance-analysis.md) |
 | `performance-catalog/v1` | [safe catalog projection](schemas/performance-catalog/v1/performance-catalog.schema.json) | Authorized resource metadata and complete fresh snapshots |
 | `analysis/v1` | [analysis result](schemas/analysis/v1/analysis-result.schema.json) | Independent quality, SLO, and regression outcomes with evidence references |
 | `baseline/v1` | [performance baseline](schemas/baseline/v1/baseline.schema.json) | Versioned normalized-result anchor, qualification, environment identity, and approval history |
@@ -111,7 +112,7 @@ and negative regression cases. Schema IDs identify bundled resources; validation
 does not fetch schemas or artifacts from the internet. Tests verify fixture
 checksums against local bytes.
 
-CI runs these checks and uploads a `perfeng-contracts-0.24.0.tar.gz` candidate
+CI runs these checks and uploads a `perfeng-contracts-0.25.0.tar.gz` candidate
 bundle. That CI artifact is not a published stable release. Until a release
 exists, integrations should pin the merged commit SHA, not a floating branch.
 
