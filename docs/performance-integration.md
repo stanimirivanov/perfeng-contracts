@@ -97,6 +97,11 @@ intent, a 202 acknowledgement and deadline expiry never imply CANCELLED.
 
 ## Compatibility, conformance and migration
 
+Integration API 1.1.0 additionally defines the separate
+[retained analysis read](performance-analysis.md#scoped-http-reads). Its 200 body
+uses performance-analysis/v1, never a new member of this closed lifecycle union.
+Existing request/lifecycle/cancellation operations and payloads retain their meaning.
+
 This is an additive candidate generation. Existing schemas and native APIs keep
 their bytes and meaning. No default consumer behavior changes. Provider admission
 and Argus integration must pin a released bundle after joint review and check

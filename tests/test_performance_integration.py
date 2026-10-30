@@ -16,7 +16,7 @@ class IntegrationTest(unittest.TestCase):
         return read_json(ROOT / f"examples/performance-integration/{name}.json")
 
     def test_offline_openapi_and_all_exchange_fixtures(self) -> None:
-        self.assertEqual(validate_integration(), 11)
+        self.assertEqual(validate_integration(), 12)
 
     def test_json_schema_rejects_incomplete_provenance_and_versions(self) -> None:
         _, validators = load_contracts()
@@ -108,17 +108,20 @@ class IntegrationTest(unittest.TestCase):
     def test_http_operations_share_closed_generated_schemas(self) -> None:
         api = read_json(ROOT / "api/performance-integration/v1/openapi.json")
         self.assertEqual(api["security"], [{"bearerAuth": []}])
-        for path in api["paths"].values():
+        for name, path in api["paths"].items():
             for method in ("get", "post"):
                 if method not in path:
                     continue
                 responses = path[method]["responses"]
-                for status in ("400", "401", "403", "404", "409", "410", "429", "503"):
+                statuses = ["400", "401", "403", "404", "429", "503"]
+                if not name.endswith("/analysis"):
+                    statuses += ["409", "410"]
+                for status in statuses:
                     error = {"code": "unavailable", "message": "Retry later"}
                     schema_validator(api, "Error").validate(error)
                     self.assertIn(status, responses)
                 self.assertIn("Retry-After", responses["429"]["headers"])
-        self.assertEqual(len(api["paths"]), 3)
+        self.assertEqual(len(api["paths"]), 4)
         pending, terminal = self.trace("cancelled")[-2:]
         schema_validator(api, "Cancelling").validate(pending)
         schema_validator(api, "Terminal").validate(terminal)

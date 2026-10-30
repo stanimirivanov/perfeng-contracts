@@ -5,10 +5,12 @@ from pathlib import Path
 from openapi_spec_validator import OpenAPIV31SpecValidator
 
 try:
+    from .performance_analysis import check_read_scope
     from .performance_integration import check_exchange
     from .validate import ROOT, load_contracts, read_json
     from .validate_api import check_local_references, schema_validator
 except ImportError:
+    from performance_analysis import check_read_scope
     from performance_integration import check_exchange
     from validate import ROOT, load_contracts, read_json
     from validate_api import check_local_references, schema_validator
@@ -31,7 +33,17 @@ def validate_integration(root: Path = ROOT) -> int:
             schema_validator(document, component).validate(message)
         check_exchange(messages, "https://provider.example/identity")
         count += len(messages)
-    return count
+    publication = read_json(root / "examples/performance-analysis/published.json")
+    validators["performance-analysis/v1"].validate(publication)
+    schema_validator(document, "AnalysisPublication").validate(publication)
+    admission = read_json(root / "examples/performance-integration/completed.json")[1]
+    check_read_scope(
+        publication,
+        provider=admission["source"],
+        principal=admission["data"]["context"]["principal"],
+        request=admission["data"]["context"]["request"],
+    )
+    return count + 1
 
 
 if __name__ == "__main__":

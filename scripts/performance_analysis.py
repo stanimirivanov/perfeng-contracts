@@ -35,6 +35,24 @@ def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     return result
 
 
+def check_read_scope(
+    message: dict[str, Any], *, provider: str, principal: dict[str, str], request: dict[str, str]
+) -> None:
+    """Check a schema-valid read against independently authenticated request scope.
+
+    Inputs are trusted configuration/authentication and parsed path/query identity,
+    never values copied from the response. This neither authenticates credentials
+    nor replaces full retained admission/native/artifact/policy binding checks.
+    """
+    check_reference(message)
+    if (
+        message["source"] != provider
+        or message["data"]["context"]["principal"] != principal
+        or message["data"]["context"]["request"] != request
+    ):
+        raise ValueError("Analysis read differs from authenticated request scope")
+
+
 def check_binding(
     message: dict[str, Any],
     admission: dict[str, Any],
