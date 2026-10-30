@@ -4,7 +4,7 @@
 
 - Candidate performance-analysis/v1 maps native analysis/v1 to an admitted request.
 - Authenticate scope and compare retained native bindings before consuming bytes.
-- Existing integration messages and APIs are unchanged; no endpoint is activated.
+- Lifecycle messages remain closed; the opt-in read contract activates no endpoint.
 
 ## Meaning and authority
 
@@ -59,8 +59,8 @@ Publication time cannot precede admission or analysis creation; analysis creatio
 cannot precede admission. Deadline expiry or cancellation intent does not discard
 valid late analysis. No terminal lifecycle transition is inferred from publication.
 Authenticate before exposing scope-specific absence or evidence. This contract
-defines no HTTP operation, callback, acknowledgement or transport retry schedule;
-provider implementation must review that delivery boundary separately.
+defines the scoped HTTP read below, with no mutation, callback or acknowledgement.
+Provider implementation must adopt the reviewed operation before consumption.
 
 Retain one immutable publication association per request/attempt. Exact redelivery
 is idempotent. Reusing source/event ID with different content, or publishing a
@@ -80,3 +80,49 @@ The offline `scripts/performance_analysis.py` checks relationships after schema
 validation. `check_binding` additionally requires independently trusted inputs and
 already validated analysis/policy semantics; it is conformance tooling, not an SDK.
 See [ADR-0011](decisions/0011-bind-analysis-publications-to-retained-admission.md).
+
+## Scoped HTTP reads
+
+Candidate bundle 0.26.0 / integration API 1.1.0 defines
+`GET /integration/v1/requests/{requestId}/analysis?issuer=<request-issuer>`.
+Percent-encode the opaque request ID and issuer once using the existing integration
+identity rules. Require one nonblank request ID and exactly one issuer query;
+reject duplicate/unknown query parameters and a request body. Native Run IDs and
+artifact URLs are not request identity and never select another owner's evidence.
+
+Authenticate bearer credentials and require the existing request-read permission
+before exposing absence. Derive principal namespace/ID from authentication and
+provider namespace from trusted configuration. Scope lookup by principal and full
+request identity. Return the original immutable performance-analysis/v1 publication
+as application/json, including its stable event ID/time; do not wrap it in lifecycle
+messages, re-create it on reads, return a latest report or trigger materialization.
+Reading never executes, schedules, cancels, promotes a baseline or fetches artifacts.
+
+| Status | Body / behavior |
+| --- | --- |
+| 200 | Separate closed AnalysisPublication component |
+| 400 | Existing Error with invalid_request for malformed read identity |
+| 401 | unauthenticated; required WWW-Authenticate: Bearer |
+| 403 | forbidden when authenticated read permission is absent |
+| 404 | unknown_request with message "Not Found" uniformly for unknown, invisible or unpublished requests |
+| 429 | rate_limited; required positive Retry-After seconds |
+| 503 | unavailable; required positive Retry-After seconds |
+
+All responses require Cache-Control: no-store. Absence cases share body and headers;
+never expose an owner-specific not-ready marker. A 404 may become ready later and
+is not a terminal Run state; consumers use bounded polling/backoff and preserve
+request identity. Honor Retry-After on 429/503; fix identity or credentials instead
+of blindly retrying 400/401/403. Other methods are not defined; providers reject
+them without side effects. No transport acknowledgement or artifact download is added.
+
+After schema validation, `check_read_scope` compares independently trusted provider,
+authenticated principal and parsed path/query identity. It is conformance tooling,
+not an authenticator or runtime SDK. Consumers still perform retained admission,
+native association, exact artifact/policy and outcome checks before decisions.
+Publication, completion and SLO PASS remain separate from overall decision authority.
+
+Old payloads and operations keep their meaning and bytes. Pin the changed API
+document and confirm provider support before opting in; an old endpoint's 404 may
+mean unsupported route. Roll out provider handler/authentication, then Argus polling
+and persistence. No deployment or stable release occurs here. Roll back read opt-in
+while preserving retained evidence. See [ADR-0012](decisions/0012-read-retained-analysis-by-request.md).

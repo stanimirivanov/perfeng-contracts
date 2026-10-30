@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.25.0`; it is not a stable release.
+- The current candidate bundle is `0.26.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,13 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.26.0 adds a scoped retained-analysis GET in integration OpenAPI
+1.1.0. All payload schemas and existing operations remain unchanged; the API document
+gains a separate AnalysisPublication component and read path. Strict API-document
+readers must opt in to its new digest. Providers implement/authenticate the route
+before consumers enable polling; an older provider's 404 cannot establish readiness.
+No release or endpoint activation occurs here. See [analysis reads](performance-analysis.md#scoped-http-reads).
 
 Candidate bundle 0.25.0 adds `performance-analysis/v1` as a separate closed family.
 Existing schemas and APIs remain byte-identical, including the integration union.
