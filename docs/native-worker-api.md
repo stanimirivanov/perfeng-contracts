@@ -3,7 +3,7 @@
 ## TL;DR
 
 - This API is the machine-facing boundary between the control plane and a
-  qualified interactive Windows worker; it is separate from Run Management.
+  qualified interactive Linux worker; it is separate from Run Management.
 - The worker makes outbound authenticated HTTPS requests and never chooses its
   server-side identity, a command, a target URL, or an object-store key.
 - Capability, qualification, availability and authorization are distinct;
@@ -22,7 +22,7 @@
   HTTP fixtures under `api/native-worker/v2` as the conformance boundary.
 
 The Native Worker API dispatches existing reviewed Playwright journeys to a
-representative Windows laptop without exposing an inbound listener,
+representative Linux workstation without exposing an inbound listener,
 Kubernetes identity, permanent object-store credentials or caller-selected
 commands. [ADR-0001](decisions/0001-native-windows-worker-protocol.md) owns the
 architecture decision. This document explains the supported v2 behavior;
@@ -34,8 +34,7 @@ Native Worker API credentials have a different audience from user-facing Run
 Management credentials. A deployment may serve both APIs from one process, but
 it must authenticate and authorize them independently. The API has no enrollment,
 credential issuance or rotation endpoint. Operators provision a distinct
-revocable credential to each installation and the agent stores it in Windows
-Credential Manager or an equivalent OS-protected store.
+revocable credential to each installation and the agent stores it in an account-private Linux credential store or an equivalent OS-protected store.
 
 Every request uses the worker credential as an HTTPS bearer credential. The
 authenticated principal is the worker identity. Request bodies therefore have
@@ -66,7 +65,7 @@ authoritative for leases and grants.
 
 Presence reports four different concepts without collapsing them:
 
-- **Capability** is an untrusted claim about tool, Windows architecture,
+- **Capability** is an untrusted claim about tool, Linux architecture,
   browser families, runner contract, accepted execution artifacts, evidence
   kinds and diagnostic modes.
 - **Qualification evidence** identifies the immutable
@@ -124,7 +123,7 @@ The projection to Playwright `RunnerConfiguration` is exact:
 The worker must compare the recipe's host profile ID and evidence SHA-256 with
 its current qualification evidence, and compare the assigned execution
 artifact with its qualified runner identity. The SUT target environment ID is
-separate from the Windows host profile. Capabilities must cover the assigned
+separate from the Linux host profile. Capabilities must cover the assigned
 browser, diagnostic mode and artifact kinds before browser launch. `journeyId`
 selects repository-owned code, never a caller-supplied command. See
 [ADR-0004](decisions/0004-version-native-worker-execution-recipes.md) for the
@@ -338,7 +337,7 @@ qualification policy, matching, leases, fencing, cancellation and object-store
 verification. The Playwright repository implements the interactive per-user
 agent and maps existing qualification, capture, diagnostics and provenance
 receipts to the assigned attempt. `perfeng-environment` may provision local
-connectivity and identity, but does not own the Windows process or commit its
+connectivity and identity, but does not own the Linux process or commit its
 credential. Analysis consumes only registered immutable evidence and remains
 independent of this transport.
 

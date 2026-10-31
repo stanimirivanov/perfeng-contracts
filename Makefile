@@ -63,7 +63,6 @@ verify: check test
 
 vuln:
 	uv audit --preview-features audit-command --locked --python-platform linux
-	uv audit --preview-features audit-command --locked --python-platform windows
 	pnpm audit --audit-level high
 
 license:

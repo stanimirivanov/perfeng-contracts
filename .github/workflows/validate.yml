@@ -39,40 +39,11 @@ jobs:
       - name: Assemble candidate contract bundle
         run: |
           mkdir -p dist
-          tar -czf dist/perfeng-contracts-0.26.0.tar.gz contracts.json schemas examples api docs tests/fixtures README.md LICENSE
+          tar -czf dist/perfeng-contracts-0.27.0.tar.gz contracts.json schemas examples api docs tests/fixtures README.md LICENSE
       - uses: actions/upload-artifact@v7
         with:
-          name: perfeng-contracts-0.26.0
-          path: dist/perfeng-contracts-0.26.0.tar.gz
-
-  windows:
-    name: Windows verification
-    runs-on: windows-2025
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-      - uses: actions/setup-python@v7
-        with:
-          python-version-file: .python-version
-      - uses: pnpm/action-setup@v6
-        with:
-          run_install: false
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .node-version
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
-      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
-        with:
-          enable-cache: true
-      - name: Install GNU Make
-        shell: pwsh
-        run: choco install make --version=4.4.1 --no-progress --yes
-      - run: make bootstrap
-      - run: make doctor
-      - run: make verify
+          name: perfeng-contracts-0.27.0
+          path: dist/perfeng-contracts-0.27.0.tar.gz
 
   supply-chain:
     name: Supply chain
