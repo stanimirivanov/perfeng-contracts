@@ -99,3 +99,5 @@ How will assumptions and consequences be verified?
 | [0010](0010-project-safe-performance-catalog-snapshots.md) | Proposed | Publish safe current resource metadata in complete, principal-scoped catalog snapshots with exact supported selections. |
 | [0011](0011-bind-analysis-publications-to-retained-admission.md) | Proposed | Bind immutable analysis publications to authenticated retained admission and explicit native resource associations. |
 | [0012](0012-read-retained-analysis-by-request.md) | Proposed | Expose retained analysis through an authenticated scoped GET without expanding lifecycle messages or granting execution authority. |
+
+| [0013](0013-support-linux-hosts.md) | Proposed | Support Linux development and native browser hosts; retire active Windows support. |

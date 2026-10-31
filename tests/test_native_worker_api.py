@@ -20,6 +20,15 @@ class NativeWorkerApiTests(unittest.TestCase):
         }
         self.cases = read_json(root / "http-cases.json")
 
+    def test_linux_capability_extension_preserves_historical_documents(self):
+        presence = copy.deepcopy(self.values["presence"])
+        validator = native.schema_validator(self.document, native.FIXTURES["presence"])
+        for platform in ("linux", "windows"):
+            presence["capabilities"]["operatingSystem"] = platform
+            validator.validate(presence)
+        presence["capabilities"]["operatingSystem"] = "plan9"
+        self.assertFalse(validator.is_valid(presence))
+
     def test_contract_and_conformance_corpus_validate_without_network(self):
         with patch("socket.create_connection", side_effect=AssertionError("network")):
             self.assertEqual(native.validate_native_worker_api(), (27, 27, 19))

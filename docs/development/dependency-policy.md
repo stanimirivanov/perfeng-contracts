@@ -55,7 +55,7 @@ repository policy validator does not enforce a single reference style.
 
 ## Vulnerabilities and licenses
 
-`uv audit --locked` checks the Python graph for supported Linux and Windows
+`uv audit --locked` checks the Python graph for supported Linux
 targets. `pnpm audit` checks both authoring and development dependencies because
 all execute in trusted CI. Findings require an explicit assessment of affected
 versions, reachability, fix availability and exposure; exceptions require an

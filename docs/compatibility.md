@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.26.0`; it is not a stable release.
+- The current candidate bundle is `0.27.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,16 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.27.0 extends Native Worker API v2 to OpenAPI 2.3.0 with
+`linux` in the closed operating-system capability union. Protocol version and
+routes remain v2; existing Windows documents keep their meaning. Strict consumers
+must opt into the new API digest before sending Linux capabilities. Active
+Perfeng execution supports Linux only; the Windows enum remains for historical
+contract compatibility, not admission authority. Linux workers require a fresh
+Linux profile and qualification; never relabel Windows evidence or persisted
+execution targets. Data schemas remain byte-identical. This source change does
+not publish a release, qualify a host or activate native acquisition.
 
 Candidate bundle 0.26.0 adds a scoped retained-analysis GET in integration OpenAPI
 1.1.0. All payload schemas and existing operations remain unchanged; the API document

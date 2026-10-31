@@ -571,7 +571,7 @@ def lint(document: dict[str, Any]) -> None:
     if grant["responses"]["201"].get("headers"):
         raise ValueError("Upload authorization must be returned only in the response body")
 
-    if document["info"]["version"] != "2.2.0" or not all(
+    if document["info"]["version"] != "2.3.0" or not all(
         path.startswith("/native-worker/v2/") for path in document["paths"]
     ):
         raise ValueError("Native Worker paths and version must identify protocol v2")

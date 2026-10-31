@@ -82,7 +82,7 @@ schemas or report unavailable advisory data as healthy.
 ## CI mapping
 
 The existing Linux `validate` job remains the stable status context and retains
-candidate-bundle assembly. Windows verification proves ADR-0002's cross-platform
+candidate-bundle assembly. Linux verification exercises the
 generation requirement. Supply-chain feedback runs separately because current
 advisory data has different availability and failure characteristics.
 
