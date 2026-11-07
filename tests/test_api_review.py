@@ -1,6 +1,7 @@
 """Direction-sensitive review receipts preserve meaningful API diffs."""
 
 import copy
+import json
 import unittest
 from typing import Any
 
@@ -99,3 +100,51 @@ class ApiReviewTests(unittest.TestCase):
         self.assertEqual(changes[0]["classification"], "review")
         self.assertFalse(changes[0]["beforePresent"])
         self.assertTrue(changes[0]["afterPresent"])
+
+    def test_cli_compares_actual_git_base_and_head(self):
+        import subprocess
+        import sys
+        import tempfile
+        from pathlib import Path
+
+        from scripts.api_review import APIS
+
+        script = Path(__file__).resolve().parents[1] / "scripts/api_review.py"
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in APIS:
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(json.dumps(self.document))
+
+            def git(*args):
+                return subprocess.run(
+                    [
+                        "git",
+                        "-c",
+                        "user.name=Fixture",
+                        "-c",
+                        "user.email=fixture@example.invalid",
+                        *args,
+                    ],
+                    cwd=root,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                ).stdout.strip()
+
+            git("init")
+            git("add", "api")
+            git("commit", "-m", "baseline")
+            base = git("rev-parse", "HEAD")
+            candidate = copy.deepcopy(self.document)
+            candidate["components"]["schemas"]["Input"]["required"].append("new")
+            (root / APIS[0]).write_text(json.dumps(candidate))
+            run = subprocess.run(
+                [sys.executable, str(script), "--base", base],
+                cwd=root,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(run.returncode, 1)
+            self.assertIn('"classification": "breaking"', run.stdout)

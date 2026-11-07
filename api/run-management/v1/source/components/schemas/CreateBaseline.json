@@ -1,0 +1,68 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "version",
+    "testId",
+    "sourceRunId",
+    "artifact",
+    "software",
+    "workload",
+    "environment",
+    "dataset",
+    "reason"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "./ResourceId.json"
+    },
+    "version": {
+      "$ref": "./Version.json"
+    },
+    "testId": {
+      "$ref": "./ResourceId.json"
+    },
+    "sourceRunId": {
+      "$ref": "./RunId.json"
+    },
+    "artifact": {
+      "allOf": [
+        {
+          "$ref": "./Artifact.json"
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "normalized"
+            },
+            "mediaType": {
+              "const": "application/json"
+            },
+            "format": {
+              "const": "normalized-result/v1"
+            }
+          }
+        }
+      ]
+    },
+    "software": {
+      "$ref": "./BaselineSoftware.json"
+    },
+    "workload": {
+      "$ref": "./BaselineIdentity.json"
+    },
+    "environment": {
+      "$ref": "./BaselineEnvironment.json"
+    },
+    "dataset": {
+      "$ref": "./BaselineDataset.json"
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "\\S"
+    }
+  }
+}

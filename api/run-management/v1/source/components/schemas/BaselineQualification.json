@@ -1,0 +1,13 @@
+{
+  "oneOf": [
+    {
+      "$ref": "./PendingQualification.json"
+    },
+    {
+      "$ref": "./PassedQualification.json"
+    },
+    {
+      "$ref": "./FailedQualification.json"
+    }
+  ]
+}

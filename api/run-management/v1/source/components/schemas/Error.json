@@ -1,0 +1,63 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "code",
+    "message",
+    "requestId"
+  ],
+  "properties": {
+    "code": {
+      "type": "string",
+      "enum": [
+        "BAD_REQUEST",
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "NOT_FOUND",
+        "IDEMPOTENCY_CONFLICT",
+        "REQUEST_IN_PROGRESS",
+        "RUN_TERMINAL",
+        "BASELINE_EXISTS",
+        "REVISION_CONFLICT",
+        "BASELINE_TRANSITION_CONFLICT",
+        "VALIDATION_FAILED",
+        "RATE_LIMITED",
+        "INTERNAL_ERROR",
+        "UNAVAILABLE"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "requestId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "details": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "message"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "maxLength": 512,
+            "pattern": "^(?:/(?:[^~]|~[01])*)?$"
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        }
+      }
+    }
+  }
+}

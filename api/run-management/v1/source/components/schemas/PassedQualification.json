@@ -1,0 +1,32 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "reasons",
+    "sampleCount",
+    "maximumCv"
+  ],
+  "properties": {
+    "status": {
+      "const": "PASSED"
+    },
+    "reasons": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "\\S"
+      }
+    },
+    "sampleCount": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "maximumCv": {
+      "type": "number",
+      "minimum": 0
+    }
+  }
+}

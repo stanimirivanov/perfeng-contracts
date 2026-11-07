@@ -1,0 +1,83 @@
+{
+  "parameters": [
+    {
+      "name": "baselineId",
+      "in": "path",
+      "required": true,
+      "schema": {
+        "$ref": "../components/schemas/ResourceId.json"
+      }
+    },
+    {
+      "name": "version",
+      "in": "path",
+      "required": true,
+      "schema": {
+        "$ref": "../components/schemas/Version.json"
+      }
+    }
+  ],
+  "post": {
+    "tags": [
+      "Baselines"
+    ],
+    "operationId": "transitionBaseline",
+    "summary": "Apply one revision-checked baseline lifecycle decision",
+    "description": "The server records the authenticated actor. Clients provide the observed revision, target state, reason and qualification evidence only when the transition requires it. Retrying after an uncertain response starts with GET of this exact version.",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "../components/schemas/BaselineTransition.json"
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Transition committed and lifecycle event appended.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/Baseline.json"
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthenticated.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "404": {
+        "$ref": "../components/responses/NotFound.json"
+      },
+      "409": {
+        "$ref": "../components/responses/BaselineTransitionConflict.json"
+      },
+      "413": {
+        "$ref": "../components/responses/RequestTooLarge.json"
+      },
+      "415": {
+        "$ref": "../components/responses/UnsupportedMediaType.json"
+      },
+      "422": {
+        "$ref": "../components/responses/ValidationFailed.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

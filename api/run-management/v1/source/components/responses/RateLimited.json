@@ -1,0 +1,31 @@
+{
+  "description": "Rate limited; retry after the indicated delay.",
+  "content": {
+    "application/json": {
+      "schema": {
+        "allOf": [
+          {
+            "$ref": "../schemas/Error.json"
+          },
+          {
+            "properties": {
+              "code": {
+                "const": "RATE_LIMITED"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "headers": {
+    "Retry-After": {
+      "required": true,
+      "schema": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "description": "Retry delay in seconds."
+    }
+  }
+}

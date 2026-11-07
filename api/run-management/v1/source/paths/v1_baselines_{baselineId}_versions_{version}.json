@@ -1,0 +1,60 @@
+{
+  "parameters": [
+    {
+      "name": "baselineId",
+      "in": "path",
+      "required": true,
+      "schema": {
+        "$ref": "../components/schemas/ResourceId.json"
+      }
+    },
+    {
+      "name": "version",
+      "in": "path",
+      "required": true,
+      "schema": {
+        "$ref": "../components/schemas/Version.json"
+      }
+    }
+  ],
+  "get": {
+    "tags": [
+      "Baselines"
+    ],
+    "operationId": "getBaseline",
+    "summary": "Read one exact baseline version",
+    "responses": {
+      "200": {
+        "description": "Current consistent baseline snapshot.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/Baseline.json"
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthenticated.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "404": {
+        "$ref": "../components/responses/NotFound.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

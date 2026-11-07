@@ -105,3 +105,10 @@ status for compatibility review. This diagnostic does not resolve remote inputs 
 prove arbitrary schema equivalence. `make api-review-check` verifies current API
 operation/reference traversal and keyword inventory without changing artifacts.
 See [ADR-0014](../decisions/0014-split-api-authoring-and-review-semantics.md).
+
+For a pull request, CI invokes `scripts/api_review.py --base <exact-base-commit>`
+after fetching repository history. The receipt compares actual base/head API
+objects. Any non-documentation difference fails this migration lane for explicit
+compatibility review. Inventory/self-comparison is only the local smoke gate;
+it cannot replace the PR comparison. Separately versioned semantic API work must
+supply a reviewed compatibility change before changing that expected boundary.

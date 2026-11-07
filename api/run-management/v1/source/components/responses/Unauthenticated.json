@@ -1,0 +1,30 @@
+{
+  "description": "Missing or invalid credentials.",
+  "content": {
+    "application/json": {
+      "schema": {
+        "allOf": [
+          {
+            "$ref": "../schemas/Error.json"
+          },
+          {
+            "properties": {
+              "code": {
+                "const": "UNAUTHENTICATED"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "headers": {
+    "WWW-Authenticate": {
+      "required": true,
+      "schema": {
+        "type": "string"
+      },
+      "description": "Bearer authentication challenge."
+    }
+  }
+}

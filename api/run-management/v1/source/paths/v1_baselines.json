@@ -1,0 +1,89 @@
+{
+  "post": {
+    "tags": [
+      "Baselines"
+    ],
+    "operationId": "createBaseline",
+    "summary": "Create a baseline candidate from completed evidence",
+    "description": "Creates one immutable baseline version in CANDIDATE. The authenticated actor is recorded by the server; it is never accepted from the body. A repeated ID/version returns 409 even when the body is identical; after an uncertain response, read the exact resource.",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "../components/schemas/CreateBaseline.json"
+          }
+        }
+      }
+    },
+    "responses": {
+      "201": {
+        "description": "Baseline candidate created with revision one.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "../components/schemas/Baseline.json"
+                },
+                {
+                  "properties": {
+                    "state": {
+                      "const": "CANDIDATE"
+                    },
+                    "revision": {
+                      "const": 1
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "headers": {
+          "Location": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^/v1/baselines/[a-z][a-z0-9]*(?:-[a-z0-9]+)*/versions/(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$"
+            },
+            "description": "Relative URI of the created baseline version."
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthenticated.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "404": {
+        "$ref": "../components/responses/NotFound.json"
+      },
+      "409": {
+        "$ref": "../components/responses/BaselineExists.json"
+      },
+      "413": {
+        "$ref": "../components/responses/RequestTooLarge.json"
+      },
+      "415": {
+        "$ref": "../components/responses/UnsupportedMediaType.json"
+      },
+      "422": {
+        "$ref": "../components/responses/ValidationFailed.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

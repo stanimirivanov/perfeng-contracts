@@ -1,0 +1,19 @@
+{
+  "type": "string",
+  "enum": [
+    "CREATED",
+    "VALIDATING",
+    "PROVISIONING",
+    "WARMING_UP",
+    "RUNNING",
+    "COLLECTING",
+    "ANALYZING",
+    "REPORTING",
+    "CANCELLING",
+    "COMPLETED",
+    "INVALID",
+    "ABORTED",
+    "INFRASTRUCTURE_FAILURE",
+    "TEST_FAILURE"
+  ]
+}

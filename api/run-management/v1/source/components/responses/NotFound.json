@@ -1,0 +1,21 @@
+{
+  "description": "Resource is absent or not visible to this caller.",
+  "content": {
+    "application/json": {
+      "schema": {
+        "allOf": [
+          {
+            "$ref": "../schemas/Error.json"
+          },
+          {
+            "properties": {
+              "code": {
+                "const": "NOT_FOUND"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

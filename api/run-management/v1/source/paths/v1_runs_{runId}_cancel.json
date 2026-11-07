@@ -1,0 +1,89 @@
+{
+  "parameters": [
+    {
+      "name": "runId",
+      "in": "path",
+      "required": true,
+      "schema": {
+        "$ref": "../components/schemas/RunId.json"
+      },
+      "description": "Server-generated run identity."
+    }
+  ],
+  "post": {
+    "tags": [
+      "Runs"
+    ],
+    "operationId": "cancelRun",
+    "summary": "Request cancellation without deleting evidence",
+    "description": "No request body. CREATED or VALIDATING is aborted synchronously before dispatch and returns 200. PROVISIONING or a later active state enters CANCELLING and returns 202. Repeated CANCELLING returns 202 without mutation; already ABORTED returns 200 without mutation; any other terminal state returns 409 RUN_TERMINAL. Stop/cleanup after dispatch is asynchronous, so 202 does not mean execution has stopped.",
+    "responses": {
+      "200": {
+        "description": "Cancellation completed before dispatch, or the Run was already ABORTED; response state ABORTED.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "../components/schemas/Run.json"
+                },
+                {
+                  "properties": {
+                    "state": {
+                      "const": "ABORTED"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "202": {
+        "description": "Cancellation durably requested; response state CANCELLING.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "../components/schemas/Run.json"
+                },
+                {
+                  "properties": {
+                    "state": {
+                      "const": "CANCELLING"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthenticated.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "404": {
+        "$ref": "../components/responses/NotFound.json"
+      },
+      "409": {
+        "$ref": "../components/responses/RunTerminal.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

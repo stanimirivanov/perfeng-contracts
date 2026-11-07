@@ -1,0 +1,52 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "runId",
+    "kind",
+    "uri",
+    "sha256",
+    "sizeBytes",
+    "mediaType",
+    "format"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+    },
+    "runId": {
+      "$ref": "./RunId.json"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "raw",
+        "normalized"
+      ]
+    },
+    "uri": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^(s3|https)://[^\\s?#]+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "sizeBytes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "mediaType": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9!#$&^_.+-]*/[a-z0-9][a-z0-9!#$&^_.+-]*$"
+    },
+    "format": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9./_-]*$"
+    }
+  }
+}

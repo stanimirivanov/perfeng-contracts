@@ -1,0 +1,24 @@
+{
+  "description": "The observed revision is stale or the requested lifecycle edge is not allowed.",
+  "content": {
+    "application/json": {
+      "schema": {
+        "allOf": [
+          {
+            "$ref": "../schemas/Error.json"
+          },
+          {
+            "properties": {
+              "code": {
+                "enum": [
+                  "REVISION_CONFLICT",
+                  "BASELINE_TRANSITION_CONFLICT"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

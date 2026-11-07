@@ -1,0 +1,45 @@
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "const": "none"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id",
+        "version",
+        "sha256",
+        "seed"
+      ],
+      "properties": {
+        "kind": {
+          "const": "versioned"
+        },
+        "id": {
+          "$ref": "./ResourceId.json"
+        },
+        "version": {
+          "$ref": "./Version.json"
+        },
+        "sha256": {
+          "$ref": "./Sha256.json"
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  ]
+}
