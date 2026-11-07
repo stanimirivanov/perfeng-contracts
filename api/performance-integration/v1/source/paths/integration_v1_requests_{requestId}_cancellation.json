@@ -1,0 +1,167 @@
+{
+  "parameters": [
+    {
+      "name": "requestId",
+      "in": "path",
+      "required": true,
+      "schema": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      }
+    },
+    {
+      "name": "issuer",
+      "in": "query",
+      "required": true,
+      "schema": {
+        "type": "string",
+        "format": "uri",
+        "maxLength": 512
+      }
+    }
+  ],
+  "post": {
+    "operationId": "cancelPerformanceRequest",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "../components/schemas/Cancellation.json"
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Terminal",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/Terminal.json"
+            }
+          }
+        }
+      },
+      "202": {
+        "description": "Cancelling",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/Cancelling.json"
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/Error.json"
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/Error.json"
+            }
+          }
+        }
+      },
+      "403": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/Error.json"
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/Error.json"
+            }
+          }
+        }
+      },
+      "409": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/Error.json"
+            }
+          }
+        }
+      },
+      "410": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/Error.json"
+            }
+          }
+        }
+      },
+      "415": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/Error.json"
+            }
+          }
+        }
+      },
+      "429": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/Error.json"
+            }
+          }
+        },
+        "headers": {
+          "Retry-After": {
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Seconds before retry; preserve request identity and immutable context."
+          }
+        }
+      },
+      "503": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/Error.json"
+            }
+          }
+        },
+        "headers": {
+          "Retry-After": {
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Seconds before retry; preserve request identity and immutable context."
+          }
+        }
+      }
+    }
+  }
+}

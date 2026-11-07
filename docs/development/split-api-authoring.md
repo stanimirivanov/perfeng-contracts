@@ -62,3 +62,33 @@ Never hand-resolve a generated wire change by dropping conformance evidence.
 - [Redocly split](https://redocly.com/docs/cli/commands/split)
 - [Redocly bundle](https://redocly.com/docs/cli/commands/bundle)
 - [ADR-0014](../decisions/0014-split-api-authoring-and-review-semantics.md)
+
+## Generated Integration fragments
+
+Integration path metadata is grouped into lifecycle and analysis modules. The
+Effect definitions under contracts/source remain its sole authored schema source.
+`pnpm contracts:generate` and `pnpm contracts:check` now generate/check those
+fragments and all declared API bundles using the existing locked Python tooling.
+The source registry marks this family with `effect-components`; do not edit its
+source fragments manually.
+
+Qualification exposed a Redocly split defect for component-owned nested $defs:
+the emitted Error fragment retained a document-root pointer that was invalid in
+its new local file. Correcting local pointers then caused Redocly bundle to hoist
+nested definitions into new components, changing 152 canonical API pointers.
+That representation change was rejected instead of changing expected identity.
+
+Integration therefore uses Redocly-style JSON root/path/component layout with a
+bounded custom emitter/assembler, rather than claiming the standard Redocly bundle
+round trip supports it. The emitter relocates each reference into its declared
+file context. The assembler restores the owning component-root pointer without
+hoisting definitions. Every reference resolves locally, and the reconstructed
+published object and bytes retain the prior canonical identity. The renderer is
+limited to the admitted static component graph; identity-changing schema keywords
+and dynamic reference mechanisms require separate admission.
+
+Regression tests preserve the formerly failing external-component pointer case,
+exact nested-definition reconstruction, generated fragment drift and unknown-file
+refusal. The same release inventory includes these generated fragments. Native
+and Run consumers still receive their normal bundled artifacts. No provider
+snapshot is selected by generation or this source move.

@@ -6,6 +6,7 @@ import argparse
 import json
 import os
 import subprocess
+import sys
 import tempfile
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -13,8 +14,10 @@ from urllib.parse import unquote, urlsplit
 
 if __package__:
     from .api_review import digest
+    from .integration_sources import assemble, fragment_outputs, write_fragments
 else:
     from api_review import digest
+    from integration_sources import assemble, fragment_outputs, write_fragments
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = {"extends": [], "rules": {}, "preprocessors": {}, "decorators": {}}
@@ -84,35 +87,41 @@ def build(entry: dict[str, Any], check: bool) -> None:
     destination = ROOT / entry["output"]
     if not destination.resolve().is_relative_to(ROOT / "api"):
         raise ValueError("Output is outside the API tree")
-    cli = ROOT / "node_modules/@redocly/cli/bin/cli.js"
-    with tempfile.TemporaryDirectory(prefix="perfeng-api-bundle-") as directory:
-        output = Path(directory) / "openapi.json"
-        subprocess.run(
-            [
-                "sh",
-                str(ROOT / "scripts/offline-node.sh"),
-                str(cli),
-                "bundle",
-                str(source / "openapi.json"),
-                "--config",
-                str(config),
-                "--component-renaming-conflicts-severity=error",
-                "--output",
-                str(output),
-            ],
-            check=True,
-            cwd=ROOT,
-            env={**os.environ, "REDOCLY_TELEMETRY": "off"},
-        )
-        document = json.loads(output.read_text())
-        if digest(document) != entry["semanticSha256"]:
-            raise ValueError("Semantic change requires explicit identity and compatibility review")
-        generated = json.dumps(document, indent=2) + "\n"
-        if check:
-            if destination.read_text() != generated:
-                raise ValueError(f"Stale API bundle: {entry['output']}")
-        else:
-            destination.write_text(generated)
+    mode = entry.get("mode", "redocly")
+    if mode == "effect-components":
+        document = assemble(load_source(source, entry["files"]))
+    elif mode == "redocly":
+        cli = ROOT / "node_modules/@redocly/cli/bin/cli.js"
+        with tempfile.TemporaryDirectory(prefix="perfeng-api-bundle-") as directory:
+            output = Path(directory) / "openapi.json"
+            subprocess.run(
+                [
+                    "sh",
+                    str(ROOT / "scripts/offline-node.sh"),
+                    str(cli),
+                    "bundle",
+                    str(source / "openapi.json"),
+                    "--config",
+                    str(config),
+                    "--component-renaming-conflicts-severity=error",
+                    "--output",
+                    str(output),
+                ],
+                check=True,
+                cwd=ROOT,
+                env={**os.environ, "REDOCLY_TELEMETRY": "off"},
+            )
+            document = json.loads(output.read_text())
+    else:
+        raise ValueError("Unreviewed API assembly mode")
+    if digest(document) != entry["semanticSha256"]:
+        raise ValueError("Semantic change requires explicit identity and compatibility review")
+    generated = json.dumps(document, indent=2) + "\n"
+    if check:
+        if destination.read_text() != generated:
+            raise ValueError(f"Stale API bundle: {entry['output']}")
+    else:
+        destination.write_text(generated)
 
 
 def check_release_inventory() -> None:
@@ -131,9 +140,22 @@ def check_release_inventory() -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--write", action="store_true")
+    parser.add_argument("--integration", action="store_true")
     args = parser.parse_args()
-    check_release_inventory()
     registry = json.loads((ROOT / "contracts/api-sources.json").read_text())
+    if args.integration:
+        entries = [entry for entry in registry["apis"] if entry.get("mode") == "effect-components"]
+        if len(entries) != 1:
+            raise ValueError("Expected one reviewed Effect Integration source")
+        entry = entries[0]
+        source = ROOT / entry["root"]
+        if source.name != "source" or not source.resolve().is_relative_to(ROOT / "api"):
+            raise ValueError("Invalid generated source root")
+        outputs = fragment_outputs(json.load(sys.stdin))
+        if sorted(outputs) != sorted(entry["files"]):
+            raise ValueError("Generated Integration inventory requires review")
+        write_fragments(source, outputs, not args.write)
+    check_release_inventory()
     for entry in registry["apis"]:
         build(entry, not args.write)
 

@@ -1,6 +1,8 @@
 import { JSONSchema, type Schema } from "effect";
 import { PerformanceAnalysisV1 } from "../source/performance-analysis-v1.js";
 import { IntegrationMessages } from "../source/performance-integration-v1.js";
+import { analysisPaths } from "./integration-analysis-paths.js";
+import { lifecyclePaths } from "./integration-lifecycle-paths.js";
 
 export function integrationOpenAPI() {
   const messages: Readonly<Record<string, Schema.Schema.AnyNoContext>> = {
@@ -126,44 +128,17 @@ export function integrationOpenAPI() {
     info: { title: "Performance integration", version: "1.1.0" },
     security: [{ bearerAuth: [] }],
     paths: {
-      "/integration/v1/requests": {
-        post: {
-          operationId: "requestPerformanceRun",
-          requestBody: { required: true, content: content("Request") },
-          responses: { ...errors, "202": response("Accepted"), "422": response("Rejected") },
-        },
-      },
-      "/integration/v1/requests/{requestId}": {
-        parameters,
-        get: {
-          operationId: "getPerformanceRequest",
-          responses: { ...read, "422": response("Rejected") },
-        },
-      },
-      "/integration/v1/requests/{requestId}/cancellation": {
-        parameters,
-        post: {
-          operationId: "cancelPerformanceRequest",
-          requestBody: { required: true, content: content("Cancellation") },
-          responses: { ...errors, "200": response("Terminal"), "202": response("Cancelling") },
-        },
-      },
-      "/integration/v1/requests/{requestId}/analysis": {
+      ...lifecyclePaths({ parameters, content, response, errors, read }),
+      ...analysisPaths({
         parameters: parameters.map((parameter) =>
           parameter.name === "requestId"
             ? { ...parameter, schema: { ...parameter.schema, pattern: "\\S" } }
             : parameter,
         ),
-        get: {
-          operationId: "getPerformanceAnalysis",
-          description:
-            "Requires authenticated principal and existing request-read permission. Returns retained immutable analysis; never materializes, executes or fetches artifact bytes. Request identity is scoped by issuer and principal, never by native Run ID.",
-          responses: {
-            ...analysisErrors,
-            "200": { ...response("AnalysisPublication"), headers: { "Cache-Control": noStore } },
-          },
-        },
-      },
+        analysisErrors,
+        response,
+        noStore,
+      }),
     },
     components: { securitySchemes: { bearerAuth: { type: "http", scheme: "bearer" } }, schemas },
   };
