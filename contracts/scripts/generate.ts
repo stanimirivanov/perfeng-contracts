@@ -1,3 +1,4 @@
+import { spawnSync } from "node:child_process";
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
@@ -56,14 +57,22 @@ for (const contract of GeneratedContracts) {
   }
 }
 
-const apiOutput = new URL("../../api/performance-integration/v1/openapi.json", import.meta.url);
 const apiExpected = `${JSON.stringify(integrationOpenAPI(), undefined, 2)}\n`;
-if (check) {
-  if ((await readFile(apiOutput, "utf8")) !== apiExpected) {
-    throw new Error("Performance integration OpenAPI is stale; run pnpm contracts:generate");
-  }
-} else {
-  await writeFile(apiOutput, apiExpected, "utf8");
+const apiGeneration = spawnSync(
+  "uv",
+  [
+    "run",
+    "--locked",
+    "--offline",
+    "python",
+    "scripts/api_sources.py",
+    "--integration",
+    ...(check ? [] : ["--write"]),
+  ],
+  { cwd: repositoryRoot, input: apiExpected, stdio: ["pipe", "inherit", "inherit"] },
+);
+if (apiGeneration.error || apiGeneration.status !== 0) {
+  throw new Error("Generated Integration fragments or API bundles failed verification");
 }
 
 console.log(

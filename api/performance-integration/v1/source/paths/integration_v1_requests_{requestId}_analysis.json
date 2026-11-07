@@ -1,0 +1,256 @@
+{
+  "parameters": [
+    {
+      "name": "requestId",
+      "in": "path",
+      "required": true,
+      "schema": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256,
+        "pattern": "\\S"
+      }
+    },
+    {
+      "name": "issuer",
+      "in": "query",
+      "required": true,
+      "schema": {
+        "type": "string",
+        "format": "uri",
+        "maxLength": 512
+      }
+    }
+  ],
+  "get": {
+    "operationId": "getPerformanceAnalysis",
+    "description": "Requires authenticated principal and existing request-read permission. Returns retained immutable analysis; never materializes, executes or fetches artifact bytes. Request identity is scoped by issuer and principal, never by native Run ID.",
+    "responses": {
+      "200": {
+        "description": "AnalysisPublication",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/AnalysisPublication.json"
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "../components/schemas/Error.json"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "invalid_request"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "../components/schemas/Error.json"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "unauthenticated"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            }
+          },
+          "WWW-Authenticate": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "Bearer"
+            }
+          }
+        }
+      },
+      "403": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "../components/schemas/Error.json"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "forbidden"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Unknown, invisible or not yet published",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "../components/schemas/Error.json"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "unknown_request"
+                    },
+                    "message": {
+                      "const": "Not Found"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            }
+          }
+        }
+      },
+      "429": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "../components/schemas/Error.json"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "rate_limited"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "headers": {
+          "Retry-After": {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Seconds before retrying the same scoped read."
+          },
+          "Cache-Control": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            }
+          }
+        }
+      },
+      "503": {
+        "description": "Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "../components/schemas/Error.json"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "unavailable"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "headers": {
+          "Retry-After": {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Seconds before retrying the same scoped read."
+          },
+          "Cache-Control": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            }
+          }
+        }
+      }
+    }
+  }
+}

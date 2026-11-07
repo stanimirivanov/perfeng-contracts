@@ -118,6 +118,28 @@
         "paths/native-worker_v2_presence.json"
       ],
       "semanticSha256": "af69607d655146701797b622ef3e0b1c9e5dea8712f0a9618f286cc2f52e6bd0"
+    },
+    {
+      "root": "api/performance-integration/v1/source",
+      "output": "api/performance-integration/v1/openapi.json",
+      "mode": "effect-components",
+      "files": [
+        "components/schemas/Accepted.json",
+        "components/schemas/AnalysisPublication.json",
+        "components/schemas/Cancellation.json",
+        "components/schemas/Cancelling.json",
+        "components/schemas/Error.json",
+        "components/schemas/Lifecycle.json",
+        "components/schemas/Rejected.json",
+        "components/schemas/Request.json",
+        "components/schemas/Terminal.json",
+        "openapi.json",
+        "paths/integration_v1_requests.json",
+        "paths/integration_v1_requests_{requestId}.json",
+        "paths/integration_v1_requests_{requestId}_analysis.json",
+        "paths/integration_v1_requests_{requestId}_cancellation.json"
+      ],
+      "semanticSha256": "3ca4008b044fbdff7001504df1329e60d8c28dcda46cabbea6479f10de927e66"
     }
   ]
 }

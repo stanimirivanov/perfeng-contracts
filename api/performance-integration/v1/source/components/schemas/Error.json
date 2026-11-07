@@ -1,0 +1,39 @@
+{
+  "$ref": "#/$defs/IntegrationError",
+  "$defs": {
+    "IntegrationError": {
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "invalid_request",
+            "unauthenticated",
+            "forbidden",
+            "conflict",
+            "unknown_request",
+            "expired",
+            "unsupported_version",
+            "unsupported_revision",
+            "unavailable_reference",
+            "rate_limited",
+            "unavailable"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "description": "a string matching the pattern \\S",
+          "title": "maxLength(256)",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

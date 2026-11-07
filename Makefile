@@ -32,7 +32,6 @@ doctor:
 
 generate-contracts:
 	pnpm contracts:generate
-	$(UV_RUN) python scripts/api_sources.py --write
 
 fmt:
 	$(UV_RUN) ruff format .

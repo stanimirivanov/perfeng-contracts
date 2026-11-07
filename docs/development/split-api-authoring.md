@@ -20,7 +20,9 @@ unchanged until its own slice.
 
 `contracts/api-sources.json` declares each source root, complete fragment inventory,
 output path and canonical semantic SHA-256. Every file and reference must stay
-inside that declared tree; symlinks, extra files, remote/encoded refs and missing
+inside that declared tree. Source and output ownership paths must be canonical,
+including every ancestor; an alias to another location inside api is rejected.
+Symlinks, extra files, remote/encoded refs and missing
 pointers fail before bundling. The `redocly.yaml` JSON-compatible configuration
 admits no inherited config, rules, preprocessors or decorators. The fixed file
 and component-name collision errors are mandatory.
@@ -82,3 +84,38 @@ No native qualification, lease, fencing, terminal or upload meaning changes.
 Source fragments are deliberately present in the release inventory. Serialized
 bundle bytes change due to formatting/order; a consumer must adopt a reviewed
 new digest in C6 rather than silently substituting these bytes for its old pin.
+
+## Generated Integration fragments
+
+Integration path metadata is grouped into lifecycle and analysis modules. The
+Effect definitions under contracts/source remain its sole authored schema source.
+`pnpm contracts:generate` and `pnpm contracts:check` now generate/check those
+fragments and all declared API bundles using the existing locked Python tooling.
+The source registry marks this family with `effect-components`; do not edit its
+source fragments manually.
+
+Qualification exposed a Redocly split defect for component-owned nested $defs:
+the emitted Error fragment retained a document-root pointer that was invalid in
+its new local file. Correcting local pointers then caused Redocly bundle to hoist
+nested definitions into new components, changing 152 canonical API pointers.
+That representation change was rejected instead of changing expected identity.
+
+Integration therefore uses Redocly-style JSON root/path/component layout with a
+bounded custom emitter/assembler, rather than claiming the standard Redocly bundle
+round trip supports it. The emitter relocates each reference into its declared
+file context. The assembler restores the owning component-root pointer without
+hoisting definitions. Every reference resolves locally, and the reconstructed
+published object and bytes retain the prior canonical identity. The renderer is
+limited to the admitted static component graph; identity-changing schema keywords
+and dynamic reference mechanisms require separate admission.
+
+Regression tests preserve the formerly failing external-component pointer case,
+exact nested-definition reconstruction, generated fragment drift and unknown-file
+refusal. The same release inventory includes these generated fragments. Native
+and Run consumers still receive their normal bundled artifacts. No provider
+snapshot is selected by generation or this source move.
+
+Exact generated-file attributes classify the Integration bundle and generated
+fragments in review. The authored Effect definitions and endpoint metadata
+remain visible. This display classification has no effect on merge conflicts,
+source identity verification or the required conformance checks.

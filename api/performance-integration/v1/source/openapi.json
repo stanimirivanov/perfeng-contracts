@@ -1,0 +1,63 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Performance integration",
+    "version": "1.1.0"
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/integration/v1/requests": {
+      "$ref": "paths/integration_v1_requests.json"
+    },
+    "/integration/v1/requests/{requestId}": {
+      "$ref": "paths/integration_v1_requests_{requestId}.json"
+    },
+    "/integration/v1/requests/{requestId}/cancellation": {
+      "$ref": "paths/integration_v1_requests_{requestId}_cancellation.json"
+    },
+    "/integration/v1/requests/{requestId}/analysis": {
+      "$ref": "paths/integration_v1_requests_{requestId}_analysis.json"
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "Request": {
+        "$ref": "components/schemas/Request.json"
+      },
+      "Accepted": {
+        "$ref": "components/schemas/Accepted.json"
+      },
+      "Rejected": {
+        "$ref": "components/schemas/Rejected.json"
+      },
+      "Lifecycle": {
+        "$ref": "components/schemas/Lifecycle.json"
+      },
+      "Cancellation": {
+        "$ref": "components/schemas/Cancellation.json"
+      },
+      "Error": {
+        "$ref": "components/schemas/Error.json"
+      },
+      "Cancelling": {
+        "$ref": "components/schemas/Cancelling.json"
+      },
+      "Terminal": {
+        "$ref": "components/schemas/Terminal.json"
+      },
+      "AnalysisPublication": {
+        "$ref": "components/schemas/AnalysisPublication.json"
+      }
+    }
+  }
+}
