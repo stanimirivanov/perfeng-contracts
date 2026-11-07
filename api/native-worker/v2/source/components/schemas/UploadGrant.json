@@ -1,0 +1,62 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "grantId",
+    "leaseId",
+    "attemptId",
+    "runId",
+    "slot",
+    "objectKey",
+    "uploadUrl",
+    "uploadHeaders",
+    "method",
+    "expiresAt",
+    "maximumBytes",
+    "sha256"
+  ],
+  "properties": {
+    "grantId": {
+      "$ref": "./Uuid.json"
+    },
+    "leaseId": {
+      "$ref": "./Uuid.json"
+    },
+    "attemptId": {
+      "$ref": "./Uuid.json"
+    },
+    "runId": {
+      "$ref": "./RunId.json"
+    },
+    "slot": {
+      "$ref": "./Identifier.json"
+    },
+    "objectKey": {
+      "type": "string",
+      "pattern": "^runs/perf-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}/attempts/[0-9a-f-]{36}/[a-z][a-z0-9-]{1,62}$"
+    },
+    "uploadUrl": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://[^/?#@]+/[^?#]+\\?[^#]+$",
+      "description": "Short-lived S3 Signature Version 4 presigned PUT URL for the exact server-selected object. The URL query is secret bearer material and must not be logged or persisted."
+    },
+    "uploadHeaders": {
+      "$ref": "./PresignedUploadHeaders.json"
+    },
+    "method": {
+      "const": "PUT"
+    },
+    "expiresAt": {
+      "$ref": "./Timestamp.json"
+    },
+    "maximumBytes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 536870912
+    },
+    "sha256": {
+      "$ref": "./Sha256.json"
+    }
+  }
+}

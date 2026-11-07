@@ -1,0 +1,61 @@
+{
+  "parameters": [
+    {
+      "$ref": "../components/parameters/LeaseId.json"
+    },
+    {
+      "$ref": "../components/parameters/LeaseCapability.json"
+    }
+  ],
+  "post": {
+    "operationId": "createNativeUploadGrant",
+    "summary": "Create a short-lived exact-object upload grant",
+    "description": "The server selects the object key from the assigned artifact slot. The response contains a short-lived S3 Signature Version 4 presigned PUT URL and the exact headers the worker must reproduce. The grant authorizes an identical retry until expiry and no listing, reading, deletion, or arbitrary key selection.",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "../components/schemas/UploadGrantRequest.json"
+          }
+        }
+      }
+    },
+    "responses": {
+      "201": {
+        "description": "Upload grant created. The response body contains sensitive bearer material and must not be logged or persisted.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/UploadGrant.json"
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthorized.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "409": {
+        "$ref": "../components/responses/Conflict.json"
+      },
+      "410": {
+        "$ref": "../components/responses/LeaseGone.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

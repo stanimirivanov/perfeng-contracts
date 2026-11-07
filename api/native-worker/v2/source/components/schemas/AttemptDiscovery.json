@@ -1,0 +1,77 @@
+{
+  "description": "At most one current measurement slot owned by the bearer principal. Read serverTime after serialization with acquisition and presence; use it consistently for availability, slot expiry and attempt inspection. Expiry is exclusive. NONE includes expired, released or absent leases and is not a historical or idempotency result.",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "serverTime",
+        "availability"
+      ],
+      "properties": {
+        "state": {
+          "const": "NONE"
+        },
+        "serverTime": {
+          "$ref": "./Timestamp.json"
+        },
+        "availability": {
+          "$ref": "./DiscoveryAvailability.json"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "serverTime",
+        "availability",
+        "slotExpiresAt",
+        "attempt"
+      ],
+      "properties": {
+        "state": {
+          "const": "FOUND"
+        },
+        "serverTime": {
+          "$ref": "./Timestamp.json"
+        },
+        "availability": {
+          "allOf": [
+            {
+              "$ref": "./DiscoveryAvailability.json"
+            },
+            {
+              "not": {
+                "const": "UNREPORTED"
+              }
+            }
+          ]
+        },
+        "slotExpiresAt": {
+          "$ref": "./Timestamp.json",
+          "description": "Expiry of the unreleased occupying lease, strictly later than serverTime. For ACTIVE, it equals attempt.expiresAt. Retained terminal acceptance does not itself release capacity."
+        },
+        "attempt": {
+          "allOf": [
+            {
+              "$ref": "./AttemptInspection.json"
+            },
+            {
+              "not": {
+                "properties": {
+                  "state": {
+                    "const": "INACTIVE"
+                  }
+                }
+              }
+            }
+          ],
+          "description": "ACTIVE or TERMINAL at the envelope's serverTime. Terminal acceptance takes precedence over the retained lease. This is identity and state, never authority."
+        }
+      }
+    }
+  ]
+}

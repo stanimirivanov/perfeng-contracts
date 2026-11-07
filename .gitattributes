@@ -2,4 +2,5 @@
 
 # Generated artifacts remain byte-checked. Authored fragments stay visible.
 api/run-management/v1/openapi.json linguist-generated=true
+/api/native-worker/v2/openapi.json linguist-generated=true
 schemas/**/*.schema.json linguist-generated=true

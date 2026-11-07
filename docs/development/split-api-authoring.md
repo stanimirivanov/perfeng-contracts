@@ -2,7 +2,8 @@
 
 ## TL;DR
 
-- Edit Run API fragments under `api/run-management/v1/source`.
+- Edit Run API fragments under `api/run-management/v1/source` and Native Worker
+  fragments under `api/native-worker/v2/source`.
 - Run `make generate-contracts` to regenerate the bundled published API.
 - Preserve canonical semantic identity unless separately reviewed wire work changes it.
 - Keep authored source, release inventory and exact bundler inputs reviewable.
@@ -13,8 +14,9 @@
 Redocly CLI 2.76.0 (MIT) split the existing JSON API into JSON path/component
 fragments. Keeping JSON rather than converting to YAML preserves the existing
 syntax and avoids another parser. Redocly's root plus paths/components structure
-is unchanged. The bundled `api/run-management/v1/openapi.json` is now generated.
-Native and Integration ownership remains unchanged until their own slices.
+is unchanged. The bundled `api/run-management/v1/openapi.json` and
+`api/native-worker/v2/openapi.json` are generated. Integration ownership remains
+unchanged until its own slice.
 
 `contracts/api-sources.json` declares each source root, complete fragment inventory,
 output path and canonical semantic SHA-256. Every file and reference must stay
@@ -62,3 +64,21 @@ Never hand-resolve a generated wire change by dropping conformance evidence.
 - [Redocly split](https://redocly.com/docs/cli/commands/split)
 - [Redocly bundle](https://redocly.com/docs/cli/commands/bundle)
 - [ADR-0014](../decisions/0014-split-api-authoring-and-review-semantics.md)
+
+## Native Worker source identity
+
+The Native v2.3.0 split retains the original canonical semantic SHA-256
+`af69607d655146701797b622ef3e0b1c9e5dea8712f0a9618f286cc2f52e6bd0`.
+The initial Redocly round trip omitted the unused `AttemptFence` component from
+its output. The source root now explicitly references every original schema,
+including that root, so published names and reference shape remain identical.
+The frozen identity gate rejected the omission before any bundle was accepted.
+
+Native-specific registration tests assert the API version, nine paths and exact
+schema root identities. The source merge fixture exercises both Run and Native
+registrations, combining two path edits and one shared-component edit in both
+orders. Existing native positive, rejection and HTTP fixtures remain authoritative.
+No native qualification, lease, fencing, terminal or upload meaning changes.
+Source fragments are deliberately present in the release inventory. Serialized
+bundle bytes change due to formatting/order; a consumer must adopt a reviewed
+new digest in C6 rather than silently substituting these bytes for its old pin.

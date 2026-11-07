@@ -1,0 +1,60 @@
+{
+  "parameters": [
+    {
+      "$ref": "../components/parameters/LeaseId.json"
+    },
+    {
+      "$ref": "../components/parameters/LeaseCapability.json"
+    }
+  ],
+  "post": {
+    "operationId": "renewNativeLease",
+    "summary": "Renew a current lease and observe cancellation",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "../components/schemas/RenewLease.json"
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Renewed lease and current cancellation state",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/LeaseRenewal.json"
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthorized.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "409": {
+        "$ref": "../components/responses/Conflict.json"
+      },
+      "410": {
+        "$ref": "../components/responses/LeaseGone.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

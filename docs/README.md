@@ -6,7 +6,8 @@
   use this page to load only the contract sources relevant to the task.
 - Effect Schema is authoritative for data contracts; generated JSON Schema is
   the language-neutral consumer boundary. OpenAPI remains explicitly
-  hand-authored for existing APIs; integration OpenAPI is generated from Effect.
+  authored as split fragments for Run and Native APIs; their bundled OpenAPI is
+  generated. Integration OpenAPI is generated from Effect.
 - Compatibility, examples, rejection fixtures and consumer migration guidance
   change together.
 - Update this map when a canonical source moves or a recurring task lacks a

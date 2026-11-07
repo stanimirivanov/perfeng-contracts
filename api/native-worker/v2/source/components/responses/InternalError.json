@@ -1,0 +1,10 @@
+{
+  "description": "Unexpected control-plane failure",
+  "content": {
+    "application/json": {
+      "schema": {
+        "$ref": "../schemas/Error.json"
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "X-Perfeng-Lease",
+  "in": "header",
+  "required": true,
+  "description": "Opaque capability bound to the authenticated worker and this lease.",
+  "schema": {
+    "$ref": "../schemas/LeaseCapability.json"
+  }
+}

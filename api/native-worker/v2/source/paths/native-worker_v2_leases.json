@@ -1,0 +1,69 @@
+{
+  "post": {
+    "operationId": "acquireNativeLease",
+    "summary": "Acquire one compatible native execution lease",
+    "description": "Returns work only when presence, qualification, capability, availability, authorization, and policy all permit acquisition. A 204 response means no compatible work is currently available.",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "../components/schemas/AcquireLease.json"
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Lease acquired",
+        "headers": {
+          "X-Perfeng-Lease": {
+            "required": true,
+            "description": "Opaque capability for this lease. Never include it in JSON, logs, or evidence.",
+            "schema": {
+              "$ref": "../components/schemas/LeaseCapability.json"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/Lease.json"
+            }
+          }
+        }
+      },
+      "204": {
+        "description": "No compatible work",
+        "headers": {
+          "Retry-After": {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 60
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthorized.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

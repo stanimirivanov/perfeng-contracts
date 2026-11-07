@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "environmentId",
+    "environmentSha256",
+    "runner"
+  ],
+  "properties": {
+    "environmentId": {
+      "$ref": "./Identifier.json"
+    },
+    "environmentSha256": {
+      "$ref": "./Sha256.json"
+    },
+    "runner": {
+      "$ref": "./ExecutionArtifact.json"
+    }
+  },
+  "description": "Immutable evidence claimed by the worker. It does not let the worker declare itself qualified."
+}

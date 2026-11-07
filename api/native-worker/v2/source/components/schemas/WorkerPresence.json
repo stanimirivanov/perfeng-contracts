@@ -1,0 +1,32 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocolVersion",
+    "agentVersion",
+    "availability",
+    "capabilities",
+    "qualificationEvidence"
+  ],
+  "properties": {
+    "protocolVersion": {
+      "const": 2
+    },
+    "agentVersion": {
+      "$ref": "./SemanticVersion.json"
+    },
+    "availability": {
+      "enum": [
+        "AVAILABLE",
+        "DRAINING",
+        "UNAVAILABLE"
+      ]
+    },
+    "capabilities": {
+      "$ref": "./WorkerCapabilities.json"
+    },
+    "qualificationEvidence": {
+      "$ref": "./QualificationEvidence.json"
+    }
+  }
+}

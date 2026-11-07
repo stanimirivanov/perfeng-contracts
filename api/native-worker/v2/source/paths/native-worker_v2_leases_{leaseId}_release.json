@@ -1,0 +1,53 @@
+{
+  "parameters": [
+    {
+      "$ref": "../components/parameters/LeaseId.json"
+    },
+    {
+      "$ref": "../components/parameters/LeaseCapability.json"
+    }
+  ],
+  "post": {
+    "operationId": "releaseNativeLease",
+    "summary": "Release a current lease without reporting ordinary completion",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "../components/schemas/ReleaseLease.json"
+          }
+        }
+      }
+    },
+    "responses": {
+      "204": {
+        "description": "Lease released; duplicate release is idempotent"
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthorized.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "409": {
+        "$ref": "../components/responses/Conflict.json"
+      },
+      "410": {
+        "$ref": "../components/responses/LeaseGone.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

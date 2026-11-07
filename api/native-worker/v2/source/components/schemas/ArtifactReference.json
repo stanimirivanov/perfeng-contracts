@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifactId",
+    "runId",
+    "attemptId",
+    "slot",
+    "kind",
+    "uri",
+    "size",
+    "sha256",
+    "mediaType",
+    "registeredAt"
+  ],
+  "properties": {
+    "artifactId": {
+      "$ref": "./Uuid.json"
+    },
+    "runId": {
+      "$ref": "./RunId.json"
+    },
+    "attemptId": {
+      "$ref": "./Uuid.json"
+    },
+    "slot": {
+      "$ref": "./Identifier.json"
+    },
+    "kind": {
+      "$ref": "./Identifier.json"
+    },
+    "uri": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^s3://[^/?#]+/runs/[^?#]+$"
+    },
+    "size": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 536870912
+    },
+    "sha256": {
+      "$ref": "./Sha256.json"
+    },
+    "mediaType": {
+      "type": "string",
+      "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$"
+    },
+    "registeredAt": {
+      "$ref": "./Timestamp.json"
+    }
+  }
+}

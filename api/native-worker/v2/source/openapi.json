@@ -1,0 +1,164 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Performance Engineering Native Worker API",
+    "version": "2.3.0",
+    "description": "Authenticated outbound-pull protocol for qualified native workers. Worker identity is derived only from the bearer credential. Lease capabilities are transported only in headers. Presigned upload URLs and their signed headers are returned only in upload-grant response bodies. All authorization material must be redacted and must not be persisted as evidence."
+  },
+  "servers": [
+    {
+      "url": "https://control.perfeng.invalid"
+    }
+  ],
+  "security": [
+    {
+      "workerBearer": []
+    }
+  ],
+  "paths": {
+    "/native-worker/v2/presence": {
+      "$ref": "paths/native-worker_v2_presence.json"
+    },
+    "/native-worker/v2/leases": {
+      "$ref": "paths/native-worker_v2_leases.json"
+    },
+    "/native-worker/v2/leases/{leaseId}/renew": {
+      "$ref": "paths/native-worker_v2_leases_{leaseId}_renew.json"
+    },
+    "/native-worker/v2/leases/{leaseId}/release": {
+      "$ref": "paths/native-worker_v2_leases_{leaseId}_release.json"
+    },
+    "/native-worker/v2/leases/{leaseId}/upload-grants": {
+      "$ref": "paths/native-worker_v2_leases_{leaseId}_upload-grants.json"
+    },
+    "/native-worker/v2/leases/{leaseId}/artifacts": {
+      "$ref": "paths/native-worker_v2_leases_{leaseId}_artifacts.json"
+    },
+    "/native-worker/v2/leases/{leaseId}/terminal": {
+      "$ref": "paths/native-worker_v2_leases_{leaseId}_terminal.json"
+    },
+    "/native-worker/v2/attempts/discover": {
+      "$ref": "paths/native-worker_v2_attempts_discover.json"
+    },
+    "/native-worker/v2/attempts/inspect": {
+      "$ref": "paths/native-worker_v2_attempts_inspect.json"
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "workerBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "opaque worker credential",
+        "description": "Pre-provisioned per-worker credential. The authenticated principal is the worker identity."
+      }
+    },
+    "schemas": {
+      "Uuid": {
+        "$ref": "components/schemas/Uuid.json"
+      },
+      "Timestamp": {
+        "$ref": "components/schemas/Timestamp.json"
+      },
+      "Sha256": {
+        "$ref": "components/schemas/Sha256.json"
+      },
+      "Identifier": {
+        "$ref": "components/schemas/Identifier.json"
+      },
+      "ArtifactFormat": {
+        "$ref": "components/schemas/ArtifactFormat.json"
+      },
+      "SemanticVersion": {
+        "$ref": "components/schemas/SemanticVersion.json"
+      },
+      "RunId": {
+        "$ref": "components/schemas/RunId.json"
+      },
+      "LeaseCapability": {
+        "$ref": "components/schemas/LeaseCapability.json"
+      },
+      "AttemptFence": {
+        "$ref": "components/schemas/AttemptFence.json"
+      },
+      "ExecutionArtifact": {
+        "$ref": "components/schemas/ExecutionArtifact.json"
+      },
+      "WorkerCapabilities": {
+        "$ref": "components/schemas/WorkerCapabilities.json"
+      },
+      "QualificationEvidence": {
+        "$ref": "components/schemas/QualificationEvidence.json"
+      },
+      "WorkerPresence": {
+        "$ref": "components/schemas/WorkerPresence.json"
+      },
+      "QualificationDecision": {
+        "$ref": "components/schemas/QualificationDecision.json"
+      },
+      "PresenceStatus": {
+        "$ref": "components/schemas/PresenceStatus.json"
+      },
+      "AcquireLease": {
+        "$ref": "components/schemas/AcquireLease.json"
+      },
+      "ArtifactPlan": {
+        "$ref": "components/schemas/ArtifactPlan.json"
+      },
+      "ExecutionRecipe": {
+        "$ref": "components/schemas/ExecutionRecipe.json"
+      },
+      "Lease": {
+        "$ref": "components/schemas/Lease.json"
+      },
+      "RenewLease": {
+        "$ref": "components/schemas/RenewLease.json"
+      },
+      "LeaseRenewal": {
+        "$ref": "components/schemas/LeaseRenewal.json"
+      },
+      "ReleaseLease": {
+        "$ref": "components/schemas/ReleaseLease.json"
+      },
+      "UploadGrantRequest": {
+        "$ref": "components/schemas/UploadGrantRequest.json"
+      },
+      "UploadGrant": {
+        "$ref": "components/schemas/UploadGrant.json"
+      },
+      "PresignedUploadHeaders": {
+        "$ref": "components/schemas/PresignedUploadHeaders.json"
+      },
+      "RegisterArtifact": {
+        "$ref": "components/schemas/RegisterArtifact.json"
+      },
+      "ArtifactReference": {
+        "$ref": "components/schemas/ArtifactReference.json"
+      },
+      "TerminalReport": {
+        "$ref": "components/schemas/TerminalReport.json"
+      },
+      "DiscoverAttempt": {
+        "$ref": "components/schemas/DiscoverAttempt.json"
+      },
+      "DiscoveryAvailability": {
+        "$ref": "components/schemas/DiscoveryAvailability.json"
+      },
+      "AttemptDiscovery": {
+        "$ref": "components/schemas/AttemptDiscovery.json"
+      },
+      "InspectAttempt": {
+        "$ref": "components/schemas/InspectAttempt.json"
+      },
+      "AttemptInspection": {
+        "$ref": "components/schemas/AttemptInspection.json"
+      },
+      "TerminalAck": {
+        "$ref": "components/schemas/TerminalAck.json"
+      },
+      "Error": {
+        "$ref": "components/schemas/Error.json"
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "description": "Missing or invalid worker credential",
+  "content": {
+    "application/json": {
+      "schema": {
+        "$ref": "../schemas/Error.json"
+      }
+    }
+  }
+}

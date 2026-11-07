@@ -35,6 +35,18 @@ class ApiSourceTests(unittest.TestCase):
                 load_source(root, ["openapi.json", "other.json"])
 
     def test_disjoint_and_shared_edits_merge_in_both_orders_and_reproduce(self):
+        from scripts import api_sources
+
+        registry = json.loads((api_sources.ROOT / "contracts/api-sources.json").read_text())
+        for output in (
+            "api/run-management/v1/openapi.json",
+            "api/native-worker/v2/openapi.json",
+        ):
+            entry = next(item for item in registry["apis"] if item["output"] == output)
+            with self.subTest(output=output):
+                self.assert_merge_reproduction(entry)
+
+    def assert_merge_reproduction(self, entry):
         import copy
         import shutil
         import subprocess
@@ -43,7 +55,6 @@ class ApiSourceTests(unittest.TestCase):
         from scripts import api_sources
         from scripts.api_review import digest
 
-        entry = json.loads((api_sources.ROOT / "contracts/api-sources.json").read_text())["apis"][0]
         original = json.loads((api_sources.ROOT / entry["output"]).read_text())
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

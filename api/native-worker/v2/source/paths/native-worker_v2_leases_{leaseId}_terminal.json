@@ -1,0 +1,61 @@
+{
+  "parameters": [
+    {
+      "$ref": "../components/parameters/LeaseId.json"
+    },
+    {
+      "$ref": "../components/parameters/LeaseCapability.json"
+    }
+  ],
+  "post": {
+    "operationId": "reportNativeTerminal",
+    "summary": "Report completed or failed execution for the current attempt",
+    "description": "Completion names the manifest registered last. Duplicate identical reports are acknowledged; conflicting or stale reports are rejected.",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "../components/schemas/TerminalReport.json"
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Terminal report accepted or previously accepted",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/TerminalAck.json"
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthorized.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "409": {
+        "$ref": "../components/responses/Conflict.json"
+      },
+      "410": {
+        "$ref": "../components/responses/LeaseGone.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

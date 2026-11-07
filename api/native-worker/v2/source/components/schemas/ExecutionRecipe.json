@@ -1,0 +1,143 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "description": "Immutable, server-reviewed inputs for the baseline Chromium runner. The enclosing lease supplies runId and catalogueTestId; the assignment supplies workloadId, profile, target URL, browser family, diagnostic mode and execution artifact. The worker must not substitute local defaults.",
+  "required": [
+    "journeyId",
+    "workloadVersion",
+    "workloadSha256",
+    "scenario",
+    "environment",
+    "browserSettings"
+  ],
+  "properties": {
+    "journeyId": {
+      "const": "search",
+      "description": "Repository-owned search journey; other journeys require an explicit contract revision."
+    },
+    "workloadVersion": {
+      "$ref": "./SemanticVersion.json"
+    },
+    "workloadSha256": {
+      "$ref": "./Sha256.json"
+    },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cacheProfile",
+        "pageReuse",
+        "warmupIterations",
+        "measurementIterations"
+      ],
+      "properties": {
+        "cacheProfile": {
+          "enum": [
+            "cold",
+            "warm"
+          ]
+        },
+        "pageReuse": {
+          "enum": [
+            "per-iteration",
+            "per-run"
+          ]
+        },
+        "warmupIterations": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "measurementIterations": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "cacheProfile": {
+                "const": "cold"
+              }
+            },
+            "required": [
+              "cacheProfile"
+            ]
+          },
+          "then": {
+            "properties": {
+              "pageReuse": {
+                "const": "per-iteration"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "profileVersion",
+        "fingerprint",
+        "evidenceSha256"
+      ],
+      "properties": {
+        "profileId": {
+          "$ref": "./Identifier.json"
+        },
+        "profileVersion": {
+          "$ref": "./SemanticVersion.json"
+        },
+        "fingerprint": {
+          "$ref": "./Sha256.json"
+        },
+        "evidenceSha256": {
+          "$ref": "./Sha256.json"
+        }
+      }
+    },
+    "browserSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "headless",
+        "viewport",
+        "deviceScaleFactor"
+      ],
+      "properties": {
+        "headless": {
+          "type": "boolean"
+        },
+        "viewport": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "width",
+            "height"
+          ],
+          "properties": {
+            "width": {
+              "type": "integer",
+              "minimum": 320,
+              "maximum": 3840
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 240,
+              "maximum": 2160
+            }
+          }
+        },
+        "deviceScaleFactor": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 4
+        }
+      }
+    }
+  }
+}
