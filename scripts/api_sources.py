@@ -23,6 +23,22 @@ ROOT = Path(__file__).resolve().parents[1]
 CONFIG = {"extends": [], "rules": {}, "preprocessors": {}, "decorators": {}}
 
 
+def owned_api_path(relative: str) -> Path:
+    if (
+        not isinstance(relative, str)
+        or "\\" in relative
+        or relative.split("/")[0] != "api"
+        or any(part in {"", ".", ".."} for part in relative.split("/"))
+    ):
+        raise ValueError("API ownership requires canonical relative paths")
+    path = ROOT / relative
+    # Equality rejects aliases anywhere in the ancestry, including aliases
+    # that resolve into another otherwise permitted location inside api/.
+    if path.resolve() != path:
+        raise ValueError("Noncanonical API ownership path or symlink ancestor")
+    return path
+
+
 def load_source(root: Path, expected: list[str]) -> dict[str, Any]:
     if root.is_symlink():
         raise ValueError("Source root symlink")
@@ -77,16 +93,14 @@ def load_source(root: Path, expected: list[str]) -> dict[str, Any]:
 
 
 def build(entry: dict[str, Any], check: bool) -> None:
-    source = ROOT / entry["root"]
-    if source.name != "source" or not source.resolve().is_relative_to(ROOT / "api"):
+    source = owned_api_path(entry["root"])
+    destination = owned_api_path(entry["output"])
+    if source.name != "source":
         raise ValueError("Source is outside the API authoring tree")
     load_source(source, entry["files"])
     config = ROOT / "redocly.yaml"
     if config.is_symlink() or json.loads(config.read_text()) != CONFIG:
         raise ValueError("Bundler configuration differs from admitted local policy")
-    destination = ROOT / entry["output"]
-    if not destination.resolve().is_relative_to(ROOT / "api"):
-        raise ValueError("Output is outside the API tree")
     mode = entry.get("mode", "redocly")
     if mode == "effect-components":
         document = assemble(load_source(source, entry["files"]))
@@ -143,13 +157,16 @@ def main() -> None:
     parser.add_argument("--integration", action="store_true")
     args = parser.parse_args()
     registry = json.loads((ROOT / "contracts/api-sources.json").read_text())
+    for entry in registry["apis"]:
+        owned_api_path(entry["root"])
+        owned_api_path(entry["output"])
     if args.integration:
         entries = [entry for entry in registry["apis"] if entry.get("mode") == "effect-components"]
         if len(entries) != 1:
             raise ValueError("Expected one reviewed Effect Integration source")
         entry = entries[0]
-        source = ROOT / entry["root"]
-        if source.name != "source" or not source.resolve().is_relative_to(ROOT / "api"):
+        source = owned_api_path(entry["root"])
+        if source.name != "source":
             raise ValueError("Invalid generated source root")
         outputs = fragment_outputs(json.load(sys.stdin))
         if sorted(outputs) != sorted(entry["files"]):

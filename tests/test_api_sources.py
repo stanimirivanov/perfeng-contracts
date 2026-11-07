@@ -112,3 +112,33 @@ class ApiSourceTests(unittest.TestCase):
                 outputs.append((root / entry["output"]).read_bytes())
             self.assertEqual(outputs[0], outputs[1])
             self.assertEqual(json.loads(outputs[0]), expected)
+
+    def test_in_tree_ancestor_alias_cannot_redirect_source_or_output_ownership(self):
+        from unittest.mock import patch
+
+        from scripts import api_sources
+        from scripts.api_review import digest
+
+        document = {"openapi": "3.1.1", "paths": {}, "components": {"schemas": {}}}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "api/real/v1/source"
+            source.mkdir(parents=True)
+            (source / "openapi.json").write_text(json.dumps(document))
+            (root / "api/alias").symlink_to(root / "api/real", target_is_directory=True)
+            (root / "api/result").mkdir()
+            (root / "redocly.yaml").write_text(json.dumps(api_sources.CONFIG))
+            entry = {
+                "root": "api/real/v1/source",
+                "output": "api/result/openapi.json",
+                "files": ["openapi.json"],
+                "mode": "effect-components",
+                "semanticSha256": digest(document),
+            }
+            with patch.object(api_sources, "ROOT", root):
+                for alias in [
+                    {"root": "api/alias/v1/source"},
+                    {"output": "api/alias/openapi.json"},
+                ]:
+                    with self.subTest(alias=alias), self.assertRaisesRegex(ValueError, "canonical"):
+                        api_sources.build({**entry, **alias}, check=False)

@@ -18,7 +18,9 @@ Native and Integration ownership remains unchanged until their own slices.
 
 `contracts/api-sources.json` declares each source root, complete fragment inventory,
 output path and canonical semantic SHA-256. Every file and reference must stay
-inside that declared tree; symlinks, extra files, remote/encoded refs and missing
+inside that declared tree. Source and output ownership paths must be canonical,
+including every ancestor; an alias to another location inside api is rejected.
+Symlinks, extra files, remote/encoded refs and missing
 pointers fail before bundling. The `redocly.yaml` JSON-compatible configuration
 admits no inherited config, rules, preprocessors or decorators. The fixed file
 and component-name collision errors are mandatory.
