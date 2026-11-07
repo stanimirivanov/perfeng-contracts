@@ -1,0 +1,95 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "id",
+    "version",
+    "revision",
+    "state",
+    "testId",
+    "sourceRunId",
+    "artifact",
+    "software",
+    "workload",
+    "environment",
+    "dataset",
+    "qualification",
+    "createdAt",
+    "lifecycle"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "PerformanceBaseline"
+    },
+    "id": {
+      "$ref": "./ResourceId.json"
+    },
+    "version": {
+      "$ref": "./Version.json"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "state": {
+      "$ref": "./BaselineState.json"
+    },
+    "testId": {
+      "$ref": "./ResourceId.json"
+    },
+    "sourceRunId": {
+      "$ref": "./RunId.json"
+    },
+    "artifact": {
+      "allOf": [
+        {
+          "$ref": "./Artifact.json"
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "normalized"
+            },
+            "mediaType": {
+              "const": "application/json"
+            },
+            "format": {
+              "const": "normalized-result/v1"
+            }
+          }
+        }
+      ]
+    },
+    "software": {
+      "$ref": "./BaselineSoftware.json"
+    },
+    "workload": {
+      "$ref": "./BaselineIdentity.json"
+    },
+    "environment": {
+      "$ref": "./BaselineEnvironment.json"
+    },
+    "dataset": {
+      "$ref": "./BaselineDataset.json"
+    },
+    "qualification": {
+      "$ref": "./BaselineQualification.json"
+    },
+    "createdAt": {
+      "$ref": "./Timestamp.json"
+    },
+    "lifecycle": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "./BaselineEvent.json"
+      }
+    }
+  }
+}

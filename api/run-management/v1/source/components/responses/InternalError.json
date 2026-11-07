@@ -1,0 +1,21 @@
+{
+  "description": "Unexpected server error; recover an outcome-uncertain mutation using its documented read operation.",
+  "content": {
+    "application/json": {
+      "schema": {
+        "allOf": [
+          {
+            "$ref": "../schemas/Error.json"
+          },
+          {
+            "properties": {
+              "code": {
+                "const": "INTERNAL_ERROR"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

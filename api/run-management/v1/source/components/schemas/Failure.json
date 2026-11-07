@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "code",
+    "message"
+  ],
+  "properties": {
+    "code": {
+      "type": "string",
+      "enum": [
+        "VALIDATION_FAILED",
+        "INFRASTRUCTURE_ERROR",
+        "PIPELINE_TIMEOUT",
+        "TOOL_ERROR",
+        "ANALYSIS_ERROR"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    }
+  }
+}

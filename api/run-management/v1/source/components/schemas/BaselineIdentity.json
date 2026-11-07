@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "version",
+    "sha256"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "./ResourceId.json"
+    },
+    "version": {
+      "$ref": "./Version.json"
+    },
+    "sha256": {
+      "$ref": "./Sha256.json"
+    }
+  }
+}

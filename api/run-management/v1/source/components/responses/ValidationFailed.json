@@ -1,0 +1,21 @@
+{
+  "description": "Request schema or synchronous resource validation failed; no mutation was committed.",
+  "content": {
+    "application/json": {
+      "schema": {
+        "allOf": [
+          {
+            "$ref": "../schemas/Error.json"
+          },
+          {
+            "properties": {
+              "code": {
+                "const": "VALIDATION_FAILED"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

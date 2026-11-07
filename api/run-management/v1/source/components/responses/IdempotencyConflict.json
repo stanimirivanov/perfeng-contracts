@@ -1,0 +1,33 @@
+{
+  "description": "Key conflicts with another request or the identical request is still in progress.",
+  "content": {
+    "application/json": {
+      "schema": {
+        "allOf": [
+          {
+            "$ref": "../schemas/Error.json"
+          },
+          {
+            "properties": {
+              "code": {
+                "enum": [
+                  "IDEMPOTENCY_CONFLICT",
+                  "REQUEST_IN_PROGRESS"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "headers": {
+    "Retry-After": {
+      "schema": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "description": "Required for REQUEST_IN_PROGRESS, absent for a payload conflict."
+    }
+  }
+}

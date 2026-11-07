@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "version",
+    "sha256",
+    "fingerprint"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "./ResourceId.json"
+    },
+    "version": {
+      "$ref": "./Version.json"
+    },
+    "sha256": {
+      "$ref": "./Sha256.json"
+    },
+    "fingerprint": {
+      "$ref": "./Sha256.json"
+    }
+  }
+}

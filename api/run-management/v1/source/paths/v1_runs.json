@@ -1,0 +1,139 @@
+{
+  "post": {
+    "tags": [
+      "Runs"
+    ],
+    "operationId": "createRun",
+    "summary": "Create a run idempotently",
+    "description": "Select approved, versioned catalogue/environment/policy resources. No caller-supplied commands, target URLs or credentials. Idempotency is scoped to authenticated principal and this operation.",
+    "parameters": [
+      {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "description": "Opaque client-generated key. Reuse for retries of the same parsed JSON request; use a new key for a new run.",
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{15,127}$"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "../components/schemas/CreateRun.json"
+          }
+        }
+      }
+    },
+    "responses": {
+      "201": {
+        "description": "Durably accepted run. An idempotent replay returns the original 201 snapshot and headers; GET returns current state.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "../components/schemas/Run.json"
+                },
+                {
+                  "properties": {
+                    "state": {
+                      "const": "CREATED"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "headers": {
+          "Location": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^/v1/runs/perf-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}$"
+            },
+            "description": "Relative URI of the accepted run."
+          },
+          "Idempotency-Key-Expires-At": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "UTC expiration, at least 24 hours after original acceptance; unchanged on replay."
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthenticated.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "409": {
+        "$ref": "../components/responses/IdempotencyConflict.json"
+      },
+      "413": {
+        "description": "Request exceeds the 64 KiB UTF-8 body limit; code BAD_REQUEST.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "../components/schemas/Error.json"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "BAD_REQUEST"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "415": {
+        "description": "Only application/json is accepted; code BAD_REQUEST.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "../components/schemas/Error.json"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "BAD_REQUEST"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "422": {
+        "$ref": "../components/responses/ValidationFailed.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

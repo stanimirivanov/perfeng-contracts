@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "state",
+    "at",
+    "actor",
+    "reason"
+  ],
+  "properties": {
+    "state": {
+      "$ref": "./BaselineState.json"
+    },
+    "at": {
+      "$ref": "./Timestamp.json"
+    },
+    "actor": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "\\S"
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "\\S"
+    }
+  }
+}

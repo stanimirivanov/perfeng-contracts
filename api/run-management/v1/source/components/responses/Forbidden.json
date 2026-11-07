@@ -1,0 +1,21 @@
+{
+  "description": "Caller lacks permission for the requested operation or selected resources.",
+  "content": {
+    "application/json": {
+      "schema": {
+        "allOf": [
+          {
+            "$ref": "../schemas/Error.json"
+          },
+          {
+            "properties": {
+              "code": {
+                "const": "FORBIDDEN"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

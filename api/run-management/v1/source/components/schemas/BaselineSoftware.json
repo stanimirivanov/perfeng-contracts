@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "gitSha",
+    "image"
+  ],
+  "properties": {
+    "gitSha": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{40}$"
+    },
+    "image": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:/-]*@sha256:[a-f0-9]{64}$"
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    }
+  }
+}

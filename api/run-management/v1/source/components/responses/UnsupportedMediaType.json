@@ -1,0 +1,21 @@
+{
+  "description": "Only application/json is accepted; code BAD_REQUEST.",
+  "content": {
+    "application/json": {
+      "schema": {
+        "allOf": [
+          {
+            "$ref": "../schemas/Error.json"
+          },
+          {
+            "properties": {
+              "code": {
+                "const": "BAD_REQUEST"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "state",
+    "revision",
+    "request",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "./RunId.json"
+    },
+    "state": {
+      "$ref": "./RunState.json"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "request": {
+      "$ref": "./CreateRun.json"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finishedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "toolExitCode": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 255
+    },
+    "failure": {
+      "$ref": "./Failure.json"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "state": {
+            "enum": [
+              "COMPLETED",
+              "INVALID",
+              "ABORTED",
+              "INFRASTRUCTURE_FAILURE",
+              "TEST_FAILURE"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "finishedAt"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "finishedAt"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "state": {
+            "enum": [
+              "INVALID",
+              "INFRASTRUCTURE_FAILURE",
+              "TEST_FAILURE"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "failure"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "failure"
+          ]
+        }
+      }
+    }
+  ]
+}

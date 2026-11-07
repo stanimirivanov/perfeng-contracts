@@ -1,0 +1,54 @@
+{
+  "parameters": [
+    {
+      "name": "runId",
+      "in": "path",
+      "required": true,
+      "schema": {
+        "$ref": "../components/schemas/RunId.json"
+      },
+      "description": "Server-generated run identity."
+    }
+  ],
+  "get": {
+    "tags": [
+      "Runs"
+    ],
+    "operationId": "listRunArtifacts",
+    "summary": "List immutable artifacts visible for a run",
+    "description": "Returns the current principal-scoped artifact-reference snapshot in ascending artifact-ID order. The collection can be empty or partial while the run is active. References are evidence metadata, not object bytes, credentials, signed URLs, lifecycle completion, or analysis verdicts.",
+    "responses": {
+      "200": {
+        "description": "Current artifact-reference snapshot for the visible run.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/ArtifactCollection.json"
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthenticated.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "404": {
+        "$ref": "../components/responses/NotFound.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

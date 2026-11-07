@@ -32,6 +32,7 @@ doctor:
 
 generate-contracts:
 	pnpm contracts:generate
+	$(UV_RUN) python scripts/api_sources.py --write
 
 fmt:
 	$(UV_RUN) ruff format .
@@ -44,7 +45,7 @@ fmt-check:
 docs-check:
 	$(UV_RUN) python scripts/repo_check.py
 
-check: fmt-check docs-check api-review-check
+check: fmt-check docs-check api-review-check api-source-check
 	uv lock --check --offline
 	pnpm contracts:check
 	pnpm typecheck
@@ -75,3 +76,7 @@ validate: verify supply-chain
 .PHONY: api-review-check
 api-review-check:
 	$(UV_RUN) python scripts/api_review.py > /dev/null
+
+.PHONY: api-source-check
+api-source-check:
+	$(UV_RUN) python scripts/api_sources.py

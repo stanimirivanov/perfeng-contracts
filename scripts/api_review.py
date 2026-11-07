@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -155,9 +156,32 @@ def review(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--base", help="Immutable Git commit for PR comparison")
     parser.add_argument("--before", type=Path)
     parser.add_argument("--after", type=Path)
     args = parser.parse_args()
+    if args.base:
+        if (
+            args.before
+            or args.after
+            or len(args.base) != 40
+            or any(char not in "0123456789abcdef" for char in args.base)
+        ):
+            parser.error("--base requires one exact commit hash and no file pair")
+        receipts = {}
+        for path in APIS:
+            previous = subprocess.run(
+                ["git", "show", args.base + ":" + path], check=True, capture_output=True, text=True
+            )
+            receipts[path] = review(json.loads(previous.stdout), json.loads(Path(path).read_text()))
+        print(json.dumps({"baseCommit": args.base, "apis": receipts}, indent=2))
+        if any(
+            change["classification"] != "documentation"
+            for receipt in receipts.values()
+            for change in receipt["changes"]
+        ):
+            raise SystemExit(1)
+        return
     if bool(args.before) != bool(args.after):
         parser.error("Provide both --before and --after")
     if args.before:

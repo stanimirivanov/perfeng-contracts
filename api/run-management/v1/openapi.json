@@ -604,94 +604,6 @@
       }
     },
     "schemas": {
-      "RunId": {
-        "type": "string",
-        "pattern": "^perf-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}$"
-      },
-      "ResourceId": {
-        "type": "string",
-        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
-      },
-      "Version": {
-        "type": "string",
-        "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
-      },
-      "Sha256": {
-        "type": "string",
-        "pattern": "^[a-f0-9]{64}$"
-      },
-      "Timestamp": {
-        "type": "string",
-        "format": "date-time",
-        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:[0-5]\\d(?:\\.\\d{1,6})?(?:Z|[+-]\\d{2}:\\d{2})$"
-      },
-      "Artifact": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "runId",
-          "kind",
-          "uri",
-          "sha256",
-          "sizeBytes",
-          "mediaType",
-          "format"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
-          },
-          "runId": {
-            "$ref": "#/components/schemas/RunId"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "raw",
-              "normalized"
-            ]
-          },
-          "uri": {
-            "type": "string",
-            "format": "uri",
-            "pattern": "^(s3|https)://[^\\s?#]+$"
-          },
-          "sha256": {
-            "type": "string",
-            "pattern": "^[a-f0-9]{64}$"
-          },
-          "sizeBytes": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "mediaType": {
-            "type": "string",
-            "pattern": "^[a-z0-9][a-z0-9!#$&^_.+-]*/[a-z0-9][a-z0-9!#$&^_.+-]*$"
-          },
-          "format": {
-            "type": "string",
-            "pattern": "^[a-z0-9][a-z0-9./_-]*$"
-          }
-        }
-      },
-      "ArtifactCollection": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "artifacts"
-        ],
-        "properties": {
-          "artifacts": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Artifact"
-            }
-          }
-        }
-      },
       "Reference": {
         "type": "object",
         "additionalProperties": false,
@@ -773,6 +685,10 @@
             "$ref": "#/components/schemas/Reference"
           }
         }
+      },
+      "RunId": {
+        "type": "string",
+        "pattern": "^perf-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}$"
       },
       "RunState": {
         "type": "string",
@@ -920,25 +836,143 @@
           }
         ]
       },
-      "BaselineIdentity": {
+      "Error": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "message",
+          "requestId"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "BAD_REQUEST",
+              "UNAUTHENTICATED",
+              "FORBIDDEN",
+              "NOT_FOUND",
+              "IDEMPOTENCY_CONFLICT",
+              "REQUEST_IN_PROGRESS",
+              "RUN_TERMINAL",
+              "BASELINE_EXISTS",
+              "REVISION_CONFLICT",
+              "BASELINE_TRANSITION_CONFLICT",
+              "VALIDATION_FAILED",
+              "RATE_LIMITED",
+              "INTERNAL_ERROR",
+              "UNAVAILABLE"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "requestId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "details": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "message"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "maxLength": 512,
+                  "pattern": "^(?:/(?:[^~]|~[01])*)?$"
+                },
+                "message": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                }
+              }
+            }
+          }
+        }
+      },
+      "Artifact": {
         "type": "object",
         "additionalProperties": false,
         "required": [
           "id",
-          "version",
-          "sha256"
+          "runId",
+          "kind",
+          "uri",
+          "sha256",
+          "sizeBytes",
+          "mediaType",
+          "format"
         ],
         "properties": {
           "id": {
-            "$ref": "#/components/schemas/ResourceId"
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
           },
-          "version": {
-            "$ref": "#/components/schemas/Version"
+          "runId": {
+            "$ref": "#/components/schemas/RunId"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "raw",
+              "normalized"
+            ]
+          },
+          "uri": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^(s3|https)://[^\\s?#]+$"
           },
           "sha256": {
-            "$ref": "#/components/schemas/Sha256"
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mediaType": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9!#$&^_.+-]*/[a-z0-9][a-z0-9!#$&^_.+-]*$"
+          },
+          "format": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9./_-]*$"
           }
         }
+      },
+      "ArtifactCollection": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "artifacts"
+        ],
+        "properties": {
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Artifact"
+            }
+          }
+        }
+      },
+      "ResourceId": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      },
+      "Version": {
+        "type": "string",
+        "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
       },
       "BaselineSoftware": {
         "type": "object",
@@ -960,6 +994,30 @@
             "type": "string",
             "minLength": 1,
             "pattern": "\\S"
+          }
+        }
+      },
+      "Sha256": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      },
+      "BaselineIdentity": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "version",
+          "sha256"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "version": {
+            "$ref": "#/components/schemas/Version"
+          },
+          "sha256": {
+            "$ref": "#/components/schemas/Sha256"
           }
         }
       },
@@ -1030,6 +1088,83 @@
               }
             }
           }
+        ]
+      },
+      "CreateBaseline": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "version",
+          "testId",
+          "sourceRunId",
+          "artifact",
+          "software",
+          "workload",
+          "environment",
+          "dataset",
+          "reason"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "version": {
+            "$ref": "#/components/schemas/Version"
+          },
+          "testId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "sourceRunId": {
+            "$ref": "#/components/schemas/RunId"
+          },
+          "artifact": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Artifact"
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "const": "normalized"
+                  },
+                  "mediaType": {
+                    "const": "application/json"
+                  },
+                  "format": {
+                    "const": "normalized-result/v1"
+                  }
+                }
+              }
+            ]
+          },
+          "software": {
+            "$ref": "#/components/schemas/BaselineSoftware"
+          },
+          "workload": {
+            "$ref": "#/components/schemas/BaselineIdentity"
+          },
+          "environment": {
+            "$ref": "#/components/schemas/BaselineEnvironment"
+          },
+          "dataset": {
+            "$ref": "#/components/schemas/BaselineDataset"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024,
+            "pattern": "\\S"
+          }
+        }
+      },
+      "BaselineState": {
+        "type": "string",
+        "enum": [
+          "CANDIDATE",
+          "QUALIFIED",
+          "APPROVED",
+          "RETIRED"
         ]
       },
       "PendingQualification": {
@@ -1130,14 +1265,10 @@
           }
         ]
       },
-      "BaselineState": {
+      "Timestamp": {
         "type": "string",
-        "enum": [
-          "CANDIDATE",
-          "QUALIFIED",
-          "APPROVED",
-          "RETIRED"
-        ]
+        "format": "date-time",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:[0-5]\\d(?:\\.\\d{1,6})?(?:Z|[+-]\\d{2}:\\d{2})$"
       },
       "BaselineEvent": {
         "type": "object",
@@ -1264,74 +1395,6 @@
           }
         }
       },
-      "CreateBaseline": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "version",
-          "testId",
-          "sourceRunId",
-          "artifact",
-          "software",
-          "workload",
-          "environment",
-          "dataset",
-          "reason"
-        ],
-        "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "version": {
-            "$ref": "#/components/schemas/Version"
-          },
-          "testId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "sourceRunId": {
-            "$ref": "#/components/schemas/RunId"
-          },
-          "artifact": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Artifact"
-              },
-              {
-                "properties": {
-                  "kind": {
-                    "const": "normalized"
-                  },
-                  "mediaType": {
-                    "const": "application/json"
-                  },
-                  "format": {
-                    "const": "normalized-result/v1"
-                  }
-                }
-              }
-            ]
-          },
-          "software": {
-            "$ref": "#/components/schemas/BaselineSoftware"
-          },
-          "workload": {
-            "$ref": "#/components/schemas/BaselineIdentity"
-          },
-          "environment": {
-            "$ref": "#/components/schemas/BaselineEnvironment"
-          },
-          "dataset": {
-            "$ref": "#/components/schemas/BaselineDataset"
-          },
-          "reason": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 1024,
-            "pattern": "\\S"
-          }
-        }
-      },
       "BaselineTransition": {
         "oneOf": [
           {
@@ -1417,69 +1480,6 @@
             }
           }
         ]
-      },
-      "Error": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "code",
-          "message",
-          "requestId"
-        ],
-        "properties": {
-          "code": {
-            "type": "string",
-            "enum": [
-              "BAD_REQUEST",
-              "UNAUTHENTICATED",
-              "FORBIDDEN",
-              "NOT_FOUND",
-              "IDEMPOTENCY_CONFLICT",
-              "REQUEST_IN_PROGRESS",
-              "RUN_TERMINAL",
-              "BASELINE_EXISTS",
-              "REVISION_CONFLICT",
-              "BASELINE_TRANSITION_CONFLICT",
-              "VALIDATION_FAILED",
-              "RATE_LIMITED",
-              "INTERNAL_ERROR",
-              "UNAVAILABLE"
-            ]
-          },
-          "message": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 1000
-          },
-          "requestId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "details": {
-            "type": "array",
-            "maxItems": 100,
-            "items": {
-              "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "path",
-                "message"
-              ],
-              "properties": {
-              "path": {
-                "type": "string",
-                "maxLength": 512,
-                "pattern": "^(?:/(?:[^~]|~[01])*)?$"
-                },
-                "message": {
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 512
-                }
-              }
-            }
-          }
-        }
       }
     },
     "responses": {
@@ -1555,8 +1555,8 @@
           }
         }
       },
-      "NotFound": {
-        "description": "Resource is absent or not visible to this caller.",
+      "IdempotencyConflict": {
+        "description": "Key conflicts with another request or the identical request is still in progress.",
         "content": {
           "application/json": {
             "schema": {
@@ -1567,12 +1567,24 @@
                 {
                   "properties": {
                     "code": {
-                      "const": "NOT_FOUND"
+                      "enum": [
+                        "IDEMPOTENCY_CONFLICT",
+                        "REQUEST_IN_PROGRESS"
+                      ]
                     }
                   }
                 }
               ]
             }
+          }
+        },
+        "headers": {
+          "Retry-After": {
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Required for REQUEST_IN_PROGRESS, absent for a payload conflict."
           }
         }
       },
@@ -1680,8 +1692,8 @@
           }
         }
       },
-      "IdempotencyConflict": {
-        "description": "Key conflicts with another request or the identical request is still in progress.",
+      "NotFound": {
+        "description": "Resource is absent or not visible to this caller.",
         "content": {
           "application/json": {
             "schema": {
@@ -1692,24 +1704,54 @@
                 {
                   "properties": {
                     "code": {
-                      "enum": [
-                        "IDEMPOTENCY_CONFLICT",
-                        "REQUEST_IN_PROGRESS"
-                      ]
+                      "const": "NOT_FOUND"
                     }
                   }
                 }
               ]
             }
           }
-        },
-        "headers": {
-          "Retry-After": {
+        }
+      },
+      "RunTerminal": {
+        "description": "Cancellation lost the race to another terminal state.",
+        "content": {
+          "application/json": {
             "schema": {
-              "type": "integer",
-              "minimum": 1
-            },
-            "description": "Required for REQUEST_IN_PROGRESS, absent for a payload conflict."
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Error"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "RUN_TERMINAL"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "BaselineExists": {
+        "description": "The principal already owns this immutable baseline ID and version.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Error"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "BASELINE_EXISTS"
+                    }
+                  }
+                }
+              ]
+            }
           }
         }
       },
@@ -1755,27 +1797,6 @@
           }
         }
       },
-      "BaselineExists": {
-        "description": "The principal already owns this immutable baseline ID and version.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/Error"
-                },
-                {
-                  "properties": {
-                    "code": {
-                      "const": "BASELINE_EXISTS"
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        }
-      },
       "BaselineTransitionConflict": {
         "description": "The observed revision is stale or the requested lifecycle edge is not allowed.",
         "content": {
@@ -1792,27 +1813,6 @@
                         "REVISION_CONFLICT",
                         "BASELINE_TRANSITION_CONFLICT"
                       ]
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        }
-      },
-      "RunTerminal": {
-        "description": "Cancellation lost the race to another terminal state.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/Error"
-                },
-                {
-                  "properties": {
-                    "code": {
-                      "const": "RUN_TERMINAL"
                     }
                   }
                 }

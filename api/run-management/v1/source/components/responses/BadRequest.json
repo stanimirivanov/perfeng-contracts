@@ -1,0 +1,21 @@
+{
+  "description": "Malformed JSON, duplicate object keys, invalid headers/path, or unsupported request body.",
+  "content": {
+    "application/json": {
+      "schema": {
+        "allOf": [
+          {
+            "$ref": "../schemas/Error.json"
+          },
+          {
+            "properties": {
+              "code": {
+                "const": "BAD_REQUEST"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

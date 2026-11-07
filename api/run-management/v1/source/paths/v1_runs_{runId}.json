@@ -1,0 +1,53 @@
+{
+  "parameters": [
+    {
+      "name": "runId",
+      "in": "path",
+      "required": true,
+      "schema": {
+        "$ref": "../components/schemas/RunId.json"
+      },
+      "description": "Server-generated run identity."
+    }
+  ],
+  "get": {
+    "tags": [
+      "Runs"
+    ],
+    "operationId": "getRun",
+    "summary": "Read the current run snapshot",
+    "responses": {
+      "200": {
+        "description": "Current consistent snapshot; revision increases on each persisted mutation.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/Run.json"
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthenticated.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "404": {
+        "$ref": "../components/responses/NotFound.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

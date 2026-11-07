@@ -1,0 +1,41 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "testSuite",
+    "catalogue",
+    "profile",
+    "candidate",
+    "environment",
+    "policy"
+  ],
+  "properties": {
+    "testSuite": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,62}$"
+    },
+    "catalogue": {
+      "$ref": "./Reference.json"
+    },
+    "profile": {
+      "type": "string",
+      "enum": [
+        "smoke",
+        "average",
+        "regression",
+        "stress",
+        "capacity",
+        "soak"
+      ]
+    },
+    "candidate": {
+      "$ref": "./Candidate.json"
+    },
+    "environment": {
+      "$ref": "./Reference.json"
+    },
+    "policy": {
+      "$ref": "./Reference.json"
+    }
+  }
+}

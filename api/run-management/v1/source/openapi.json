@@ -1,0 +1,61 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Performance Run and Baseline Management API",
+    "version": "0.4.0",
+    "description": "Candidate contract only. Run lifecycle and baseline administration remain independent of measurement quality, SLO and regression verdicts. See docs/run-management-api.md."
+  },
+  "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Runs",
+      "description": "Declarative, authenticated run lifecycle."
+    },
+    {
+      "name": "Baselines",
+      "description": "Explicit, authenticated baseline creation and lifecycle administration."
+    }
+  ],
+  "paths": {
+    "/v1/runs": {
+      "$ref": "paths/v1_runs.json"
+    },
+    "/v1/runs/{runId}": {
+      "$ref": "paths/v1_runs_{runId}.json"
+    },
+    "/v1/runs/{runId}/artifacts": {
+      "$ref": "paths/v1_runs_{runId}_artifacts.json"
+    },
+    "/v1/runs/{runId}/cancel": {
+      "$ref": "paths/v1_runs_{runId}_cancel.json"
+    },
+    "/v1/baselines": {
+      "$ref": "paths/v1_baselines.json"
+    },
+    "/v1/baselines/{baselineId}/versions/{version}": {
+      "$ref": "paths/v1_baselines_{baselineId}_versions_{version}.json"
+    },
+    "/v1/baselines/{baselineId}/versions/{version}/transitions": {
+      "$ref": "paths/v1_baselines_{baselineId}_versions_{version}_transitions.json"
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Opaque credential verified by the server; token issuance is outside this contract. TLS is required outside isolated development."
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "reasons"
+  ],
+  "properties": {
+    "status": {
+      "const": "PENDING"
+    },
+    "reasons": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "\\S"
+      }
+    }
+  }
+}
