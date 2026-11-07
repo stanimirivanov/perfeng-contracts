@@ -44,7 +44,7 @@ fmt-check:
 docs-check:
 	$(UV_RUN) python scripts/repo_check.py
 
-check: fmt-check docs-check
+check: fmt-check docs-check api-review-check
 	uv lock --check --offline
 	pnpm contracts:check
 	pnpm typecheck
@@ -71,3 +71,7 @@ license:
 supply-chain: vuln license
 
 validate: verify supply-chain
+
+.PHONY: api-review-check
+api-review-check:
+	$(UV_RUN) python scripts/api_review.py > /dev/null

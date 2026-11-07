@@ -96,3 +96,12 @@ Harness changes are normal reviewed changes. Update this guide, the
 documentation map, Make targets and CI together whenever command ownership or
 feedback timing changes. Review false positives, runtime, repeated suppressions
 and escaped compatibility defects.
+
+## API semantic review
+
+Run `uv run --locked --offline python scripts/api_review.py --before OLD.json --after NEW.json`
+to print a deterministic change receipt. Non-documentation changes return a failing
+status for compatibility review. This diagnostic does not resolve remote inputs or
+prove arbitrary schema equivalence. `make api-review-check` verifies current API
+operation/reference traversal and keyword inventory without changing artifacts.
+See [ADR-0014](../decisions/0014-split-api-authoring-and-review-semantics.md).

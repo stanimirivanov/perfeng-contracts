@@ -101,3 +101,4 @@ How will assumptions and consequences be verified?
 | [0012](0012-read-retained-analysis-by-request.md) | Proposed | Expose retained analysis through an authenticated scoped GET without expanding lifecycle messages or granting execution authority. |
 
 | [0013](0013-support-linux-hosts.md) | Proposed | Support Linux development and native browser hosts; retire active Windows support. |
+| [0014](0014-split-api-authoring-and-review-semantics.md) | Proposed | Split authoring with source-owned Integration schemas and conservative offline semantic review receipts. |
