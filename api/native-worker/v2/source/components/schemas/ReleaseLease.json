@@ -1,0 +1,31 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "attemptId",
+    "expectedRunRevision",
+    "reason"
+  ],
+  "properties": {
+    "attemptId": {
+      "$ref": "./Uuid.json"
+    },
+    "expectedRunRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "reason": {
+      "enum": [
+        "CANCELLATION_REQUESTED",
+        "LEASE_LOST",
+        "WORKER_SHUTDOWN",
+        "PREPARATION_FAILED"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    }
+  }
+}

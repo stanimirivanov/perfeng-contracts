@@ -1,0 +1,10 @@
+{
+  "description": "Expected attempt or Run revision is stale, or the report conflicts with an accepted mutation",
+  "content": {
+    "application/json": {
+      "schema": {
+        "$ref": "../schemas/Error.json"
+      }
+    }
+  }
+}

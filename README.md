@@ -56,8 +56,9 @@ envelope containing `result/v2` records and references to raw evidence.
 All twenty-two data contracts are authored under `contracts/source` and generated
 into their existing `schemas` paths. The registry in
 `contracts/source/registry.ts` is the complete source-to-artifact ledger.
-Generated files under `schemas` must not be edited directly. The Run Management
-and Native Worker OpenAPI descriptions remain hand-authored. Integration OpenAPI
+Generated files under `schemas` must not be edited directly. Run Management
+and Native Worker root/path/component source fragments are hand-authored; their
+bundled OpenAPI files are regenerated through the [split authoring guide](docs/development/split-api-authoring.md). Integration OpenAPI
 is generated from the same Effect schemas; see the
 [integration guide](docs/performance-integration.md) and
 [ADR-0002](docs/decisions/0002-use-effect-schema-at-contract-boundaries.md).

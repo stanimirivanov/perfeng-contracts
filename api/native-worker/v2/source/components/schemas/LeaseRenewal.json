@@ -1,0 +1,64 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "leaseId",
+    "attemptId",
+    "runRevision",
+    "serverTime",
+    "expiresAt",
+    "renewAfterSeconds",
+    "cancellationRequested"
+  ],
+  "properties": {
+    "leaseId": {
+      "$ref": "./Uuid.json"
+    },
+    "attemptId": {
+      "$ref": "./Uuid.json"
+    },
+    "runRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "serverTime": {
+      "$ref": "./Timestamp.json"
+    },
+    "expiresAt": {
+      "$ref": "./Timestamp.json"
+    },
+    "renewAfterSeconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 300
+    },
+    "cancellationRequested": {
+      "type": "boolean"
+    },
+    "stopBy": {
+      "$ref": "./Timestamp.json"
+    }
+  },
+  "if": {
+    "properties": {
+      "cancellationRequested": {
+        "const": true
+      }
+    },
+    "required": [
+      "cancellationRequested"
+    ]
+  },
+  "then": {
+    "required": [
+      "stopBy"
+    ]
+  },
+  "else": {
+    "not": {
+      "required": [
+        "stopBy"
+      ]
+    }
+  }
+}

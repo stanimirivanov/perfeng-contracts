@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "attemptId",
+    "expectedRunRevision",
+    "slot",
+    "size",
+    "sha256",
+    "mediaType"
+  ],
+  "properties": {
+    "attemptId": {
+      "$ref": "./Uuid.json"
+    },
+    "expectedRunRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "slot": {
+      "$ref": "./Identifier.json"
+    },
+    "size": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 536870912
+    },
+    "sha256": {
+      "$ref": "./Sha256.json"
+    },
+    "mediaType": {
+      "type": "string",
+      "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$"
+    }
+  }
+}

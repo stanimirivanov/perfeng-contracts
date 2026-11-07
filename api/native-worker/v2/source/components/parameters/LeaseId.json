@@ -1,0 +1,8 @@
+{
+  "name": "leaseId",
+  "in": "path",
+  "required": true,
+  "schema": {
+    "$ref": "../schemas/Uuid.json"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "code",
+    "message"
+  ],
+  "properties": {
+    "code": {
+      "enum": [
+        "INVALID_REQUEST",
+        "UNAUTHENTICATED",
+        "NOT_AUTHORIZED",
+        "NOT_QUALIFIED",
+        "NOT_AVAILABLE",
+        "CAPABILITY_MISMATCH",
+        "STALE_ATTEMPT",
+        "REVISION_CONFLICT",
+        "LEASE_EXPIRED",
+        "LEASE_RELEASED",
+        "ARTIFACT_MISMATCH",
+        "DUPLICATE_CONFLICT",
+        "ATTEMPT_NOT_FOUND",
+        "RATE_LIMITED",
+        "INTERNAL_ERROR",
+        "DEPENDENCY_UNAVAILABLE"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "requestId": {
+      "$ref": "./Uuid.json"
+    }
+  }
+}

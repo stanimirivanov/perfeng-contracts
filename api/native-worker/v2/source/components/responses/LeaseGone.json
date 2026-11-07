@@ -1,0 +1,10 @@
+{
+  "description": "Lease expired, was released, or no longer belongs to the current attempt",
+  "content": {
+    "application/json": {
+      "schema": {
+        "$ref": "../schemas/Error.json"
+      }
+    }
+  }
+}

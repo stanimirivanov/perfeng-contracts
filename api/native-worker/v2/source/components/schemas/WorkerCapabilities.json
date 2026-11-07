@@ -1,0 +1,75 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "capacity",
+    "tool",
+    "operatingSystem",
+    "architecture",
+    "browsers",
+    "runnerContract",
+    "executionArtifacts",
+    "artifactKinds",
+    "diagnosticModes"
+  ],
+  "properties": {
+    "capacity": {
+      "const": 1,
+      "description": "Native Worker API v2 permits one active browser measurement lease."
+    },
+    "tool": {
+      "const": "playwright"
+    },
+    "operatingSystem": {
+      "enum": [
+        "windows",
+        "linux"
+      ]
+    },
+    "architecture": {
+      "enum": [
+        "x64",
+        "arm64"
+      ]
+    },
+    "browsers": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "const": "chromium"
+      }
+    },
+    "runnerContract": {
+      "const": 2
+    },
+    "executionArtifacts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "const": "source-checkout"
+      }
+    },
+    "artifactKinds": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "./Identifier.json"
+      }
+    },
+    "diagnosticModes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "const": "baseline"
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocolVersion",
+    "maxWaitSeconds"
+  ],
+  "properties": {
+    "protocolVersion": {
+      "const": 2
+    },
+    "maxWaitSeconds": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 30
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "description": "Authenticated worker is not authorized for the operation",
+  "content": {
+    "application/json": {
+      "schema": {
+        "$ref": "../schemas/Error.json"
+      }
+    }
+  }
+}

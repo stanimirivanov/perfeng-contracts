@@ -1,0 +1,79 @@
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "attemptId",
+        "expectedRunRevision",
+        "manifestArtifactId"
+      ],
+      "properties": {
+        "kind": {
+          "const": "COMPLETED"
+        },
+        "attemptId": {
+          "$ref": "./Uuid.json"
+        },
+        "expectedRunRevision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "manifestArtifactId": {
+          "$ref": "./Uuid.json"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "attemptId",
+        "expectedRunRevision",
+        "failure"
+      ],
+      "properties": {
+        "kind": {
+          "const": "FAILED"
+        },
+        "attemptId": {
+          "$ref": "./Uuid.json"
+        },
+        "expectedRunRevision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "failure": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "code",
+            "message",
+            "retryable"
+          ],
+          "properties": {
+            "code": {
+              "enum": [
+                "PREPARATION_FAILED",
+                "TOOL_FAILED",
+                "CAPTURE_FAILED",
+                "UPLOAD_FAILED",
+                "HOST_BECAME_UNQUALIFIED"
+              ]
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "retryable": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

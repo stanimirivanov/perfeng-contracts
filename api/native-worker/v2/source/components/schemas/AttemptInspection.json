@@ -1,0 +1,105 @@
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "attemptId",
+        "state",
+        "serverTime",
+        "leaseId",
+        "expiresAt",
+        "runRevision"
+      ],
+      "properties": {
+        "runId": {
+          "$ref": "./RunId.json"
+        },
+        "attemptId": {
+          "$ref": "./Uuid.json"
+        },
+        "state": {
+          "const": "ACTIVE"
+        },
+        "serverTime": {
+          "$ref": "./Timestamp.json"
+        },
+        "leaseId": {
+          "$ref": "./Uuid.json"
+        },
+        "expiresAt": {
+          "$ref": "./Timestamp.json"
+        },
+        "runRevision": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "attemptId",
+        "state",
+        "serverTime"
+      ],
+      "properties": {
+        "runId": {
+          "$ref": "./RunId.json"
+        },
+        "attemptId": {
+          "$ref": "./Uuid.json"
+        },
+        "state": {
+          "const": "INACTIVE"
+        },
+        "serverTime": {
+          "$ref": "./Timestamp.json"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "attemptId",
+        "state",
+        "serverTime",
+        "terminalKind",
+        "runRevision",
+        "acceptedAt"
+      ],
+      "properties": {
+        "runId": {
+          "$ref": "./RunId.json"
+        },
+        "attemptId": {
+          "$ref": "./Uuid.json"
+        },
+        "state": {
+          "const": "TERMINAL"
+        },
+        "serverTime": {
+          "$ref": "./Timestamp.json"
+        },
+        "terminalKind": {
+          "enum": [
+            "COMPLETED",
+            "FAILED"
+          ]
+        },
+        "runRevision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "acceptedAt": {
+          "$ref": "./Timestamp.json"
+        }
+      }
+    }
+  ]
+}
