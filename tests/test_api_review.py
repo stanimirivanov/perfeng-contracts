@@ -148,3 +148,34 @@ class ApiReviewTests(unittest.TestCase):
             )
             self.assertEqual(run.returncode, 1)
             self.assertIn('"classification": "breaking"', run.stdout)
+
+    def test_literal_arrays_and_description_are_semantic_changes(self):
+        for before, after in [
+            ({"const": {"required": ["a", "b"]}}, {"const": {"required": ["b", "a"]}}),
+            ({"const": {"description": "a"}}, {"const": {"description": "b"}}),
+            ({"const": True}, {"const": 1}),
+            ({"x-vendor": {"enum": ["a", "b"]}}, {"x-vendor": {"enum": ["b", "a"]}}),
+        ]:
+            with self.subTest(before=before):
+                baseline = copy.deepcopy(self.document)
+                candidate = copy.deepcopy(self.document)
+                baseline["components"]["schemas"]["Input"].update(before)
+                candidate["components"]["schemas"]["Input"].update(after)
+                receipt = review(baseline, candidate)
+                self.assertNotEqual(receipt["beforeSha256"], receipt["afterSha256"])
+                self.assertTrue(receipt["changes"])
+                self.assertTrue(
+                    all(item["classification"] != "documentation" for item in receipt["changes"])
+                )
+
+    def test_only_known_openapi_annotations_are_documentation(self):
+        baseline = copy.deepcopy(self.document)
+        baseline["info"] = {"title": "Example", "description": "before"}
+        candidate = copy.deepcopy(baseline)
+        candidate["info"]["description"] = "after"
+        self.assertEqual(
+            review(baseline, candidate)["changes"][0]["classification"], "documentation"
+        )
+        candidate = copy.deepcopy(baseline)
+        candidate["x-vendor"] = {"description": "external semantic setting"}
+        self.assertEqual(review(baseline, candidate)["changes"][0]["classification"], "review")
