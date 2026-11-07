@@ -1,0 +1,47 @@
+{
+  "post": {
+    "operationId": "reportWorkerPresence",
+    "summary": "Report availability, capabilities, and qualification evidence",
+    "description": "The authenticated principal selects the worker identity. Capabilities and evidence are untrusted scheduling inputs; the response reports the server's separate qualification and authorization decisions.",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "../components/schemas/WorkerPresence.json"
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Current server interpretation of worker state",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/PresenceStatus.json"
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthorized.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

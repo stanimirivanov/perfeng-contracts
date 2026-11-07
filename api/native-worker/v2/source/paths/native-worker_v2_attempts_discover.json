@@ -1,0 +1,55 @@
+{
+  "post": {
+    "operationId": "discoverNativeAttempt",
+    "summary": "Discover this worker's current measurement slot after an uncertain acquisition",
+    "description": "Read-only, worker-scoped observation serialized with acquisition and presence replacement. Report stored availability and at most one unexpired, unreleased v2 lease at serverTime, including a terminal report if that lease still occupies capacity. NONE means no current slot, not that an acquisition never succeeded. No historical enumeration, lease capability, execution recipe or upload authority is returned. Stop the old process and withdraw availability before manual recovery; this snapshot never authorizes execution, deletion or acquisition. Fail closed rather than choosing one if multiple current slots exist.",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "../components/schemas/DiscoverAttempt.json"
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "One consistent server observation, never recovered authority",
+        "headers": {
+          "Cache-Control": {
+            "required": true,
+            "schema": {
+              "const": "no-store"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/AttemptDiscovery.json"
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthorized.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

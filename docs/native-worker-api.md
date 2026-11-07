@@ -28,6 +28,16 @@ commands. [ADR-0001](decisions/0001-native-windows-worker-protocol.md) owns the
 architecture decision. This document explains the supported v2 behavior;
 the self-contained OpenAPI document is authoritative for wire shape.
 
+## Authoring and bundled contract
+
+Edit the declared root/path/component JSON fragments under
+`api/native-worker/v2/source`. `make generate-contracts` regenerates the bundled
+`api/native-worker/v2/openapi.json` at its existing published path. Do not hand-edit
+the bundle. The [split authoring guide](development/split-api-authoring.md) records
+the unchanged v2.3.0 semantic identity, closure checks and release inventory.
+The split preserves every published component root, including the otherwise
+unused `AttemptFence`; consumer pins require their own reviewed digest update.
+
 ## API boundary
 
 Native Worker API credentials have a different audience from user-facing Run

@@ -1,0 +1,21 @@
+{
+  "description": "Attempt is unknown or not owned by the authenticated worker; the server does not distinguish these cases",
+  "content": {
+    "application/json": {
+      "schema": {
+        "allOf": [
+          {
+            "$ref": "../schemas/Error.json"
+          },
+          {
+            "properties": {
+              "code": {
+                "const": "ATTEMPT_NOT_FOUND"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

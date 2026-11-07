@@ -1,0 +1,10 @@
+{
+  "description": "Malformed or structurally invalid request",
+  "content": {
+    "application/json": {
+      "schema": {
+        "$ref": "../schemas/Error.json"
+      }
+    }
+  }
+}

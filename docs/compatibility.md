@@ -345,3 +345,13 @@ remain distinct concepts. The [policy and analysis contracts](performance-polici
 preserve the separation between failed execution, poor measurements, and
 performance changes. Existing producers need not emit these new documents until
 their analysis integration is implemented.
+
+## Native v2.3.0 split authoring
+
+C3 reorganizes Native Worker API authoring into local fragments and regenerates
+the existing published OpenAPI path. The before/after semantic receipt has no
+changes. Every named schema root and local reference is preserved, including
+`AttemptFence`. No API version bump or producer payload change is introduced.
+Formatting changes the serialized bytes, so downstream snapshot hashes must be
+updated only through the independent reviewed adoption step. Existing consumers
+can retain their current pins until that step.

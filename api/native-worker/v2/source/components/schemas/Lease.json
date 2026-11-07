@@ -1,0 +1,164 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "leaseId",
+    "attemptId",
+    "runId",
+    "runRevision",
+    "issuedAt",
+    "expiresAt",
+    "renewAfterSeconds",
+    "assignment",
+    "artifactPlan"
+  ],
+  "properties": {
+    "leaseId": {
+      "$ref": "./Uuid.json"
+    },
+    "attemptId": {
+      "$ref": "./Uuid.json"
+    },
+    "runId": {
+      "$ref": "./RunId.json"
+    },
+    "runRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "issuedAt": {
+      "$ref": "./Timestamp.json"
+    },
+    "expiresAt": {
+      "$ref": "./Timestamp.json"
+    },
+    "renewAfterSeconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 300
+    },
+    "assignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "catalogueTestId",
+        "workloadId",
+        "profile",
+        "target",
+        "browser",
+        "diagnosticMode",
+        "executionArtifact",
+        "recipe"
+      ],
+      "properties": {
+        "catalogueTestId": {
+          "$ref": "./Identifier.json"
+        },
+        "workloadId": {
+          "$ref": "./Identifier.json"
+        },
+        "profile": {
+          "enum": [
+            "smoke",
+            "average",
+            "regression",
+            "stress",
+            "capacity",
+            "soak"
+          ]
+        },
+        "target": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "environmentId",
+            "baseUrl"
+          ],
+          "properties": {
+            "environmentId": {
+              "$ref": "./Identifier.json"
+            },
+            "baseUrl": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://[^/@?#]+(?:/[^?#]*)?$"
+            }
+          },
+          "description": "Server-resolved reviewed target. It is not supplied by the Run caller or selected by the worker."
+        },
+        "browser": {
+          "const": "chromium"
+        },
+        "diagnosticMode": {
+          "const": "baseline"
+        },
+        "executionArtifact": {
+          "$ref": "./ExecutionArtifact.json"
+        },
+        "recipe": {
+          "$ref": "./ExecutionRecipe.json"
+        }
+      }
+    },
+    "artifactPlan": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        {
+          "allOf": [
+            {
+              "$ref": "./ArtifactPlan.json"
+            },
+            {
+              "properties": {
+                "slot": {
+                  "const": "measurements"
+                },
+                "kind": {
+                  "const": "measurements"
+                },
+                "mediaType": {
+                  "const": "application/json"
+                },
+                "format": {
+                  "const": "playwright-measurements/v2"
+                },
+                "required": {
+                  "const": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "./ArtifactPlan.json"
+            },
+            {
+              "properties": {
+                "slot": {
+                  "const": "manifest"
+                },
+                "kind": {
+                  "const": "manifest"
+                },
+                "mediaType": {
+                  "const": "application/json"
+                },
+                "format": {
+                  "const": "raw-result/v2"
+                },
+                "required": {
+                  "const": true
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "items": false
+    }
+  }
+}

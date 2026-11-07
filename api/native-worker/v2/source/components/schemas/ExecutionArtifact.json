@@ -1,0 +1,32 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "repository",
+    "revision",
+    "lockfile",
+    "lockfileSha256"
+  ],
+  "properties": {
+    "kind": {
+      "const": "source-checkout"
+    },
+    "repository": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://[^/@?#]+(?:/[^?#]*)?$"
+    },
+    "revision": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "lockfile": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._/-]+$"
+    },
+    "lockfileSha256": {
+      "$ref": "./Sha256.json"
+    }
+  }
+}

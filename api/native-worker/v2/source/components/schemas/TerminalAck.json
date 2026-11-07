@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "attemptId",
+    "runRevision",
+    "disposition"
+  ],
+  "properties": {
+    "attemptId": {
+      "$ref": "./Uuid.json"
+    },
+    "runRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "disposition": {
+      "enum": [
+        "ACCEPTED",
+        "ALREADY_ACCEPTED"
+      ]
+    }
+  }
+}

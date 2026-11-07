@@ -1,0 +1,50 @@
+{
+  "post": {
+    "operationId": "inspectNativeAttempt",
+    "summary": "Inspect one retained attempt without recovering lease authority",
+    "description": "The bearer principal selects the worker. A terminal report takes precedence over a matching lease row. ACTIVE is a point-in-time lease observation, INACTIVE means the matching retained lease row is released or expired, and 404 does not distinguish an unknown attempt from one owned by another worker. No response supplies a lease capability or authorizes cleanup, resumption, or another acquisition.",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "../components/schemas/InspectAttempt.json"
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Read-only server snapshot for an attempt owned by the authenticated worker",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/AttemptInspection.json"
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthorized.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "404": {
+        "$ref": "../components/responses/AttemptNotFound.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "parameters": [
+    {
+      "$ref": "../components/parameters/LeaseId.json"
+    },
+    {
+      "$ref": "../components/parameters/LeaseCapability.json"
+    }
+  ],
+  "post": {
+    "operationId": "registerNativeArtifact",
+    "summary": "Register a verified immutable uploaded artifact",
+    "description": "Registration is conditional on the current lease, attempt, and run revision. The server verifies bytes at the server-selected object key before accepting the reference.",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "../components/schemas/RegisterArtifact.json"
+          }
+        }
+      }
+    },
+    "responses": {
+      "201": {
+        "description": "Artifact verified and registered",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/ArtifactReference.json"
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthorized.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "409": {
+        "$ref": "../components/responses/Conflict.json"
+      },
+      "410": {
+        "$ref": "../components/responses/LeaseGone.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "content-type",
+    "x-amz-checksum-sha256"
+  ],
+  "properties": {
+    "content-type": {
+      "type": "string",
+      "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$",
+      "description": "Exact media type signed into the upload request."
+    },
+    "x-amz-checksum-sha256": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{43}=$",
+      "description": "Base64 encoding of the full-object SHA-256 digest signed into the upload request."
+    }
+  },
+  "description": "Closed set of request headers that the worker must reproduce exactly. Header names are lowercase canonical names; values and the presigned URL are sensitive delivery material."
+}

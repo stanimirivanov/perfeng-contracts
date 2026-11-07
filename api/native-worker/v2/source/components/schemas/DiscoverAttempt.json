@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocolVersion"
+  ],
+  "properties": {
+    "protocolVersion": {
+      "const": 2
+    }
+  }
+}

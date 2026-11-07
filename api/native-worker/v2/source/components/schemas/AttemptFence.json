@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "attemptId",
+    "expectedRunRevision"
+  ],
+  "properties": {
+    "attemptId": {
+      "$ref": "./Uuid.json"
+    },
+    "expectedRunRevision": {
+      "type": "integer",
+      "minimum": 1
+    }
+  }
+}

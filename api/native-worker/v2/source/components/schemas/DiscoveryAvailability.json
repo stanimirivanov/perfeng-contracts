@@ -1,0 +1,10 @@
+{
+  "type": "string",
+  "enum": [
+    "UNREPORTED",
+    "AVAILABLE",
+    "DRAINING",
+    "UNAVAILABLE"
+  ],
+  "description": "Stored worker availability at serverTime, irrespective of freshness, qualification or authorization. UNREPORTED means no presence record exists. This field is not permission to acquire."
+}

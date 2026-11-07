@@ -1,0 +1,38 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "workerId",
+    "serverTime",
+    "nextHeartbeatSeconds",
+    "availability",
+    "qualification",
+    "authorizedToAcquire"
+  ],
+  "properties": {
+    "workerId": {
+      "$ref": "./Identifier.json"
+    },
+    "serverTime": {
+      "$ref": "./Timestamp.json"
+    },
+    "nextHeartbeatSeconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 300
+    },
+    "availability": {
+      "enum": [
+        "AVAILABLE",
+        "DRAINING",
+        "UNAVAILABLE"
+      ]
+    },
+    "qualification": {
+      "$ref": "./QualificationDecision.json"
+    },
+    "authorizedToAcquire": {
+      "type": "boolean"
+    }
+  }
+}
