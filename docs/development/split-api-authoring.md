@@ -94,3 +94,8 @@ exact nested-definition reconstruction, generated fragment drift and unknown-fil
 refusal. The same release inventory includes these generated fragments. Native
 and Run consumers still receive their normal bundled artifacts. No provider
 snapshot is selected by generation or this source move.
+
+Exact generated-file attributes classify the Integration bundle and generated
+fragments in review. The authored Effect definitions and endpoint metadata
+remain visible. This display classification has no effect on merge conflicts,
+source identity verification or the required conformance checks.

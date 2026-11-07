@@ -18,17 +18,93 @@ APIS = (
 )
 
 
-def canonical(value: Any) -> Any:
+SCHEMA_MAPS = {"properties", "patternProperties", "$defs", "definitions", "dependentSchemas"}
+SCHEMA_ARRAYS = {"allOf", "anyOf", "oneOf", "prefixItems"}
+SCHEMA_CHILDREN = {
+    "additionalProperties",
+    "unevaluatedProperties",
+    "items",
+    "additionalItems",
+    "contains",
+    "not",
+    "if",
+    "then",
+    "else",
+    "propertyNames",
+    "unevaluatedItems",
+    "contentSchema",
+}
+LITERAL_FIELDS = {"const", "default", "example", "examples"}
+
+
+def literal(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {key: literal(item) for key, item in sorted(value.items())}
+    if isinstance(value, list):
+        return [literal(item) for item in value]
+    return value
+
+
+def canonical_schema(value: Any) -> Any:
+    if isinstance(value, list):
+        return [canonical_schema(item) for item in value]
+    if not isinstance(value, dict):
+        return value
+    output = {}
+    for key, item in sorted(value.items()):
+        if key in {"required", "enum"} and isinstance(item, list):
+            output[key] = sorted(
+                (literal(entry) for entry in item),
+                key=lambda entry: json.dumps(entry, sort_keys=True),
+            )
+        elif key in SCHEMA_MAPS and isinstance(item, dict):
+            output[key] = {name: canonical_schema(child) for name, child in sorted(item.items())}
+        elif key in SCHEMA_ARRAYS and isinstance(item, list):
+            output[key] = [canonical_schema(child) for child in item]
+        elif key in SCHEMA_CHILDREN:
+            output[key] = canonical_schema(item)
+        else:
+            # Literal and unknown keyword values retain all array ordering.
+            output[key] = literal(item)
+    return output
+
+
+def canonical(value: Any, path: tuple[str, ...] = ()) -> Any:
+    if (len(path) == 3 and path[:2] == ("components", "schemas")) or (
+        path and path[0] in {"paths", "components"} and path[-1] == "schema"
+    ):
+        return canonical_schema(value)
     if isinstance(value, dict):
         return {
-            key: sorted(item, key=lambda entry: json.dumps(entry, sort_keys=True))
-            if key in {"required", "enum"} and isinstance(item, list)
-            else canonical(item)
+            key: literal(item)
+            if key in LITERAL_FIELDS or key.startswith("x-")
+            else canonical(item, (*path, key))
             for key, item in sorted(value.items())
         }
     if isinstance(value, list):
-        return [canonical(item) for item in value]
+        return [canonical(item, path) for item in value]
     return value
+
+
+def known_annotation(path: list[str]) -> bool:
+    if len(path) == 2 and path[0] == "info" and path[1] in {"description", "title", "summary"}:
+        return True
+    if len(path) == 3 and path[0] == "paths" and path[-1] in {"description", "summary"}:
+        return True
+    if (
+        len(path) == 4
+        and path[0] == "paths"
+        and path[2] in METHODS
+        and path[-1] in {"description", "summary"}
+    ):
+        return True
+    return (
+        len(path) == 6
+        and path[0] == "paths"
+        and path[2] in METHODS
+        and path[3] == "responses"
+        and path[-1] == "description"
+    )
 
 
 def digest(value: Any) -> str:
@@ -71,18 +147,15 @@ def directions(document: dict[str, Any]) -> dict[str, set[str]]:
 
 def classify(path: list[str], before: Any, after: Any, uses: set[str]) -> str:
     key = path[-1]
-    if key in {"description", "summary", "title", "externalDocs"} and path[-2] not in {
-        "properties",
-        "schemas",
-        "headers",
-        "parameters",
-    }:
+    if known_annotation(path) and isinstance(before, str) and isinstance(after, str):
         return "documentation"
     if path[0] == "paths" and len(path) <= 3 and after is MISSING:
         return "breaking"
     if key in {"required", "enum"} and isinstance(before, list) and isinstance(after, list):
-        removed = set(before) - set(after)
-        added = set(after) - set(before)
+        previous = {json.dumps(item, sort_keys=True) for item in before}
+        candidate = {json.dumps(item, sort_keys=True) for item in after}
+        removed = previous - candidate
+        added = candidate - previous
         if key == "required":
             broken = (added and "request" in uses) or (removed and "response" in uses)
         else:
@@ -99,7 +172,11 @@ def review(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
     changes: list[dict[str, Any]] = []
 
     def compare(left: Any, right: Any, path: list[str]) -> None:
-        if left == right:
+        if left is MISSING or right is MISSING:
+            unchanged = left is right
+        else:
+            unchanged = json.dumps(left, sort_keys=True) == json.dumps(right, sort_keys=True)
+        if unchanged:
             return
         if isinstance(left, dict) and isinstance(right, dict):
             for key in sorted(set(left) | set(right)):

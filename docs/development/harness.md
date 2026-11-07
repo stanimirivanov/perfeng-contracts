@@ -112,3 +112,13 @@ objects. Any non-documentation difference fails this migration lane for explicit
 compatibility review. Inventory/self-comparison is only the local smoke gate;
 it cannot replace the PR comparison. Separately versioned semantic API work must
 supply a reviewed compatibility change before changing that expected boundary.
+
+Semantic normalization is schema-context aware. Literal const/default/example and
+unknown-extension values retain array ordering and JSON type identity. Only
+positively known OpenAPI annotations are automatically classified as documentation;
+unknown nested description/title keys remain review-required. This conservative
+classification does not establish arbitrary schema equivalence.
+
+Exact generated-file attributes aid source review only. They do not change merge
+behavior, suppress verification or make generated output authoritative. Run source
+fragments and the review manifests remain visible in normal diffs.
