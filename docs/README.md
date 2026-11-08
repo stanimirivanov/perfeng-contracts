@@ -30,6 +30,7 @@
 | Workloads, catalogues or metric naming | [Workloads and catalogues](workloads-and-catalogues.md), [metric naming](architecture/metric-naming.md) | Registry, examples and semantic tests |
 | Kubernetes benchmark admission, qualification or interference evidence | [Kubernetes benchmark evidence](kubernetes-benchmark-evidence.md), [ADR-0008](decisions/0008-separate-kubernetes-benchmark-evidence.md) | Strict scope/check tests, node/time consistency and cross-document binding |
 | Artifact, result, browser or policy contracts | [Artifact and result transport](artifact-and-result-transport.md), [browser diagnostics](browser-diagnostics.md), [Playwright measurements](playwright-measurements.md), [performance policies](performance-policies.md) | Contract-specific fixtures and tests |
+| Contract distribution, retention or rollback | [Distribution policy](development/contract-distribution.md), [ADR-0015](decisions/0015-distribute-immutable-contract-artifacts.md) | Distribution metadata and offline conformance tests |
 | Build, CI, repository policy or developer experience | [Harness guide](development/harness.md) | [Dependency policy](development/dependency-policy.md), `make docs-check`, `make verify` |
 | Dependency admission, updates, licensing or vulnerabilities | [Dependency policy](development/dependency-policy.md) | [Security policy](../SECURITY.md), `make supply-chain` |
 | Durable compatibility, ownership or security decision | [ADR index](decisions/README.md) | Affected consumer migration guidance |
