@@ -7,6 +7,7 @@ help:
 	@echo "  make bootstrap  Resolve locked Python and Node dependencies"
 	@echo "  make doctor     Report the effective local toolchain"
 	@echo "  make generate-contracts  Generate JSON Schema from Effect Schema"
+	@echo "  make distribution-check  Verify deterministic contract packaging"
 	@echo "  make fmt        Format Python and TypeScript sources"
 	@echo "  make fmt-check  Verify Python and TypeScript formatting"
 	@echo "  make docs-check Verify repository documentation and policy"
@@ -79,3 +80,7 @@ api-review-check:
 .PHONY: api-source-check
 api-source-check:
 	$(UV_RUN) python scripts/api_sources.py
+
+.PHONY: distribution-check
+distribution-check:
+	$(UV_RUN) python -m unittest discover -s tests -p test_contract_pack.py -v
