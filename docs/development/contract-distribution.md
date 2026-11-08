@@ -60,3 +60,21 @@ reviewed locator change, while preserving the content identity.
 This change defines metadata, tests and policy. Later tasks own the packager,
 publication, verification, restoration and consumer adoption. Existing contract
 payloads and version pins need no migration for SR-1.
+
+## Prepare a local archive
+
+Run `make distribution-check` for the offline packaging tests. With the
+tracer's historical revision already available locally, run:
+
+```sh
+uv run --locked --offline python -m scripts.contracts_pack \
+  --selection distribution/tracer.json --output /tmp/perfeng-tracer.tar.gz
+```
+
+Choose an unused output path. The packager reads raw Git objects, checks
+the source version and each declared digest, and writes a sorted tar stream
+with fixed metadata inside a gzip envelope. Repeat with the same locked
+toolchain and selection to reproduce the archive. Missing Git objects fail
+locally. The caller supplies the approved member inventory and reference
+closure. Packaging neither generates a promotion record nor publishes an
+artifact.
