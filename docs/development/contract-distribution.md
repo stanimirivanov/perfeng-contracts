@@ -184,3 +184,55 @@ members. The current consumer inspector's relative-reference profile requires
 separate qualification for those archives. Packaging establishes provider
 byte and reference closure. Consumer acceptance and hosted publication need
 their own receipts.
+
+## Admit historical and changed candidates
+
+Use `make distribution-admission-check` for the offline admission tests.
+The admission command takes an explicit candidate manifest. It writes an
+admission record to stdout for a later promotion step.
+
+For byte-preserving historical publication, run:
+
+```sh
+uv run --locked --offline python -m scripts.contracts_admission historical \
+  --candidate candidate.json > admission.json
+```
+
+The historical path checks the exact source and complete member inventory
+against the reviewed profile, then compares the archive digest with a fresh
+canonical pack from local Git objects. It establishes preservation, with no
+claim about compatibility of changed contracts or consumer adoption.
+
+For changed contracts, prepare an independent policy conforming to
+[the admission policy schema](../../distribution/admission.schema.json).
+The policy enumerates every required consumer check and binds the exact
+candidate, baseline digest, direction, command, consumer repository/revision
+and signing workflow/revision. Review and pin the policy SHA-256 separately
+from the candidate and its evidence. A policy or digest provided by the
+candidate publisher is insufficient to establish which checks are required.
+
+For each policy check, the consumer workflow emits a `<check>.json` receipt
+with `schemaVersion` 1, `check`, `candidateSha256`, `archiveSha256`,
+`repository`, `sourceRevision`, `baselineSha256`, `direction`, `command`
+and `outcome`. The workflow attests those exact bytes and supplies the
+detached bundle as `<check>.sigstore.jsonl`. Compatibility in both directions
+requires separate checks. Use the independently qualified Linux x86-64
+GitHub CLI 2.103.3 binary and Sigstore root described in the
+[environment verifier guide](https://github.com/stanimirivanov/perfeng-environment/blob/22e630bbf4d278f2fcc562d1e76d4aded1fcdd72/docs/contract-distribution-tools.md).
+
+```sh
+uv run --locked --offline python -m scripts.contracts_admission changed \
+  --candidate candidate.json --policy reviewed-policy.json \
+  --policy-sha256 "$reviewed_policy_digest" --receipts reviewed-receipts \
+  --verifier /absolute/path/to/qualified/gh \
+  --trust-root /absolute/path/to/qualified/trusted_root.json > admission.json
+```
+
+The gate requires exactly the selected passing receipts and independently
+checks signer identities and signed bytes. It verifies only reviewed main
+revisions on GitHub-hosted runners. Promotion must bind the resulting record
+and reuse the tested archive. The disposable SR-6 fixture's local marker
+provides no publication or consumer adoption authority. Integration with
+historical hosted publication belongs to SR-12. An explicit changed-contract
+policy and actual consumer issuer workflows are required before live
+changed-contract promotion.
