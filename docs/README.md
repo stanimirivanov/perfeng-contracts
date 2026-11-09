@@ -47,6 +47,8 @@
 - [Security](../SECURITY.md) defines vulnerability reporting and contribution
   expectations.
 
+Optional registry qualification has its own [offline replay guide](development/registry-qualification.md).
+
 ## Keeping the map useful
 
 A change MUST update this page when it adds, renames, moves or removes a
