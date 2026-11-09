@@ -1,0 +1,751 @@
+{
+  "consumers": {
+    "analysis": {
+      "deploymentStatus": "unknown",
+      "replayStatus": "unknown",
+      "repository": "perfeng-analysis",
+      "rollbackStatus": "unknown",
+      "selections": {
+        "current": {
+          "consumerRevision": "79cdfd5d5daad0e740c18c2ff22b5d50a11439a9",
+          "lockPath": "src/perfeng_analysis/contracts/lock.json",
+          "lockSha256": "cf563b4ad594b0908d75e331ce7a5f2bbefdd7fd3daf5e7605e89542386da4a0",
+          "profiles": {
+            "badd9206a88a48042dda54a25c6e362088d23858": {
+              "LICENSE": "LICENSE",
+              "schemas/analysis/v1/analysis-result.schema.json": "schemas/analysis/v1/analysis-result.schema.json",
+              "schemas/artifact/v1/artifact-reference.schema.json": "schemas/artifact/v1/artifact-reference.schema.json",
+              "schemas/catalogue/v1/test-catalogue.schema.json": "schemas/catalogue/v1/test-catalogue.schema.json",
+              "schemas/catalogue/v2/test-catalogue.schema.json": "schemas/catalogue/v2/test-catalogue.schema.json",
+              "schemas/normalized-result/v1/normalized-result.schema.json": "schemas/normalized-result/v1/normalized-result.schema.json",
+              "schemas/playwright-measurements/v2/playwright-measurements.schema.json": "schemas/playwright-measurements/v2/playwright-measurements.schema.json",
+              "schemas/policy/v1/performance-policy.schema.json": "schemas/policy/v1/performance-policy.schema.json",
+              "schemas/raw-result/v1/raw-result.schema.json": "schemas/raw-result/v1/raw-result.schema.json",
+              "schemas/raw-result/v2/raw-result.schema.json": "schemas/raw-result/v2/raw-result.schema.json",
+              "schemas/result/v1/test-result.schema.json": "schemas/result/v1/test-result.schema.json",
+              "schemas/result/v2/test-result.schema.json": "schemas/result/v2/test-result.schema.json",
+              "schemas/workload/v1/workload.schema.json": "schemas/workload/v1/workload.schema.json"
+            }
+          }
+        },
+        "historicalCandidate": {
+          "consumerRevision": "3e8e484c50ff34eb0fa7554f47e9870b7c3feba4",
+          "lockPath": "src/perfeng_analysis/contracts/lock.json",
+          "lockSha256": "0281ba77d5d41c65d0c2210ed77d5739ed4f4048222a347f0353b258872c7e18",
+          "profiles": {
+            "001146ef212c55c013b12b3a0b167ffc3770f3fc": {
+              "LICENSE": "LICENSE",
+              "schemas/analysis/v1/analysis-result.schema.json": "schemas/analysis/v1/analysis-result.schema.json",
+              "schemas/artifact/v1/artifact-reference.schema.json": "schemas/artifact/v1/artifact-reference.schema.json",
+              "schemas/catalogue/v1/test-catalogue.schema.json": "schemas/catalogue/v1/test-catalogue.schema.json",
+              "schemas/catalogue/v2/test-catalogue.schema.json": "schemas/catalogue/v2/test-catalogue.schema.json",
+              "schemas/normalized-result/v1/normalized-result.schema.json": "schemas/normalized-result/v1/normalized-result.schema.json",
+              "schemas/playwright-measurements/v2/playwright-measurements.schema.json": "schemas/playwright-measurements/v2/playwright-measurements.schema.json",
+              "schemas/policy/v1/performance-policy.schema.json": "schemas/policy/v1/performance-policy.schema.json",
+              "schemas/raw-result/v1/raw-result.schema.json": "schemas/raw-result/v1/raw-result.schema.json",
+              "schemas/raw-result/v2/raw-result.schema.json": "schemas/raw-result/v2/raw-result.schema.json",
+              "schemas/result/v1/test-result.schema.json": "schemas/result/v1/test-result.schema.json",
+              "schemas/result/v2/test-result.schema.json": "schemas/result/v2/test-result.schema.json",
+              "schemas/workload/v1/workload.schema.json": "schemas/workload/v1/workload.schema.json"
+            }
+          }
+        }
+      }
+    },
+    "console": {
+      "deploymentStatus": "unknown",
+      "replayStatus": "unknown",
+      "repository": "perfeng-console",
+      "rollbackStatus": "unknown",
+      "selections": {
+        "current": {
+          "consumerRevision": "dd74bac4ca47cb01c5f911cbc4e45351b82a880f",
+          "lockPath": "vendor/perfeng-contracts/lock.json",
+          "lockSha256": "e490fc5e17eded982d01ffd28ff8306f01ffa85613cb711c3c6fbdc6cedc3f14",
+          "profiles": {
+            "041273947703542f7fe22eab838c176df5517974": {
+              "examples/performance-catalog/empty.json": "examples/performance-catalog/empty.json",
+              "examples/performance-catalog/pages.json": "examples/performance-catalog/pages.json",
+              "schemas/performance-catalog/v1/performance-catalog.schema.json": "schemas/performance-catalog/v1/performance-catalog.schema.json"
+            },
+            "143daa58774d8807f1745f8410ccab8b610170a0": {
+              "api/run-management/v1/examples/artifacts.json": "examples/artifacts.json",
+              "api/run-management/v1/examples/baseline-create.json": "examples/baseline-create.json",
+              "api/run-management/v1/examples/baseline-transition.json": "examples/baseline-transition.json",
+              "api/run-management/v1/examples/completed.json": "api/run-management/v1/examples/completed.json",
+              "api/run-management/v1/examples/create.json": "examples/create.json",
+              "api/run-management/v1/openapi.json": "openapi.json",
+              "api/run-management/v1/transitions.json": "transitions.json",
+              "examples/analysis/slo-pass-regression-fail.json": "examples/analysis/slo-pass-regression-fail.json",
+              "examples/policy/browser.json": "examples/policy/browser.json",
+              "schemas/analysis/v1/analysis-result.schema.json": "schemas/analysis/v1/analysis-result.schema.json",
+              "schemas/policy/v1/performance-policy.schema.json": "schemas/policy/v1/performance-policy.schema.json"
+            },
+            "55d28f4f432825c1dc504ca0f03ee308e66fb62c": {
+              "api/native-worker/v2/examples/acquire.json": "api/native-worker/v2/examples/acquire.json",
+              "api/native-worker/v2/examples/artifact.json": "api/native-worker/v2/examples/artifact.json",
+              "api/native-worker/v2/examples/attempt-active.json": "api/native-worker/v2/examples/attempt-active.json",
+              "api/native-worker/v2/examples/attempt-inactive.json": "api/native-worker/v2/examples/attempt-inactive.json",
+              "api/native-worker/v2/examples/attempt-not-found-error.json": "api/native-worker/v2/examples/attempt-not-found-error.json",
+              "api/native-worker/v2/examples/attempt-terminal.json": "api/native-worker/v2/examples/attempt-terminal.json",
+              "api/native-worker/v2/examples/discover-attempt.json": "api/native-worker/v2/examples/discover-attempt.json",
+              "api/native-worker/v2/examples/discovery-active.json": "api/native-worker/v2/examples/discovery-active.json",
+              "api/native-worker/v2/examples/discovery-available.json": "api/native-worker/v2/examples/discovery-available.json",
+              "api/native-worker/v2/examples/discovery-none.json": "api/native-worker/v2/examples/discovery-none.json",
+              "api/native-worker/v2/examples/discovery-terminal.json": "api/native-worker/v2/examples/discovery-terminal.json",
+              "api/native-worker/v2/examples/discovery-unreported.json": "api/native-worker/v2/examples/discovery-unreported.json",
+              "api/native-worker/v2/examples/inspect-attempt.json": "api/native-worker/v2/examples/inspect-attempt.json",
+              "api/native-worker/v2/examples/lease-gone-error.json": "api/native-worker/v2/examples/lease-gone-error.json",
+              "api/native-worker/v2/examples/lease.json": "api/native-worker/v2/examples/lease.json",
+              "api/native-worker/v2/examples/presence-status.json": "api/native-worker/v2/examples/presence-status.json",
+              "api/native-worker/v2/examples/presence.json": "api/native-worker/v2/examples/presence.json",
+              "api/native-worker/v2/examples/register-artifact.json": "api/native-worker/v2/examples/register-artifact.json",
+              "api/native-worker/v2/examples/release.json": "api/native-worker/v2/examples/release.json",
+              "api/native-worker/v2/examples/renew.json": "api/native-worker/v2/examples/renew.json",
+              "api/native-worker/v2/examples/renewal.json": "api/native-worker/v2/examples/renewal.json",
+              "api/native-worker/v2/examples/terminal-ack-duplicate.json": "api/native-worker/v2/examples/terminal-ack-duplicate.json",
+              "api/native-worker/v2/examples/terminal-ack.json": "api/native-worker/v2/examples/terminal-ack.json",
+              "api/native-worker/v2/examples/terminal-completed.json": "api/native-worker/v2/examples/terminal-completed.json",
+              "api/native-worker/v2/examples/terminal-failed.json": "api/native-worker/v2/examples/terminal-failed.json",
+              "api/native-worker/v2/examples/upload-grant.json": "api/native-worker/v2/examples/upload-grant.json",
+              "api/native-worker/v2/examples/upload-request.json": "api/native-worker/v2/examples/upload-request.json",
+              "api/native-worker/v2/http-cases.json": "api/native-worker/v2/http-cases.json",
+              "api/native-worker/v2/openapi.json": "api/native-worker/v2/openapi.json",
+              "api/native-worker/v2/rejections/active-attempt-missing-expiry.json": "api/native-worker/v2/rejections/active-attempt-missing-expiry.json",
+              "api/native-worker/v2/rejections/cancellation-missing-stop-deadline.json": "api/native-worker/v2/rejections/cancellation-missing-stop-deadline.json",
+              "api/native-worker/v2/rejections/capacity-above-one.json": "api/native-worker/v2/rejections/capacity-above-one.json",
+              "api/native-worker/v2/rejections/completed-without-registered-manifest.json": "api/native-worker/v2/rejections/completed-without-registered-manifest.json",
+              "api/native-worker/v2/rejections/deadline-without-cancellation.json": "api/native-worker/v2/rejections/deadline-without-cancellation.json",
+              "api/native-worker/v2/rejections/discovery-inactive.json": "api/native-worker/v2/rejections/discovery-inactive.json",
+              "api/native-worker/v2/rejections/discovery-leaks-capability.json": "api/native-worker/v2/rejections/discovery-leaks-capability.json",
+              "api/native-worker/v2/rejections/discovery-lists-attempts.json": "api/native-worker/v2/rejections/discovery-lists-attempts.json",
+              "api/native-worker/v2/rejections/discovery-missing-expiry.json": "api/native-worker/v2/rejections/discovery-missing-expiry.json",
+              "api/native-worker/v2/rejections/discovery-none-with-attempt.json": "api/native-worker/v2/rejections/discovery-none-with-attempt.json",
+              "api/native-worker/v2/rejections/discovery-selects-run.json": "api/native-worker/v2/rejections/discovery-selects-run.json",
+              "api/native-worker/v2/rejections/discovery-selects-worker.json": "api/native-worker/v2/rejections/discovery-selects-worker.json",
+              "api/native-worker/v2/rejections/discovery-unreported-with-slot.json": "api/native-worker/v2/rejections/discovery-unreported-with-slot.json",
+              "api/native-worker/v2/rejections/failed-without-failure-classification.json": "api/native-worker/v2/rejections/failed-without-failure-classification.json",
+              "api/native-worker/v2/rejections/inactive-attempt-leaks-capability.json": "api/native-worker/v2/rejections/inactive-attempt-leaks-capability.json",
+              "api/native-worker/v2/rejections/inspect-selects-worker.json": "api/native-worker/v2/rejections/inspect-selects-worker.json",
+              "api/native-worker/v2/rejections/mutation-missing-revision-fence.json": "api/native-worker/v2/rejections/mutation-missing-revision-fence.json",
+              "api/native-worker/v2/rejections/recipe-invalid-browser-settings.json": "api/native-worker/v2/rejections/recipe-invalid-browser-settings.json",
+              "api/native-worker/v2/rejections/recipe-invalid-cache-reuse.json": "api/native-worker/v2/rejections/recipe-invalid-cache-reuse.json",
+              "api/native-worker/v2/rejections/recipe-missing-workload-sha256.json": "api/native-worker/v2/rejections/recipe-missing-workload-sha256.json",
+              "api/native-worker/v2/rejections/recipe-unsupported-journey.json": "api/native-worker/v2/rejections/recipe-unsupported-journey.json",
+              "api/native-worker/v2/rejections/request-selected-worker-identity.json": "api/native-worker/v2/rejections/request-selected-worker-identity.json",
+              "api/native-worker/v2/rejections/terminal-attempt-missing-kind.json": "api/native-worker/v2/rejections/terminal-attempt-missing-kind.json",
+              "api/native-worker/v2/rejections/upload-grant-missing-signed-headers.json": "api/native-worker/v2/rejections/upload-grant-missing-signed-headers.json",
+              "api/native-worker/v2/rejections/worker-chooses-artifact-uri.json": "api/native-worker/v2/rejections/worker-chooses-artifact-uri.json",
+              "api/native-worker/v2/rejections/worker-chooses-object-key.json": "api/native-worker/v2/rejections/worker-chooses-object-key.json",
+              "api/native-worker/v2/rejections/worker-declares-qualification.json": "api/native-worker/v2/rejections/worker-declares-qualification.json"
+            },
+            "5bbeceec61f0ddd8922f27ceb6d4968cbdfef3ac": {
+              "api/performance-integration/v1/openapi.json": "api/performance-integration/v1/openapi.json",
+              "examples/performance-integration/cancelled.json": "examples/performance-integration/cancelled.json",
+              "examples/performance-integration/completed.json": "examples/performance-integration/completed.json",
+              "examples/performance-integration/rejected.json": "examples/performance-integration/rejected.json",
+              "schemas/performance-integration/v1/performance-integration.schema.json": "schemas/performance-integration/v1/performance-integration.schema.json"
+            },
+            "cd2442f433ce93d9a886c14ad6ff8aa8488a623b": {
+              "examples/performance-analysis/published.json": "examples/performance-analysis/published.json",
+              "schemas/performance-analysis/v1/performance-analysis.schema.json": "schemas/performance-analysis/v1/performance-analysis.schema.json"
+            }
+          }
+        }
+      }
+    },
+    "control-plane": {
+      "deploymentStatus": "unknown",
+      "replayStatus": "unknown",
+      "repository": "perfeng-control-plane",
+      "rollbackStatus": "unknown",
+      "selections": {
+        "current": {
+          "consumerRevision": "bdbcccc0dd0233efd10741a5c5810e423f5a7caf",
+          "lockPath": "internal/contract/snapshot/lock.json",
+          "lockSha256": "e490fc5e17eded982d01ffd28ff8306f01ffa85613cb711c3c6fbdc6cedc3f14",
+          "profiles": {
+            "041273947703542f7fe22eab838c176df5517974": {
+              "examples/performance-catalog/empty.json": "examples/performance-catalog/empty.json",
+              "examples/performance-catalog/pages.json": "examples/performance-catalog/pages.json",
+              "schemas/performance-catalog/v1/performance-catalog.schema.json": "schemas/performance-catalog/v1/performance-catalog.schema.json"
+            },
+            "143daa58774d8807f1745f8410ccab8b610170a0": {
+              "api/run-management/v1/examples/artifacts.json": "examples/artifacts.json",
+              "api/run-management/v1/examples/baseline-create.json": "examples/baseline-create.json",
+              "api/run-management/v1/examples/baseline-transition.json": "examples/baseline-transition.json",
+              "api/run-management/v1/examples/create.json": "examples/create.json",
+              "api/run-management/v1/openapi.json": "openapi.json",
+              "api/run-management/v1/transitions.json": "transitions.json",
+              "examples/policy/browser.json": "examples/policy/browser.json",
+              "schemas/policy/v1/performance-policy.schema.json": "schemas/policy/v1/performance-policy.schema.json"
+            },
+            "55d28f4f432825c1dc504ca0f03ee308e66fb62c": {
+              "api/native-worker/v2/examples/acquire.json": "api/native-worker/v2/examples/acquire.json",
+              "api/native-worker/v2/examples/artifact.json": "api/native-worker/v2/examples/artifact.json",
+              "api/native-worker/v2/examples/attempt-active.json": "api/native-worker/v2/examples/attempt-active.json",
+              "api/native-worker/v2/examples/attempt-inactive.json": "api/native-worker/v2/examples/attempt-inactive.json",
+              "api/native-worker/v2/examples/attempt-not-found-error.json": "api/native-worker/v2/examples/attempt-not-found-error.json",
+              "api/native-worker/v2/examples/attempt-terminal.json": "api/native-worker/v2/examples/attempt-terminal.json",
+              "api/native-worker/v2/examples/discover-attempt.json": "api/native-worker/v2/examples/discover-attempt.json",
+              "api/native-worker/v2/examples/discovery-active.json": "api/native-worker/v2/examples/discovery-active.json",
+              "api/native-worker/v2/examples/discovery-available.json": "api/native-worker/v2/examples/discovery-available.json",
+              "api/native-worker/v2/examples/discovery-none.json": "api/native-worker/v2/examples/discovery-none.json",
+              "api/native-worker/v2/examples/discovery-terminal.json": "api/native-worker/v2/examples/discovery-terminal.json",
+              "api/native-worker/v2/examples/discovery-unreported.json": "api/native-worker/v2/examples/discovery-unreported.json",
+              "api/native-worker/v2/examples/inspect-attempt.json": "api/native-worker/v2/examples/inspect-attempt.json",
+              "api/native-worker/v2/examples/lease-gone-error.json": "api/native-worker/v2/examples/lease-gone-error.json",
+              "api/native-worker/v2/examples/lease.json": "api/native-worker/v2/examples/lease.json",
+              "api/native-worker/v2/examples/presence-status.json": "api/native-worker/v2/examples/presence-status.json",
+              "api/native-worker/v2/examples/presence.json": "api/native-worker/v2/examples/presence.json",
+              "api/native-worker/v2/examples/register-artifact.json": "api/native-worker/v2/examples/register-artifact.json",
+              "api/native-worker/v2/examples/release.json": "api/native-worker/v2/examples/release.json",
+              "api/native-worker/v2/examples/renew.json": "api/native-worker/v2/examples/renew.json",
+              "api/native-worker/v2/examples/renewal.json": "api/native-worker/v2/examples/renewal.json",
+              "api/native-worker/v2/examples/terminal-ack-duplicate.json": "api/native-worker/v2/examples/terminal-ack-duplicate.json",
+              "api/native-worker/v2/examples/terminal-ack.json": "api/native-worker/v2/examples/terminal-ack.json",
+              "api/native-worker/v2/examples/terminal-completed.json": "api/native-worker/v2/examples/terminal-completed.json",
+              "api/native-worker/v2/examples/terminal-failed.json": "api/native-worker/v2/examples/terminal-failed.json",
+              "api/native-worker/v2/examples/upload-grant.json": "api/native-worker/v2/examples/upload-grant.json",
+              "api/native-worker/v2/examples/upload-request.json": "api/native-worker/v2/examples/upload-request.json",
+              "api/native-worker/v2/http-cases.json": "api/native-worker/v2/http-cases.json",
+              "api/native-worker/v2/openapi.json": "api/native-worker/v2/openapi.json",
+              "api/native-worker/v2/rejections/active-attempt-missing-expiry.json": "api/native-worker/v2/rejections/active-attempt-missing-expiry.json",
+              "api/native-worker/v2/rejections/cancellation-missing-stop-deadline.json": "api/native-worker/v2/rejections/cancellation-missing-stop-deadline.json",
+              "api/native-worker/v2/rejections/capacity-above-one.json": "api/native-worker/v2/rejections/capacity-above-one.json",
+              "api/native-worker/v2/rejections/completed-without-registered-manifest.json": "api/native-worker/v2/rejections/completed-without-registered-manifest.json",
+              "api/native-worker/v2/rejections/deadline-without-cancellation.json": "api/native-worker/v2/rejections/deadline-without-cancellation.json",
+              "api/native-worker/v2/rejections/discovery-inactive.json": "api/native-worker/v2/rejections/discovery-inactive.json",
+              "api/native-worker/v2/rejections/discovery-leaks-capability.json": "api/native-worker/v2/rejections/discovery-leaks-capability.json",
+              "api/native-worker/v2/rejections/discovery-lists-attempts.json": "api/native-worker/v2/rejections/discovery-lists-attempts.json",
+              "api/native-worker/v2/rejections/discovery-missing-expiry.json": "api/native-worker/v2/rejections/discovery-missing-expiry.json",
+              "api/native-worker/v2/rejections/discovery-none-with-attempt.json": "api/native-worker/v2/rejections/discovery-none-with-attempt.json",
+              "api/native-worker/v2/rejections/discovery-selects-run.json": "api/native-worker/v2/rejections/discovery-selects-run.json",
+              "api/native-worker/v2/rejections/discovery-selects-worker.json": "api/native-worker/v2/rejections/discovery-selects-worker.json",
+              "api/native-worker/v2/rejections/discovery-unreported-with-slot.json": "api/native-worker/v2/rejections/discovery-unreported-with-slot.json",
+              "api/native-worker/v2/rejections/failed-without-failure-classification.json": "api/native-worker/v2/rejections/failed-without-failure-classification.json",
+              "api/native-worker/v2/rejections/inactive-attempt-leaks-capability.json": "api/native-worker/v2/rejections/inactive-attempt-leaks-capability.json",
+              "api/native-worker/v2/rejections/inspect-selects-worker.json": "api/native-worker/v2/rejections/inspect-selects-worker.json",
+              "api/native-worker/v2/rejections/mutation-missing-revision-fence.json": "api/native-worker/v2/rejections/mutation-missing-revision-fence.json",
+              "api/native-worker/v2/rejections/recipe-invalid-browser-settings.json": "api/native-worker/v2/rejections/recipe-invalid-browser-settings.json",
+              "api/native-worker/v2/rejections/recipe-invalid-cache-reuse.json": "api/native-worker/v2/rejections/recipe-invalid-cache-reuse.json",
+              "api/native-worker/v2/rejections/recipe-missing-workload-sha256.json": "api/native-worker/v2/rejections/recipe-missing-workload-sha256.json",
+              "api/native-worker/v2/rejections/recipe-unsupported-journey.json": "api/native-worker/v2/rejections/recipe-unsupported-journey.json",
+              "api/native-worker/v2/rejections/request-selected-worker-identity.json": "api/native-worker/v2/rejections/request-selected-worker-identity.json",
+              "api/native-worker/v2/rejections/terminal-attempt-missing-kind.json": "api/native-worker/v2/rejections/terminal-attempt-missing-kind.json",
+              "api/native-worker/v2/rejections/upload-grant-missing-signed-headers.json": "api/native-worker/v2/rejections/upload-grant-missing-signed-headers.json",
+              "api/native-worker/v2/rejections/worker-chooses-artifact-uri.json": "api/native-worker/v2/rejections/worker-chooses-artifact-uri.json",
+              "api/native-worker/v2/rejections/worker-chooses-object-key.json": "api/native-worker/v2/rejections/worker-chooses-object-key.json",
+              "api/native-worker/v2/rejections/worker-declares-qualification.json": "api/native-worker/v2/rejections/worker-declares-qualification.json"
+            },
+            "5bbeceec61f0ddd8922f27ceb6d4968cbdfef3ac": {
+              "api/performance-integration/v1/openapi.json": "api/performance-integration/v1/openapi.json",
+              "examples/performance-integration/cancelled.json": "examples/performance-integration/cancelled.json",
+              "examples/performance-integration/completed.json": "examples/performance-integration/completed.json",
+              "examples/performance-integration/rejected.json": "examples/performance-integration/rejected.json",
+              "schemas/performance-integration/v1/performance-integration.schema.json": "schemas/performance-integration/v1/performance-integration.schema.json"
+            },
+            "cd2442f433ce93d9a886c14ad6ff8aa8488a623b": {
+              "examples/performance-analysis/published.json": "examples/performance-analysis/published.json",
+              "schemas/performance-analysis/v1/performance-analysis.schema.json": "schemas/performance-analysis/v1/performance-analysis.schema.json"
+            }
+          }
+        },
+        "historicalCandidate": {
+          "consumerRevision": "c67ce48bfb4f4b4fa762cf42213700511593a573",
+          "lockPath": "internal/contract/snapshot/lock.json",
+          "lockSha256": "10299338b4d2fb8aa48f7b6f9f4eb3fd32d1797bbb00225ffb236b3ed05e6146",
+          "profiles": {
+            "041273947703542f7fe22eab838c176df5517974": {
+              "examples/performance-catalog/empty.json": "examples/performance-catalog/empty.json",
+              "examples/performance-catalog/pages.json": "examples/performance-catalog/pages.json",
+              "schemas/performance-catalog/v1/performance-catalog.schema.json": "schemas/performance-catalog/v1/performance-catalog.schema.json"
+            },
+            "143daa58774d8807f1745f8410ccab8b610170a0": {
+              "api/native-worker/v2/examples/acquire.json": "api/native-worker/v2/examples/acquire.json",
+              "api/native-worker/v2/examples/artifact.json": "api/native-worker/v2/examples/artifact.json",
+              "api/native-worker/v2/examples/attempt-active.json": "api/native-worker/v2/examples/attempt-active.json",
+              "api/native-worker/v2/examples/attempt-inactive.json": "api/native-worker/v2/examples/attempt-inactive.json",
+              "api/native-worker/v2/examples/attempt-not-found-error.json": "api/native-worker/v2/examples/attempt-not-found-error.json",
+              "api/native-worker/v2/examples/attempt-terminal.json": "api/native-worker/v2/examples/attempt-terminal.json",
+              "api/native-worker/v2/examples/discover-attempt.json": "api/native-worker/v2/examples/discover-attempt.json",
+              "api/native-worker/v2/examples/discovery-active.json": "api/native-worker/v2/examples/discovery-active.json",
+              "api/native-worker/v2/examples/discovery-available.json": "api/native-worker/v2/examples/discovery-available.json",
+              "api/native-worker/v2/examples/discovery-none.json": "api/native-worker/v2/examples/discovery-none.json",
+              "api/native-worker/v2/examples/discovery-terminal.json": "api/native-worker/v2/examples/discovery-terminal.json",
+              "api/native-worker/v2/examples/discovery-unreported.json": "api/native-worker/v2/examples/discovery-unreported.json",
+              "api/native-worker/v2/examples/inspect-attempt.json": "api/native-worker/v2/examples/inspect-attempt.json",
+              "api/native-worker/v2/examples/lease-gone-error.json": "api/native-worker/v2/examples/lease-gone-error.json",
+              "api/native-worker/v2/examples/lease.json": "api/native-worker/v2/examples/lease.json",
+              "api/native-worker/v2/examples/presence-status.json": "api/native-worker/v2/examples/presence-status.json",
+              "api/native-worker/v2/examples/presence.json": "api/native-worker/v2/examples/presence.json",
+              "api/native-worker/v2/examples/register-artifact.json": "api/native-worker/v2/examples/register-artifact.json",
+              "api/native-worker/v2/examples/release.json": "api/native-worker/v2/examples/release.json",
+              "api/native-worker/v2/examples/renew.json": "api/native-worker/v2/examples/renew.json",
+              "api/native-worker/v2/examples/renewal.json": "api/native-worker/v2/examples/renewal.json",
+              "api/native-worker/v2/examples/terminal-ack-duplicate.json": "api/native-worker/v2/examples/terminal-ack-duplicate.json",
+              "api/native-worker/v2/examples/terminal-ack.json": "api/native-worker/v2/examples/terminal-ack.json",
+              "api/native-worker/v2/examples/terminal-completed.json": "api/native-worker/v2/examples/terminal-completed.json",
+              "api/native-worker/v2/examples/terminal-failed.json": "api/native-worker/v2/examples/terminal-failed.json",
+              "api/native-worker/v2/examples/upload-grant.json": "api/native-worker/v2/examples/upload-grant.json",
+              "api/native-worker/v2/examples/upload-request.json": "api/native-worker/v2/examples/upload-request.json",
+              "api/native-worker/v2/http-cases.json": "api/native-worker/v2/http-cases.json",
+              "api/native-worker/v2/openapi.json": "api/native-worker/v2/openapi.json",
+              "api/native-worker/v2/rejections/active-attempt-missing-expiry.json": "api/native-worker/v2/rejections/active-attempt-missing-expiry.json",
+              "api/native-worker/v2/rejections/cancellation-missing-stop-deadline.json": "api/native-worker/v2/rejections/cancellation-missing-stop-deadline.json",
+              "api/native-worker/v2/rejections/capacity-above-one.json": "api/native-worker/v2/rejections/capacity-above-one.json",
+              "api/native-worker/v2/rejections/completed-without-registered-manifest.json": "api/native-worker/v2/rejections/completed-without-registered-manifest.json",
+              "api/native-worker/v2/rejections/deadline-without-cancellation.json": "api/native-worker/v2/rejections/deadline-without-cancellation.json",
+              "api/native-worker/v2/rejections/discovery-inactive.json": "api/native-worker/v2/rejections/discovery-inactive.json",
+              "api/native-worker/v2/rejections/discovery-leaks-capability.json": "api/native-worker/v2/rejections/discovery-leaks-capability.json",
+              "api/native-worker/v2/rejections/discovery-lists-attempts.json": "api/native-worker/v2/rejections/discovery-lists-attempts.json",
+              "api/native-worker/v2/rejections/discovery-missing-expiry.json": "api/native-worker/v2/rejections/discovery-missing-expiry.json",
+              "api/native-worker/v2/rejections/discovery-none-with-attempt.json": "api/native-worker/v2/rejections/discovery-none-with-attempt.json",
+              "api/native-worker/v2/rejections/discovery-selects-run.json": "api/native-worker/v2/rejections/discovery-selects-run.json",
+              "api/native-worker/v2/rejections/discovery-selects-worker.json": "api/native-worker/v2/rejections/discovery-selects-worker.json",
+              "api/native-worker/v2/rejections/discovery-unreported-with-slot.json": "api/native-worker/v2/rejections/discovery-unreported-with-slot.json",
+              "api/native-worker/v2/rejections/failed-without-failure-classification.json": "api/native-worker/v2/rejections/failed-without-failure-classification.json",
+              "api/native-worker/v2/rejections/inactive-attempt-leaks-capability.json": "api/native-worker/v2/rejections/inactive-attempt-leaks-capability.json",
+              "api/native-worker/v2/rejections/inspect-selects-worker.json": "api/native-worker/v2/rejections/inspect-selects-worker.json",
+              "api/native-worker/v2/rejections/mutation-missing-revision-fence.json": "api/native-worker/v2/rejections/mutation-missing-revision-fence.json",
+              "api/native-worker/v2/rejections/recipe-invalid-browser-settings.json": "api/native-worker/v2/rejections/recipe-invalid-browser-settings.json",
+              "api/native-worker/v2/rejections/recipe-invalid-cache-reuse.json": "api/native-worker/v2/rejections/recipe-invalid-cache-reuse.json",
+              "api/native-worker/v2/rejections/recipe-missing-workload-sha256.json": "api/native-worker/v2/rejections/recipe-missing-workload-sha256.json",
+              "api/native-worker/v2/rejections/recipe-unsupported-journey.json": "api/native-worker/v2/rejections/recipe-unsupported-journey.json",
+              "api/native-worker/v2/rejections/request-selected-worker-identity.json": "api/native-worker/v2/rejections/request-selected-worker-identity.json",
+              "api/native-worker/v2/rejections/terminal-attempt-missing-kind.json": "api/native-worker/v2/rejections/terminal-attempt-missing-kind.json",
+              "api/native-worker/v2/rejections/upload-grant-missing-signed-headers.json": "api/native-worker/v2/rejections/upload-grant-missing-signed-headers.json",
+              "api/native-worker/v2/rejections/worker-chooses-artifact-uri.json": "api/native-worker/v2/rejections/worker-chooses-artifact-uri.json",
+              "api/native-worker/v2/rejections/worker-chooses-object-key.json": "api/native-worker/v2/rejections/worker-chooses-object-key.json",
+              "api/native-worker/v2/rejections/worker-declares-qualification.json": "api/native-worker/v2/rejections/worker-declares-qualification.json",
+              "api/run-management/v1/examples/artifacts.json": "examples/artifacts.json",
+              "api/run-management/v1/examples/baseline-create.json": "examples/baseline-create.json",
+              "api/run-management/v1/examples/baseline-transition.json": "examples/baseline-transition.json",
+              "api/run-management/v1/examples/create.json": "examples/create.json",
+              "api/run-management/v1/openapi.json": "openapi.json",
+              "api/run-management/v1/transitions.json": "transitions.json",
+              "examples/policy/browser.json": "examples/policy/browser.json",
+              "schemas/policy/v1/performance-policy.schema.json": "schemas/policy/v1/performance-policy.schema.json"
+            },
+            "5bbeceec61f0ddd8922f27ceb6d4968cbdfef3ac": {
+              "api/performance-integration/v1/openapi.json": "api/performance-integration/v1/openapi.json",
+              "examples/performance-integration/cancelled.json": "examples/performance-integration/cancelled.json",
+              "examples/performance-integration/completed.json": "examples/performance-integration/completed.json",
+              "examples/performance-integration/rejected.json": "examples/performance-integration/rejected.json",
+              "schemas/performance-integration/v1/performance-integration.schema.json": "schemas/performance-integration/v1/performance-integration.schema.json"
+            },
+            "cd2442f433ce93d9a886c14ad6ff8aa8488a623b": {
+              "examples/performance-analysis/published.json": "examples/performance-analysis/published.json",
+              "schemas/performance-analysis/v1/performance-analysis.schema.json": "schemas/performance-analysis/v1/performance-analysis.schema.json"
+            }
+          }
+        }
+      }
+    },
+    "environment": {
+      "deploymentStatus": "unknown",
+      "replayStatus": "unknown",
+      "repository": "perfeng-environment",
+      "rollbackStatus": "unknown",
+      "selections": {
+        "current": {
+          "consumerRevision": "d59d8c676a3dc29ba799b4acfac6a6b68109d5ff",
+          "lockPath": "contracts/kubernetes-benchmark-lock.json",
+          "lockSha256": "c8ee3a7ab01a4d1be07f1fddb5c70c4e1d554f6213e4ced3c622877155c18a06",
+          "profiles": {
+            "3b86afa18b468d831c7c2c176618180db18b2764": {
+              "examples/kubernetes-benchmark-evidence/accepted-preflight.json": null,
+              "schemas/kubernetes-benchmark-evidence/v1/kubernetes-benchmark-evidence.schema.json": "kubernetes-benchmark-evidence.schema.json"
+            }
+          }
+        }
+      }
+    },
+    "k6": {
+      "deploymentStatus": "unknown",
+      "replayStatus": "unknown",
+      "repository": "perfeng-k6",
+      "rollbackStatus": "unknown",
+      "selections": {
+        "current": {
+          "consumerRevision": "fa70fa78f5e5b2252b47cb6d0bf9e47534d11089",
+          "lockPath": "contracts.lock.json",
+          "lockSha256": "ff21942032925d7c1567d985f066da1824b49e5afeed0c0dbe28816516a0ee8f",
+          "profiles": {
+            "badd9206a88a48042dda54a25c6e362088d23858": {
+              "LICENSE": "LICENSE",
+              "schemas/artifact/v1/artifact-reference.schema.json": "schemas/artifact/v1/artifact-reference.schema.json",
+              "schemas/catalogue/v2/test-catalogue.schema.json": "schemas/catalogue/v2/test-catalogue.schema.json",
+              "schemas/raw-result/v2/raw-result.schema.json": "schemas/raw-result/v2/raw-result.schema.json",
+              "schemas/result/v1/test-result.schema.json": "schemas/result/v1/test-result.schema.json",
+              "schemas/workload/v1/workload.schema.json": "schemas/workload/v1/workload.schema.json"
+            }
+          }
+        },
+        "historicalCandidate": {
+          "consumerRevision": "10f9bc3c7847e6e45e585042378962dae5aa0f6a",
+          "lockPath": "contracts.lock.json",
+          "lockSha256": "da422f6660986c3bb417adcf0660269b30580f0212703fe9284117af4c97638c",
+          "profiles": {
+            "8363ec6d54721a4750761df37c80465e9f76be4d": {
+              "LICENSE": "LICENSE",
+              "schemas/artifact/v1/artifact-reference.schema.json": "schemas/artifact/v1/artifact-reference.schema.json",
+              "schemas/catalogue/v1/test-catalogue.schema.json": "schemas/catalogue/v1/test-catalogue.schema.json",
+              "schemas/raw-result/v1/raw-result.schema.json": "schemas/raw-result/v1/raw-result.schema.json",
+              "schemas/result/v1/test-result.schema.json": "schemas/result/v1/test-result.schema.json",
+              "schemas/workload/v1/workload.schema.json": "schemas/workload/v1/workload.schema.json"
+            }
+          }
+        }
+      }
+    },
+    "k8s-contained": {
+      "deploymentStatus": "unknown",
+      "replayStatus": "unknown",
+      "repository": "perfeng-k8s",
+      "rollbackStatus": "unknown",
+      "selections": {
+        "current": {
+          "consumerRevision": "f663adb33afa5c554205a2fa8eeb570df7531364",
+          "lockPath": "contracts/contained/lock.json",
+          "lockSha256": "575e097059b670bea2c7d2572a24ea54521f7c81276ef187e8e0f5600803b801",
+          "profiles": {
+            "3b86afa18b468d831c7c2c176618180db18b2764": {
+              "schemas/artifact/v1/artifact-reference.schema.json": "artifact-reference.schema.json",
+              "schemas/environment/v1/environment.schema.json": "environment.schema.json",
+              "schemas/kubernetes-benchmark-evidence/v1/kubernetes-benchmark-evidence.schema.json": "kubernetes-benchmark-evidence.schema.json",
+              "schemas/raw-result/v2/raw-result.schema.json": "raw-result.schema.json"
+            }
+          }
+        }
+      }
+    },
+    "k8s-primary": {
+      "deploymentStatus": "unknown",
+      "replayStatus": "unknown",
+      "repository": "perfeng-k8s",
+      "rollbackStatus": "unknown",
+      "selections": {
+        "current": {
+          "consumerRevision": "f663adb33afa5c554205a2fa8eeb570df7531364",
+          "lockPath": "contracts/lock.json",
+          "lockSha256": "f8f4f20c9d9b13ed2a541bd5f16f35384ebb93f26d209977c942b00d94d8df48",
+          "profiles": {
+            "badd9206a88a48042dda54a25c6e362088d23858": {
+              "schemas/artifact/v1/artifact-reference.schema.json": "schemas/artifact/v1/artifact-reference.schema.json",
+              "schemas/catalogue/v2/test-catalogue.schema.json": "schemas/catalogue/v2/test-catalogue.schema.json",
+              "schemas/raw-result/v2/raw-result.schema.json": "schemas/raw-result/v2/raw-result.schema.json",
+              "schemas/result/v1/test-result.schema.json": "schemas/result/v1/test-result.schema.json",
+              "schemas/workload/v1/workload.schema.json": "schemas/workload/v1/workload.schema.json"
+            }
+          }
+        }
+      }
+    },
+    "playwright": {
+      "deploymentStatus": "unknown",
+      "rawResultContractsVersion": "0.19.0",
+      "replayStatus": "unknown",
+      "repository": "perfeng-playwright",
+      "rollbackStatus": "unknown",
+      "selections": {
+        "current": {
+          "consumerRevision": "a6a398f33c638539fe7c9617b63511a5f6f2d84f",
+          "lockPath": "vendor/contracts/lock.json",
+          "lockSha256": "e8f0acff0fde69beadab001f9527dbc6a24122561085fefed6c92194613170a0",
+          "profiles": {
+            "55d28f4f432825c1dc504ca0f03ee308e66fb62c": {
+              "api/native-worker/v2/examples/acquire.json": "native-worker/v2/examples/acquire.json",
+              "api/native-worker/v2/examples/artifact.json": "native-worker/v2/examples/artifact.json",
+              "api/native-worker/v2/examples/attempt-active.json": "native-worker/v2/examples/attempt-active.json",
+              "api/native-worker/v2/examples/attempt-inactive.json": "native-worker/v2/examples/attempt-inactive.json",
+              "api/native-worker/v2/examples/attempt-not-found-error.json": "native-worker/v2/examples/attempt-not-found-error.json",
+              "api/native-worker/v2/examples/attempt-terminal.json": "native-worker/v2/examples/attempt-terminal.json",
+              "api/native-worker/v2/examples/discover-attempt.json": "native-worker/v2/examples/discover-attempt.json",
+              "api/native-worker/v2/examples/discovery-active.json": "native-worker/v2/examples/discovery-active.json",
+              "api/native-worker/v2/examples/discovery-available.json": "native-worker/v2/examples/discovery-available.json",
+              "api/native-worker/v2/examples/discovery-none.json": "native-worker/v2/examples/discovery-none.json",
+              "api/native-worker/v2/examples/discovery-terminal.json": "native-worker/v2/examples/discovery-terminal.json",
+              "api/native-worker/v2/examples/discovery-unreported.json": "native-worker/v2/examples/discovery-unreported.json",
+              "api/native-worker/v2/examples/inspect-attempt.json": "native-worker/v2/examples/inspect-attempt.json",
+              "api/native-worker/v2/examples/lease.json": "native-worker/v2/examples/lease.json",
+              "api/native-worker/v2/examples/presence-status.json": "native-worker/v2/examples/presence-status.json",
+              "api/native-worker/v2/examples/presence.json": "native-worker/v2/examples/presence.json",
+              "api/native-worker/v2/examples/register-artifact.json": "native-worker/v2/examples/register-artifact.json",
+              "api/native-worker/v2/examples/release.json": "native-worker/v2/examples/release.json",
+              "api/native-worker/v2/examples/renew.json": "native-worker/v2/examples/renew.json",
+              "api/native-worker/v2/examples/renewal.json": "native-worker/v2/examples/renewal.json",
+              "api/native-worker/v2/examples/terminal-ack-duplicate.json": "native-worker/v2/examples/terminal-ack-duplicate.json",
+              "api/native-worker/v2/examples/terminal-ack.json": "native-worker/v2/examples/terminal-ack.json",
+              "api/native-worker/v2/examples/terminal-completed.json": "native-worker/v2/examples/terminal-completed.json",
+              "api/native-worker/v2/examples/terminal-failed.json": "native-worker/v2/examples/terminal-failed.json",
+              "api/native-worker/v2/examples/upload-grant.json": "native-worker/v2/examples/upload-grant.json",
+              "api/native-worker/v2/examples/upload-request.json": "native-worker/v2/examples/upload-request.json",
+              "api/native-worker/v2/openapi.json": null
+            }
+          }
+        },
+        "historicalCandidate": {
+          "consumerRevision": "c918cdb4412b4348bd9ded909b354406faa25db9",
+          "lockPath": "vendor/contracts/lock.json",
+          "lockSha256": "274fdd5d2bbea83508b59638c0b8f3a97ecd2083c0df061582a2ddc7fedf3878",
+          "profiles": {
+            "143daa58774d8807f1745f8410ccab8b610170a0": {
+              "api/native-worker/v2/examples/acquire.json": "native-worker/v2/examples/acquire.json",
+              "api/native-worker/v2/examples/artifact.json": "native-worker/v2/examples/artifact.json",
+              "api/native-worker/v2/examples/attempt-active.json": "native-worker/v2/examples/attempt-active.json",
+              "api/native-worker/v2/examples/attempt-inactive.json": "native-worker/v2/examples/attempt-inactive.json",
+              "api/native-worker/v2/examples/attempt-not-found-error.json": "native-worker/v2/examples/attempt-not-found-error.json",
+              "api/native-worker/v2/examples/attempt-terminal.json": "native-worker/v2/examples/attempt-terminal.json",
+              "api/native-worker/v2/examples/discover-attempt.json": "native-worker/v2/examples/discover-attempt.json",
+              "api/native-worker/v2/examples/discovery-active.json": "native-worker/v2/examples/discovery-active.json",
+              "api/native-worker/v2/examples/discovery-available.json": "native-worker/v2/examples/discovery-available.json",
+              "api/native-worker/v2/examples/discovery-none.json": "native-worker/v2/examples/discovery-none.json",
+              "api/native-worker/v2/examples/discovery-terminal.json": "native-worker/v2/examples/discovery-terminal.json",
+              "api/native-worker/v2/examples/discovery-unreported.json": "native-worker/v2/examples/discovery-unreported.json",
+              "api/native-worker/v2/examples/inspect-attempt.json": "native-worker/v2/examples/inspect-attempt.json",
+              "api/native-worker/v2/examples/lease.json": "native-worker/v2/examples/lease.json",
+              "api/native-worker/v2/examples/presence-status.json": "native-worker/v2/examples/presence-status.json",
+              "api/native-worker/v2/examples/presence.json": "native-worker/v2/examples/presence.json",
+              "api/native-worker/v2/examples/register-artifact.json": "native-worker/v2/examples/register-artifact.json",
+              "api/native-worker/v2/examples/release.json": "native-worker/v2/examples/release.json",
+              "api/native-worker/v2/examples/renew.json": "native-worker/v2/examples/renew.json",
+              "api/native-worker/v2/examples/renewal.json": "native-worker/v2/examples/renewal.json",
+              "api/native-worker/v2/examples/terminal-ack-duplicate.json": "native-worker/v2/examples/terminal-ack-duplicate.json",
+              "api/native-worker/v2/examples/terminal-ack.json": "native-worker/v2/examples/terminal-ack.json",
+              "api/native-worker/v2/examples/terminal-completed.json": "native-worker/v2/examples/terminal-completed.json",
+              "api/native-worker/v2/examples/terminal-failed.json": "native-worker/v2/examples/terminal-failed.json",
+              "api/native-worker/v2/examples/upload-grant.json": "native-worker/v2/examples/upload-grant.json",
+              "api/native-worker/v2/examples/upload-request.json": "native-worker/v2/examples/upload-request.json",
+              "api/native-worker/v2/openapi.json": null
+            }
+          }
+        }
+      }
+    }
+  },
+  "profiles": {
+    "001146ef212c55c013b12b3a0b167ffc3770f3fc": {
+      "members": {
+        "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "schemas/analysis/v1/analysis-result.schema.json": "d2395bfb7f2768929893d7265497a3758b8686ffc1cae1013e54abff58b38567",
+        "schemas/artifact/v1/artifact-reference.schema.json": "b1328d1ead8ca62f118bb00bcdae738ad434f3c3e18f1a579f5e28ebf924dcf2",
+        "schemas/catalogue/v1/test-catalogue.schema.json": "b0897a5b7b43d981d4d12bda1992b046530b07a77910ee495a4be087eacad722",
+        "schemas/catalogue/v2/test-catalogue.schema.json": "96a65ca5cf3c903a590033e3304a82d4e41dd54e67efbd1928e1cd943337619a",
+        "schemas/normalized-result/v1/normalized-result.schema.json": "0f6fd53007cbc9391cc73b875925e6eb1ecbad67a2d22fb808fdf7e532e027a3",
+        "schemas/playwright-measurements/v2/playwright-measurements.schema.json": "ba2e674060413ec7944a2a905440ab0c4388e9ff2713c2b349b5a7c334036758",
+        "schemas/policy/v1/performance-policy.schema.json": "942e445736bd770db0721faa40e9c9dec61e6a4620550f2806e05a59f4ef0de2",
+        "schemas/raw-result/v1/raw-result.schema.json": "98fafe06ad81b7c8930313d120353b540eb0ff633203f48e1135c9dae154026d",
+        "schemas/raw-result/v2/raw-result.schema.json": "73262bdd28fe034516871d315e93271345a5ab2c252fc433b544b380de51a4e7",
+        "schemas/result/v1/test-result.schema.json": "8bcb480ef6d7e1fc8468683759539d79e09cae12c2866d6a81f9d35903588134",
+        "schemas/result/v2/test-result.schema.json": "329efa05dd181d4ff787a913795998e9e780050cd2174dfe0db04d917885e802",
+        "schemas/workload/v1/workload.schema.json": "593212bf904b613593014984cbe7ac62b17a3aed6d4663565a630f821bc0c454"
+      },
+      "version": "0.12.0"
+    },
+    "041273947703542f7fe22eab838c176df5517974": {
+      "members": {
+        "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "examples/performance-catalog/empty.json": "88ddd468009e239061897dbc39ac30525c45e9f8e0f163ec6b0fcdedecefb97c",
+        "examples/performance-catalog/pages.json": "f07a6d6f1b8a3ba02692acd615f636d0300fcf9fe7f434f4bb12f185bebd1e30",
+        "schemas/performance-catalog/v1/performance-catalog.schema.json": "becf420e60231bd0411352ba94b63c8450aa1abb0cf569c0e1634915eb19ce75"
+      },
+      "version": "0.24.0"
+    },
+    "143daa58774d8807f1745f8410ccab8b610170a0": {
+      "members": {
+        "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "api/native-worker/v2/examples/acquire.json": "e9ba2464e978e4383b43e90cfe305d646fc2c9005049d1dd20698f223cd80b10",
+        "api/native-worker/v2/examples/artifact.json": "e2018a96a6d6ded52ddbecbedf52ac02bc3be68009edb370f493a231bbbad394",
+        "api/native-worker/v2/examples/attempt-active.json": "39119c74316fc2d195872f8816ff3158ab40126608eadee829e4c18211f6a978",
+        "api/native-worker/v2/examples/attempt-inactive.json": "e21d1f3c0c1466774091a9370a696607053b5beaae84eb4999c2861d499f7902",
+        "api/native-worker/v2/examples/attempt-not-found-error.json": "9b2bd882e04d9f43cf64326ac3b47b713a37411be909451348eed046b5e53a02",
+        "api/native-worker/v2/examples/attempt-terminal.json": "6e6e6f3b9f7f867e6cd4358928df914e5c4c87b3049c0f7cf268df3733fadb35",
+        "api/native-worker/v2/examples/discover-attempt.json": "2da0820a26a1961c020abf3c8c92fc3a4037eee39b02271a1f7730cd8806dd93",
+        "api/native-worker/v2/examples/discovery-active.json": "8f442d3d5c4d651b16b7e02f5ba7ef443647a5f5523e49ae07b64696f0687e56",
+        "api/native-worker/v2/examples/discovery-available.json": "6baacce73428a9cb81c87ca86b37e71996d9328cac59e6c25440c0813964765d",
+        "api/native-worker/v2/examples/discovery-none.json": "82d2a9c233ded075b443e803e5a34580898d56779ed1824702a46fcaaec73f21",
+        "api/native-worker/v2/examples/discovery-terminal.json": "a3772aa77de68fdd5eee1b8bebbfde026b37ada6f80a2ef139eb2a2f37fb5ac1",
+        "api/native-worker/v2/examples/discovery-unreported.json": "12d3c541c25383ddd1d04bc8e72d8dd74879adc27df912096a386d596d473fd6",
+        "api/native-worker/v2/examples/inspect-attempt.json": "5db2fc7d70d7f289823046fd4d426d59e0aebaa532218b85d8dc6e218d687c84",
+        "api/native-worker/v2/examples/lease-gone-error.json": "1aa35eb67b05625693952d52c448fa8347e8d3b1fee258ccee56ba6a58727d9d",
+        "api/native-worker/v2/examples/lease.json": "f06403a7140e87035806fd871186a3e834587757c9db3a5fc3cc7253dfeaed98",
+        "api/native-worker/v2/examples/presence-status.json": "24bead9a7db89549dff75360ea721b9579007702b10a0f70407265fa9a9ba9fd",
+        "api/native-worker/v2/examples/presence.json": "b9083e74a91730567792018ba9771add11eb86f18a18ab59832552a2ef807d0d",
+        "api/native-worker/v2/examples/register-artifact.json": "ed83347f66f68b73ac2898a5c47a0659d452eb2d9bb3f0476965166e7d044ccc",
+        "api/native-worker/v2/examples/release.json": "061cd2b1ca205dfe5f1c4bdb16b57d51d28575424e9776ba1e7533e764dbbe2b",
+        "api/native-worker/v2/examples/renew.json": "5bd8ea934ecda99529d1cf53917299518374c8ffea4c1bb239123f60f9bd1899",
+        "api/native-worker/v2/examples/renewal.json": "f88577548b4de149ffc4b9a57c46988d42e05b0aa2e8910b3c605747c72c711b",
+        "api/native-worker/v2/examples/terminal-ack-duplicate.json": "c95eaca9f3a09988eeb3ca840a8e709374c87f1292fccdba6978d5a60adfb6cc",
+        "api/native-worker/v2/examples/terminal-ack.json": "a8370ee4c77b75250236cae2b11aac6eecb85a1ff8756f735823c84301c921ed",
+        "api/native-worker/v2/examples/terminal-completed.json": "6baa44ff01d2f522e862cc45e232aa0acc5f06d558e8fec1de4e60961af070ed",
+        "api/native-worker/v2/examples/terminal-failed.json": "33103e3b2274edc180fe3675f4673440f9d7bc14979c5f2670000f5e98efb3cd",
+        "api/native-worker/v2/examples/upload-grant.json": "dc2621e77497278af364b9ca857759f00d8e5f887556f0280a11502ea43df00b",
+        "api/native-worker/v2/examples/upload-request.json": "1b65ecd3bc2c7cdb5776cab9aeff45f755cee79834117416197a7eb4b28f3de1",
+        "api/native-worker/v2/http-cases.json": "74865154278bd68262f7fea1d98e88c1e93ac5aa2d9df96db7a7394018ced69a",
+        "api/native-worker/v2/openapi.json": "149a1de3186c7bbad2c3543f90b32faf27883f58caa0331aa9223a6fc8149167",
+        "api/native-worker/v2/rejections/active-attempt-missing-expiry.json": "d887c9a7c7b788c8073004dc517076d0da07e409523d7395cbf1744794aa1380",
+        "api/native-worker/v2/rejections/cancellation-missing-stop-deadline.json": "c26fe86a5a6f03555a3145e1a562f35488f3b8b402424b1b3bc8c14f601183b0",
+        "api/native-worker/v2/rejections/capacity-above-one.json": "f13c123997c16644e3bd313c28b1af419b008098895237d426a5cedf2ac93998",
+        "api/native-worker/v2/rejections/completed-without-registered-manifest.json": "3cba2789f5ac02b263da6331720b8b213cc64a09b1a2fbdad5b691a7ca671d7e",
+        "api/native-worker/v2/rejections/deadline-without-cancellation.json": "5c70cfb16f13f9035413da7706b940819b3c41a582b1c65dcee8c526cd7b6747",
+        "api/native-worker/v2/rejections/discovery-inactive.json": "d0e66516ce1c62c72d02e9c7e26ebb1ac9c0d758e5d63c325896db4226f89b47",
+        "api/native-worker/v2/rejections/discovery-leaks-capability.json": "d69495dd4f9f16d592a94ac90f10347dc966520092e2115ad3c5189d50653b24",
+        "api/native-worker/v2/rejections/discovery-lists-attempts.json": "f7503c9ad1d3fa6000c8f1b1fcf6af1339e004b6035f611f2d3353f174f2452a",
+        "api/native-worker/v2/rejections/discovery-missing-expiry.json": "24e738c7da035c907cf618a5017d854744392899f38a71582f54c6006c6033b5",
+        "api/native-worker/v2/rejections/discovery-none-with-attempt.json": "b3943231eb6317e3f48d28a107ea82f7466194f32de262119b2a2fb84a02f329",
+        "api/native-worker/v2/rejections/discovery-selects-run.json": "c9d82a4013ae1a0b36ce69c6a2f555a7f9cf74d8bca69d485069d00f4f5a04fe",
+        "api/native-worker/v2/rejections/discovery-selects-worker.json": "e1a0bc21d5b7a76401dc58808b7f16902f15777257fe9c3cd3d548c220ef3cf8",
+        "api/native-worker/v2/rejections/discovery-unreported-with-slot.json": "743be114cd589cf32fc742d28b8a25c021dcf3a6bfc7da94fc9a812f478a7484",
+        "api/native-worker/v2/rejections/failed-without-failure-classification.json": "82df1b7685dfade1c735005f540617297f8e47e93a263adeb259de231d68516e",
+        "api/native-worker/v2/rejections/inactive-attempt-leaks-capability.json": "5ae405cf9c3bde2d0f58c881afe25d64cb61c6870b5dd0ced864825d8324e92a",
+        "api/native-worker/v2/rejections/inspect-selects-worker.json": "2a0edbc4559f2fa8c31100e42580e0826d1e52114773fcab196c99d13f9b0d74",
+        "api/native-worker/v2/rejections/mutation-missing-revision-fence.json": "16f9982c0b306bb54fffbd87bb01bb8d872aa37c271eb54d00fdf2774bf8784f",
+        "api/native-worker/v2/rejections/recipe-invalid-browser-settings.json": "b259641f2e4571123500072fbd90024c9425067e492925d094ac97e1891d69c1",
+        "api/native-worker/v2/rejections/recipe-invalid-cache-reuse.json": "0163bff79013e71e44150844248db95332aecb12fd3066b4482cbd0053c0862a",
+        "api/native-worker/v2/rejections/recipe-missing-workload-sha256.json": "4686686f50047d7bc7f7e93e1a05be85531db6aa16e1146c3a4eafeeb71abaf1",
+        "api/native-worker/v2/rejections/recipe-unsupported-journey.json": "0fe3034472cfa0cc6248b6c058f208643e7491ea71a5ec030745a94c1d918ca7",
+        "api/native-worker/v2/rejections/request-selected-worker-identity.json": "a1afd3e19ba7a80f2a6d3d9467c747c4a0323c4a79415d9fb167663151fdc159",
+        "api/native-worker/v2/rejections/terminal-attempt-missing-kind.json": "47a102389a4774dcbbecc9ea4d6f779e0d70f07689ffb6a4074f317a2626036f",
+        "api/native-worker/v2/rejections/upload-grant-missing-signed-headers.json": "5ade3b03872cff119a9c3d337d7e197199efa18f9cf82c19bbc1dc3fc477677a",
+        "api/native-worker/v2/rejections/worker-chooses-artifact-uri.json": "1692b400a5ae96a155d555cece5b5b8fc99f58d71a41f47784f2b45eab38158c",
+        "api/native-worker/v2/rejections/worker-chooses-object-key.json": "663fb5ab96a67150c89a62c0ff7321085bce035774e25319a61016474f0aaba5",
+        "api/native-worker/v2/rejections/worker-declares-qualification.json": "105fcc0903e5e60b4fd5eaccf90dacf139a415a8aeb0826a100efa8bf9e786e9",
+        "api/run-management/v1/examples/artifacts.json": "707a03a22f235ee016f43c7760d7edb2fa07d679ac455e7036bd4606c8646417",
+        "api/run-management/v1/examples/baseline-create.json": "c96b064ad3146e26b6c3f131712279492a110ac7a8307016967b6b5e4249f621",
+        "api/run-management/v1/examples/baseline-transition.json": "a539e397ec34e23870052586362e9425b362049171761ec95596d257b9cedf3f",
+        "api/run-management/v1/examples/completed.json": "b6c1c644ac8f67bad4d5a74bf0f7558dc7cab7a0975db1cf8312930bb9e71b35",
+        "api/run-management/v1/examples/create.json": "7aabe0afac9987cc48426a0831d16fd12e61796bb64c85f9d203758408329bc3",
+        "api/run-management/v1/openapi.json": "78019af05eabbe942310396586875db06afb6ae7fa666871a7b23df0ac7310c7",
+        "api/run-management/v1/transitions.json": "b19eff90dacebe8b6e890dbea0e1b320f9bc683dda51ef82d00116d1355032a0",
+        "examples/analysis/slo-pass-regression-fail.json": "ddea48923c2eba4c9cf1ba90c067702946094c8cc99a04ebccf5640a49993029",
+        "examples/policy/browser.json": "566a9d13e277db0b492c4a7b55294a2e479c9d449768317c072f0f4dda988646",
+        "schemas/analysis/v1/analysis-result.schema.json": "04d281d709497c511d69fb145a8fe1d3a9f10e0ef914d50c9ee5da596548eb93",
+        "schemas/policy/v1/performance-policy.schema.json": "76935f55c9aef751e0b51b9c9bcb8210e297eea35e022b35d96d258d9a7ce328"
+      },
+      "version": "0.21.0"
+    },
+    "3b86afa18b468d831c7c2c176618180db18b2764": {
+      "members": {
+        "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "examples/kubernetes-benchmark-evidence/accepted-preflight.json": "e16d57c4c114a8b39f88afe917e7834371b4b8c6d6b96b7575f2b85ac4fb3c65",
+        "schemas/artifact/v1/artifact-reference.schema.json": "d83a170967087017307a7efd33707d7e782c390ec6d6a031213d229a6e98ebc6",
+        "schemas/environment/v1/environment.schema.json": "02cc142771b4b20df26cbfb45e98d90269aaecf6acc5b10acfdaa543c899cf9f",
+        "schemas/kubernetes-benchmark-evidence/v1/kubernetes-benchmark-evidence.schema.json": "aae5daa05c2be154c67227bddde99da3f4d9ad9c5b406c10395140d4d65737a1",
+        "schemas/raw-result/v2/raw-result.schema.json": "1393795e9821b4fde8454ad6c5b593a700f0f1ec6ec028108cc67b60092d0d84"
+      },
+      "version": "0.22.0"
+    },
+    "55d28f4f432825c1dc504ca0f03ee308e66fb62c": {
+      "members": {
+        "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "api/native-worker/v2/examples/acquire.json": "e9ba2464e978e4383b43e90cfe305d646fc2c9005049d1dd20698f223cd80b10",
+        "api/native-worker/v2/examples/artifact.json": "e2018a96a6d6ded52ddbecbedf52ac02bc3be68009edb370f493a231bbbad394",
+        "api/native-worker/v2/examples/attempt-active.json": "39119c74316fc2d195872f8816ff3158ab40126608eadee829e4c18211f6a978",
+        "api/native-worker/v2/examples/attempt-inactive.json": "e21d1f3c0c1466774091a9370a696607053b5beaae84eb4999c2861d499f7902",
+        "api/native-worker/v2/examples/attempt-not-found-error.json": "9b2bd882e04d9f43cf64326ac3b47b713a37411be909451348eed046b5e53a02",
+        "api/native-worker/v2/examples/attempt-terminal.json": "6e6e6f3b9f7f867e6cd4358928df914e5c4c87b3049c0f7cf268df3733fadb35",
+        "api/native-worker/v2/examples/discover-attempt.json": "2da0820a26a1961c020abf3c8c92fc3a4037eee39b02271a1f7730cd8806dd93",
+        "api/native-worker/v2/examples/discovery-active.json": "8f442d3d5c4d651b16b7e02f5ba7ef443647a5f5523e49ae07b64696f0687e56",
+        "api/native-worker/v2/examples/discovery-available.json": "6baacce73428a9cb81c87ca86b37e71996d9328cac59e6c25440c0813964765d",
+        "api/native-worker/v2/examples/discovery-none.json": "82d2a9c233ded075b443e803e5a34580898d56779ed1824702a46fcaaec73f21",
+        "api/native-worker/v2/examples/discovery-terminal.json": "a3772aa77de68fdd5eee1b8bebbfde026b37ada6f80a2ef139eb2a2f37fb5ac1",
+        "api/native-worker/v2/examples/discovery-unreported.json": "12d3c541c25383ddd1d04bc8e72d8dd74879adc27df912096a386d596d473fd6",
+        "api/native-worker/v2/examples/inspect-attempt.json": "5db2fc7d70d7f289823046fd4d426d59e0aebaa532218b85d8dc6e218d687c84",
+        "api/native-worker/v2/examples/lease-gone-error.json": "1aa35eb67b05625693952d52c448fa8347e8d3b1fee258ccee56ba6a58727d9d",
+        "api/native-worker/v2/examples/lease.json": "0bc68a6e6413a58df349fedebd037ccfe29ba23c2216b64a93953d353d1388ad",
+        "api/native-worker/v2/examples/presence-status.json": "ecbb5835f1a04d942d573672e62761a112c051614c0403adc68d4250d0ec091f",
+        "api/native-worker/v2/examples/presence.json": "2e80a9aaf270c07b2b6ed51ae1bb909a07f8aa29981fdedff8364dd27ba9df15",
+        "api/native-worker/v2/examples/register-artifact.json": "ed83347f66f68b73ac2898a5c47a0659d452eb2d9bb3f0476965166e7d044ccc",
+        "api/native-worker/v2/examples/release.json": "061cd2b1ca205dfe5f1c4bdb16b57d51d28575424e9776ba1e7533e764dbbe2b",
+        "api/native-worker/v2/examples/renew.json": "5bd8ea934ecda99529d1cf53917299518374c8ffea4c1bb239123f60f9bd1899",
+        "api/native-worker/v2/examples/renewal.json": "f88577548b4de149ffc4b9a57c46988d42e05b0aa2e8910b3c605747c72c711b",
+        "api/native-worker/v2/examples/terminal-ack-duplicate.json": "c95eaca9f3a09988eeb3ca840a8e709374c87f1292fccdba6978d5a60adfb6cc",
+        "api/native-worker/v2/examples/terminal-ack.json": "a8370ee4c77b75250236cae2b11aac6eecb85a1ff8756f735823c84301c921ed",
+        "api/native-worker/v2/examples/terminal-completed.json": "6baa44ff01d2f522e862cc45e232aa0acc5f06d558e8fec1de4e60961af070ed",
+        "api/native-worker/v2/examples/terminal-failed.json": "33103e3b2274edc180fe3675f4673440f9d7bc14979c5f2670000f5e98efb3cd",
+        "api/native-worker/v2/examples/upload-grant.json": "dc2621e77497278af364b9ca857759f00d8e5f887556f0280a11502ea43df00b",
+        "api/native-worker/v2/examples/upload-request.json": "1b65ecd3bc2c7cdb5776cab9aeff45f755cee79834117416197a7eb4b28f3de1",
+        "api/native-worker/v2/http-cases.json": "74865154278bd68262f7fea1d98e88c1e93ac5aa2d9df96db7a7394018ced69a",
+        "api/native-worker/v2/openapi.json": "a7fd9c27b145f118d0b1058b6e10b3581609b4dce8916f31a6e030fb08d56c45",
+        "api/native-worker/v2/rejections/active-attempt-missing-expiry.json": "d887c9a7c7b788c8073004dc517076d0da07e409523d7395cbf1744794aa1380",
+        "api/native-worker/v2/rejections/cancellation-missing-stop-deadline.json": "c26fe86a5a6f03555a3145e1a562f35488f3b8b402424b1b3bc8c14f601183b0",
+        "api/native-worker/v2/rejections/capacity-above-one.json": "90085a2e3d527b68b4734aa2ca517aa050faa8bf711cfb8606dc2154d0138cc2",
+        "api/native-worker/v2/rejections/completed-without-registered-manifest.json": "3cba2789f5ac02b263da6331720b8b213cc64a09b1a2fbdad5b691a7ca671d7e",
+        "api/native-worker/v2/rejections/deadline-without-cancellation.json": "5c70cfb16f13f9035413da7706b940819b3c41a582b1c65dcee8c526cd7b6747",
+        "api/native-worker/v2/rejections/discovery-inactive.json": "d0e66516ce1c62c72d02e9c7e26ebb1ac9c0d758e5d63c325896db4226f89b47",
+        "api/native-worker/v2/rejections/discovery-leaks-capability.json": "d69495dd4f9f16d592a94ac90f10347dc966520092e2115ad3c5189d50653b24",
+        "api/native-worker/v2/rejections/discovery-lists-attempts.json": "f7503c9ad1d3fa6000c8f1b1fcf6af1339e004b6035f611f2d3353f174f2452a",
+        "api/native-worker/v2/rejections/discovery-missing-expiry.json": "24e738c7da035c907cf618a5017d854744392899f38a71582f54c6006c6033b5",
+        "api/native-worker/v2/rejections/discovery-none-with-attempt.json": "b3943231eb6317e3f48d28a107ea82f7466194f32de262119b2a2fb84a02f329",
+        "api/native-worker/v2/rejections/discovery-selects-run.json": "c9d82a4013ae1a0b36ce69c6a2f555a7f9cf74d8bca69d485069d00f4f5a04fe",
+        "api/native-worker/v2/rejections/discovery-selects-worker.json": "e1a0bc21d5b7a76401dc58808b7f16902f15777257fe9c3cd3d548c220ef3cf8",
+        "api/native-worker/v2/rejections/discovery-unreported-with-slot.json": "743be114cd589cf32fc742d28b8a25c021dcf3a6bfc7da94fc9a812f478a7484",
+        "api/native-worker/v2/rejections/failed-without-failure-classification.json": "82df1b7685dfade1c735005f540617297f8e47e93a263adeb259de231d68516e",
+        "api/native-worker/v2/rejections/inactive-attempt-leaks-capability.json": "5ae405cf9c3bde2d0f58c881afe25d64cb61c6870b5dd0ced864825d8324e92a",
+        "api/native-worker/v2/rejections/inspect-selects-worker.json": "2a0edbc4559f2fa8c31100e42580e0826d1e52114773fcab196c99d13f9b0d74",
+        "api/native-worker/v2/rejections/mutation-missing-revision-fence.json": "16f9982c0b306bb54fffbd87bb01bb8d872aa37c271eb54d00fdf2774bf8784f",
+        "api/native-worker/v2/rejections/recipe-invalid-browser-settings.json": "f1870a35e66d2128215738fcc88b64c0cd3ec85fd58a061c4faeb0e39cb59315",
+        "api/native-worker/v2/rejections/recipe-invalid-cache-reuse.json": "60133ec09cce80063d678709ec4ba0967ea94a41c1104e78401e7675e350ffc1",
+        "api/native-worker/v2/rejections/recipe-missing-workload-sha256.json": "e4413b202127dbcc885dc9e13fd8be60d3158326d4925617a5d50cde72369e36",
+        "api/native-worker/v2/rejections/recipe-unsupported-journey.json": "3ea0ec820385416ff407b228e911a90f5f6fa8aab0b65bba7f0e60940a93ab26",
+        "api/native-worker/v2/rejections/request-selected-worker-identity.json": "42ba9d07850b46896792060f550cff140a5fb87082b22b704adc23fc71b54db7",
+        "api/native-worker/v2/rejections/terminal-attempt-missing-kind.json": "47a102389a4774dcbbecc9ea4d6f779e0d70f07689ffb6a4074f317a2626036f",
+        "api/native-worker/v2/rejections/upload-grant-missing-signed-headers.json": "5ade3b03872cff119a9c3d337d7e197199efa18f9cf82c19bbc1dc3fc477677a",
+        "api/native-worker/v2/rejections/worker-chooses-artifact-uri.json": "1692b400a5ae96a155d555cece5b5b8fc99f58d71a41f47784f2b45eab38158c",
+        "api/native-worker/v2/rejections/worker-chooses-object-key.json": "663fb5ab96a67150c89a62c0ff7321085bce035774e25319a61016474f0aaba5",
+        "api/native-worker/v2/rejections/worker-declares-qualification.json": "e4e48a06328a84b08882ad75583e8dd38506467c1497a600a19120f6a3e9ca0a"
+      },
+      "version": "0.27.0"
+    },
+    "5bbeceec61f0ddd8922f27ceb6d4968cbdfef3ac": {
+      "members": {
+        "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "api/performance-integration/v1/openapi.json": "0bdafe32dec51a51b42a512d5a3947356aa26a5c958768ec8cab68327d466556",
+        "examples/performance-integration/cancelled.json": "ecfb16adaac162f1670fdf4a457232b5bbc11d18884c85c4ee9791e59e0b0ab3",
+        "examples/performance-integration/completed.json": "d997ae6d99e194e1fbcbe58b4844903929e6c8af5ca19483cc116c42b2c59c94",
+        "examples/performance-integration/rejected.json": "54894e1efe999ccb38e8a1e620cd66a36eb67f9bbc19474ea6dca970f31bbec2",
+        "schemas/performance-integration/v1/performance-integration.schema.json": "75eb03ae3f14c39291fe76285dcced92593157bd1c75f3f337a6ef2f66526960"
+      },
+      "version": "0.26.0"
+    },
+    "8363ec6d54721a4750761df37c80465e9f76be4d": {
+      "members": {
+        "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "schemas/artifact/v1/artifact-reference.schema.json": "b1328d1ead8ca62f118bb00bcdae738ad434f3c3e18f1a579f5e28ebf924dcf2",
+        "schemas/catalogue/v1/test-catalogue.schema.json": "b0897a5b7b43d981d4d12bda1992b046530b07a77910ee495a4be087eacad722",
+        "schemas/raw-result/v1/raw-result.schema.json": "98fafe06ad81b7c8930313d120353b540eb0ff633203f48e1135c9dae154026d",
+        "schemas/result/v1/test-result.schema.json": "8bcb480ef6d7e1fc8468683759539d79e09cae12c2866d6a81f9d35903588134",
+        "schemas/workload/v1/workload.schema.json": "593212bf904b613593014984cbe7ac62b17a3aed6d4663565a630f821bc0c454"
+      },
+      "version": "0.4.0"
+    },
+    "badd9206a88a48042dda54a25c6e362088d23858": {
+      "members": {
+        "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "schemas/analysis/v1/analysis-result.schema.json": "d2395bfb7f2768929893d7265497a3758b8686ffc1cae1013e54abff58b38567",
+        "schemas/artifact/v1/artifact-reference.schema.json": "b1328d1ead8ca62f118bb00bcdae738ad434f3c3e18f1a579f5e28ebf924dcf2",
+        "schemas/catalogue/v1/test-catalogue.schema.json": "b0897a5b7b43d981d4d12bda1992b046530b07a77910ee495a4be087eacad722",
+        "schemas/catalogue/v2/test-catalogue.schema.json": "7ac2ad4bc3f614b81c27646e09c630aba5a5c18c99c7341f1caa30b406c8dc65",
+        "schemas/normalized-result/v1/normalized-result.schema.json": "0f6fd53007cbc9391cc73b875925e6eb1ecbad67a2d22fb808fdf7e532e027a3",
+        "schemas/playwright-measurements/v2/playwright-measurements.schema.json": "ba2e674060413ec7944a2a905440ab0c4388e9ff2713c2b349b5a7c334036758",
+        "schemas/policy/v1/performance-policy.schema.json": "942e445736bd770db0721faa40e9c9dec61e6a4620550f2806e05a59f4ef0de2",
+        "schemas/raw-result/v1/raw-result.schema.json": "98fafe06ad81b7c8930313d120353b540eb0ff633203f48e1135c9dae154026d",
+        "schemas/raw-result/v2/raw-result.schema.json": "73262bdd28fe034516871d315e93271345a5ab2c252fc433b544b380de51a4e7",
+        "schemas/result/v1/test-result.schema.json": "8bcb480ef6d7e1fc8468683759539d79e09cae12c2866d6a81f9d35903588134",
+        "schemas/result/v2/test-result.schema.json": "329efa05dd181d4ff787a913795998e9e780050cd2174dfe0db04d917885e802",
+        "schemas/workload/v1/workload.schema.json": "1ccc136ab4ea99324eb7c464618d1c80864ffc354866e085587b1cb6e3b1381d"
+      },
+      "version": "0.13.0"
+    },
+    "cd2442f433ce93d9a886c14ad6ff8aa8488a623b": {
+      "members": {
+        "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "examples/performance-analysis/published.json": "ffe6243e0d697a486f3c72631d10505830b3e9def571f7814665b5e5244c739c",
+        "schemas/performance-analysis/v1/performance-analysis.schema.json": "cb7cbb434c8ba1b74306fe2198c8fdb4a869fccd70eaa91405d945c4d4a363cd"
+      },
+      "version": "0.25.0"
+    }
+  },
+  "schemaVersion": 1
+}
