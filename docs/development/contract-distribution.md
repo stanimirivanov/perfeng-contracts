@@ -78,3 +78,36 @@ toolchain and selection to reproduce the archive. Missing Git objects fail
 locally. The caller supplies the approved member inventory and reference
 closure. Packaging neither generates a promotion record nor publishes an
 artifact.
+
+## Exercise local publication
+
+Use a disposable, trusted directory on a filesystem that supports hard links.
+Prepare an archive from the approved selection, then supply a candidate
+manifest containing the same source and member inventory, a release ID and
+the archive's SHA-256 digest.
+
+```sh
+store=$(mktemp -d)
+uv run --locked --offline python -m scripts.contracts_publish --root "$store" stage \
+  --candidate candidate.json --archive /tmp/perfeng-tracer.tar.gz
+uv run --locked --offline python -m scripts.contracts_publish --root "$store" promote \
+  --release-id tracer --admission admission.json
+```
+
+The release ID in the command must match the candidate. The admission document
+must include `candidateSha256` computed from the exact candidate manifest bytes.
+The local publisher checks that binding and the stored archive hash. Admission
+policy evaluation and publisher authentication are separate steps.
+
+Archives and admission documents are stored under `objects/<sha256>`. The
+candidate marker lives at `releases/<releaseId>/candidate.json`. The final
+`promoted.json` marker binds the same archive and inventory plus the admission
+document's digest. Write each marker only after its referenced objects are
+available. Identical retries are safe. A competing attempt with different bytes
+cannot replace a marker. An interrupted attempt can leave unreferenced objects
+or temporary files, but their presence never indicates promotion.
+
+This fixture exercises process interruption and atomic no-clobber writes.
+Power-loss recovery and hosted publication are outside its scope. A local
+marker alone grants no adoption authority. Run `make publication-check` for the
+offline publication tests.
