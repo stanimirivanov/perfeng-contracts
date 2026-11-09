@@ -54,8 +54,7 @@ jobs:
           uv sync --locked
           make distribution-check publication-check
           if [[ "$RELEASE_ID" == contract-history-* ]]; then
-            # The pinned k6 0.4.0 source is outside protected main history.
-            git fetch --no-tags origin 8363ec6d54721a4750761df37c80465e9f76be4d
+            uv run --locked --offline python -m scripts.contracts_hydrate
             make distribution-admission-check
             uv run --locked --offline python -m scripts.contracts_publish_history \
               --release-id "$RELEASE_ID" --output release-inputs

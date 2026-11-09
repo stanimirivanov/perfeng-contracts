@@ -245,8 +245,8 @@ Dispatch against the exact reviewed protected `main` commit and use the
 existing attestation and publication reviewer gates. The default
 `distribution=tracer` continues to publish the original one-schema release.
 
-History preparation acquires the pinned k6 0.4.0 Git object before offline
-packing. It builds each archive from the reviewed source, requires historical
+History preparation fetches any missing exact Git commits from the reviewed
+inventory before offline packing. It builds each archive from the reviewed source, requires historical
 admission for the exact candidate and emits the batch index only after all
 profiles pass. A failed profile blocks the batch.
 
