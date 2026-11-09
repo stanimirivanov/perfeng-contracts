@@ -1,0 +1,7 @@
+{
+  "tag": "v0.4.0-mcp-phase7",
+  "commit": "1e0f16ddfb3c9ce191ec320b293c4e3874886b46",
+  "platform": "linux-amd64",
+  "archiveSha256": "835528d3b4cf8fa0d8ffbbfc293bac4fd37ad47112ff3b2b817e6b75dd71f5ef",
+  "binarySha256": "1be477a143990a686a33d82a36ba325d024da8e8be890599767d8c29cbf167b5"
+}

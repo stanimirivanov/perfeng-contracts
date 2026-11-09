@@ -10,6 +10,8 @@ help:
 	@echo "  make distribution-check  Verify deterministic contract packaging"
 	@echo "  make distribution-admission-check  Verify candidate admission boundaries"
 	@echo "  make distribution-history-check  Verify local historical profiles and reference closure"
+	@echo "  make registry-qualification-check  Test registry admission rules offline"
+	@echo "  make registry-admission  Exercise the pinned candidate in a private network namespace"
 	@echo "  make publication-check   Verify local immutable publication"
 	@echo "  make fmt        Format Python and TypeScript sources"
 	@echo "  make fmt-check  Verify Python and TypeScript formatting"
@@ -99,3 +101,11 @@ distribution-history-check:
 .PHONY: distribution-admission-check
 distribution-admission-check:
 	$(UV_RUN) python -m unittest discover -s tests -p test_distribution_admission.py -v
+
+.PHONY: registry-qualification-check registry-admission
+registry-qualification-check:
+	$(UV_RUN) python -m unittest discover -s tests -p test_registry_qualification.py -v
+
+registry-admission:
+	@unshare --user --map-root-user --net sh -c 'ip link set lo up && exec "$$@"' sh \
+		$(UV_RUN) python -m scripts.registry_qualification --binary "$(REGISTRY_BINARY)"
