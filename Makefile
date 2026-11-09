@@ -8,6 +8,7 @@ help:
 	@echo "  make doctor     Report the effective local toolchain"
 	@echo "  make generate-contracts  Generate JSON Schema from Effect Schema"
 	@echo "  make distribution-check  Verify deterministic contract packaging"
+	@echo "  make distribution-history-check  Verify local historical profiles and reference closure"
 	@echo "  make publication-check   Verify local immutable publication"
 	@echo "  make fmt        Format Python and TypeScript sources"
 	@echo "  make fmt-check  Verify Python and TypeScript formatting"
@@ -89,3 +90,7 @@ distribution-check:
 .PHONY: publication-check
 publication-check:
 	$(UV_RUN) python -m unittest discover -s tests -p test_contract_publish.py -v
+
+.PHONY: distribution-history-check
+distribution-history-check:
+	$(UV_RUN) python -m scripts.contracts_history

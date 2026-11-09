@@ -145,3 +145,42 @@ job gates and interruption before publication. The separately authorized
 hosted run must still demonstrate retrieval and offline verification against
 the reviewed publisher identity. Disable the repository variable to stop
 future publication.
+
+## Historical contract inventory
+
+The [supported selections inventory](../../distribution/supported-selections.json)
+records observed consumer lock revisions and SHA-256 values. `current` means the
+observed checked-in selection at the recorded consumer commit. An earlier
+`historicalCandidate` means a different checked-in selection was found. These
+observations leave deployment, rollback readiness and retained-evidence replay
+coverage unknown. Keep the selected historical bytes and verify those states
+before any retirement or rollback claim.
+
+Each profile groups the union of observed files from one exact provider
+revision. Paths in a consumer selection map source members to destinations
+relative to that consumer's snapshot directory. A null destination marks a
+verification-only input, such as Playwright's reviewed OpenAPI or the environment
+tracer example. The licence travels with each profile. The Playwright raw-result
+producer identity remains separate from its Native API selection.
+
+After preparing the required Git objects, run:
+
+```sh
+make distribution-history-check
+uv run --locked --offline python -m scripts.contracts_history \
+  --revision 3b86afa18b468d831c7c2c176618180db18b2764 --output /tmp/history.tar.gz
+```
+
+The earlier k6 selection at `8363ec6d54721a4750761df37c80465e9f76be4d` is
+not an ancestor of the provider main revision used for this inventory. The
+provider served that exact commit when explicitly requested. Prepare it
+separately from the default checkout and retain its bytes with the closure.
+
+The check verifies Git digests and resolves JSON references using only members
+in each archive. A missing object, mismatched member or unresolved reference
+fails the check. Historical schemas in 0.4.0, 0.12.0 and 0.13.0 include
+absolute `perfeng.dev` identifiers that the provider resolves from local
+members. The current consumer inspector's relative-reference profile requires
+separate qualification for those archives. Packaging establishes provider
+byte and reference closure. Consumer acceptance and hosted publication need
+their own receipts.
