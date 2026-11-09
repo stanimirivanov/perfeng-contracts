@@ -111,3 +111,37 @@ This fixture exercises process interruption and atomic no-clobber writes.
 Power-loss recovery and hosted publication are outside its scope. A local
 marker alone grants no adoption authority. Run `make publication-check` for the
 offline publication tests.
+
+## Protected tracer workflow
+
+[Publish protected contract tracer](../../.github/workflows/contracts-publish.yml)
+is an opt-in manual workflow for the fixed historical selection. An administrator
+must protect `main`, create both `contract-tracer-attestation` and
+`contract-tracer-publication` environments, restrict their deployment branches
+to `main`, and require reviewer approval with self-review disabled. Configure
+those controls before setting the repository variable
+`PERFENG_TRACER_PUBLICATION_ENABLED` to `true`. Environment names alone do not
+establish protection. The repository and plan must support GitHub artifact
+attestations. Enable GitHub immutable releases if the repository relies on
+GitHub to prevent post-publication edits by other actors.
+
+After separate authorization for the hosted exercise, dispatch from `main`
+with `expected_sha` set to the exact reviewed workflow commit. The prepare job
+has read access. The attestation job can sign the final manifest and preserve
+its bundle. The publication job reserves a unique `contract-tracer-<run-id>`
+tag, creates a draft with all five assets, then publishes the complete draft.
+It does not overwrite an existing tag or reuse an earlier attempt. A failed
+run may leave a tag or a draft. Inspect it separately, then use a new authorized
+dispatch rather than rerunning the same workflow run.
+
+For the downstream SR-4 policy, independently review the exact manifest
+digest, the workflow's main commit as both source and signer digest, the
+source ref `refs/heads/main`, and signer workflow
+`stanimirivanov/perfeng-contracts/.github/workflows/contracts-publish.yml`.
+The manifest's source revision identifies historical contract bytes and
+differs from the workflow commit. Retain the manifest, archive, candidate,
+admission document and Sigstore bundle. The local policy tests exercise the
+job gates and interruption before publication. The separately authorized
+hosted run must still demonstrate retrieval and offline verification against
+the reviewed publisher identity. Disable the repository variable to stop
+future publication.
