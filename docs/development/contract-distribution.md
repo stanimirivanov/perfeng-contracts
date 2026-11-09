@@ -236,3 +236,28 @@ provides no publication or consumer adoption authority. Integration with
 historical hosted publication belongs to SR-12. An explicit changed-contract
 policy and actual consumer issuer workflows are required before live
 changed-contract promotion.
+
+## Publish the historical batch
+
+The protected **Publish protected contract tracer** workflow accepts
+`distribution=history` to package every reviewed historical profile.
+Dispatch against the exact reviewed protected `main` commit and use the
+existing attestation and publication reviewer gates. The default
+`distribution=tracer` continues to publish the original one-schema release.
+
+History preparation acquires the pinned k6 0.4.0 Git object before offline
+packing. It builds each archive from the reviewed source, requires historical
+admission for the exact candidate and emits the batch index only after all
+profiles pass. A failed profile blocks the batch.
+
+The `contract-history-<run-id>` release contains a signed
+`catalog.manifest.json`, one promoted manifest and its candidate, admission
+and archive per revision, plus the detached attestation bundle. The index
+maps each source revision to the SHA-256 of its promoted manifest. Verify the
+index and selected manifest against the expected publisher, then check the
+linked archive and admission digests. Publication makes the complete draft
+visible only after all expected files are available.
+
+A historical admission receipt establishes byte preservation. Deployment,
+rollback support and consumer compatibility still require their respective
+evidence. Keep earlier immutable releases for recovery.
