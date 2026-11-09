@@ -93,6 +93,8 @@ distribution-check:
 .PHONY: publication-check
 publication-check:
 	$(UV_RUN) python -m unittest discover -s tests -p test_contract_publish.py -v
+	$(UV_RUN) python -m unittest discover -s tests -p test_contract_publish_workflow.py -v
+	$(UV_RUN) python -m unittest discover -s tests -p test_historical_publication.py -v
 
 .PHONY: distribution-history-check
 distribution-history-check:

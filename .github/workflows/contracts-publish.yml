@@ -3,6 +3,11 @@ name: Publish protected contract tracer
 on:
   workflow_dispatch:
     inputs:
+      distribution:
+        description: Reviewed distribution to publish
+        type: choice
+        default: tracer
+        options: [tracer, history]
       expected_sha:
         description: Exact reviewed commit at the head of protected main
         required: true
@@ -15,7 +20,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  RELEASE_ID: contract-tracer-${{ github.run_id }}
+  RELEASE_ID: ${{ format('contract-{0}-{1}', inputs.distribution || 'tracer', github.run_id) }}
 
 jobs:
   prepare:
@@ -42,14 +47,22 @@ jobs:
         with:
           version: '0.12.5'
           enable-cache: false
-      - name: Verify and assemble the fixed tracer
+      - name: Verify and assemble the selected distribution
         shell: bash
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           uv sync --locked
           make distribution-check publication-check
-          uv run --locked --offline python -m scripts.contracts_tracer \
-            --release-id "$RELEASE_ID" --output release-inputs
+          if [[ "$RELEASE_ID" == contract-history-* ]]; then
+            # The pinned k6 0.4.0 source is outside protected main history.
+            git fetch --no-tags origin 8363ec6d54721a4750761df37c80465e9f76be4d
+            make distribution-admission-check
+            uv run --locked --offline python -m scripts.contracts_publish_history \
+              --release-id "$RELEASE_ID" --output release-inputs
+          else
+            uv run --locked --offline python -m scripts.contracts_tracer \
+              --release-id "$RELEASE_ID" --output release-inputs
+          fi
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: tracer-inputs
@@ -79,7 +92,7 @@ jobs:
       - uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
         id: provenance
         with:
-          subject-path: release-inputs/manifest.json
+          subject-path: release-inputs/*manifest.json
       - name: Preserve the offline provenance bundle
         shell: bash
         env:
@@ -126,21 +139,37 @@ jobs:
           tar -xOzf "$archive" gh_2.103.3_linux_amd64/bin/gh > "$RUNNER_TEMP/tracer-gh"
           echo "b768184570b12536be4ac1528893f6340d1c6a7b40b56ad45bca9cd0e87ad34d  $RUNNER_TEMP/tracer-gh" | sha256sum --check
           chmod 700 "$RUNNER_TEMP/tracer-gh"
-      - name: Publish the complete tracer release
+      - name: Publish the complete distribution release
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh="$RUNNER_TEMP/tracer-gh"
-          for asset in candidate.json admission.json manifest.json manifest.sigstore.jsonl tracer.tar.gz; do
-            test -s "release-inputs/$asset"
+          assets=(release-inputs/manifest.sigstore.jsonl)
+          if [[ "$RELEASE_ID" == contract-history-* ]]; then
+            catalog=release-inputs/catalog.manifest.json
+            assets+=("$catalog")
+            revisions=$(jq -er --arg release "$RELEASE_ID" '
+              select(.releaseId == $release and (.profiles | length > 0))
+              | .profiles | keys[] | select(test("^[a-f0-9]{40}$"))
+            ' "$catalog")
+            while IFS= read -r revision; do
+              checksum=$(jq -er --arg revision "$revision" '.profiles[$revision]' "$catalog")
+              printf '%s  %s\n' "$checksum" "release-inputs/$revision.manifest.json" | sha256sum --check
+              for suffix in candidate.json admission.json manifest.json tar.gz; do
+                assets+=("release-inputs/$revision.$suffix")
+              done
+            done <<<"$revisions"
+            test "${#assets[@]}" -eq "$((2 + 4 * $(jq -er '.profiles | length' "$catalog")))"
+          else
+            assets+=(release-inputs/{candidate.json,admission.json,manifest.json,tracer.tar.gz})
+          fi
+          for asset in "${assets[@]}"; do
+            test -s "$asset"
           done
           "$gh" api --method POST "repos/$GITHUB_REPOSITORY/git/refs" \
             -f "ref=refs/tags/$RELEASE_ID" -f "sha=$GITHUB_SHA" > /dev/null
           "$gh" release create "$RELEASE_ID" --repo "$GITHUB_REPOSITORY" \
-            --verify-tag --draft --latest=false --title "Contract tracer $GITHUB_RUN_ID" \
-            --notes "Protected tracer from $GITHUB_SHA." \
-            release-inputs/candidate.json release-inputs/admission.json \
-            release-inputs/manifest.json release-inputs/manifest.sigstore.jsonl \
-            release-inputs/tracer.tar.gz
+            --verify-tag --draft --latest=false --title "$RELEASE_ID" \
+            --notes "Protected contract distribution from $GITHUB_SHA." "${assets[@]}"
           "$gh" release edit "$RELEASE_ID" --repo "$GITHUB_REPOSITORY" --draft=false --latest=false
