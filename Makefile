@@ -88,6 +88,7 @@ api-source-check:
 
 .PHONY: distribution-check
 distribution-check:
+	$(UV_RUN) python -m unittest discover -s tests -p test_distribution_retirement.py -v
 	$(UV_RUN) python -m unittest discover -s tests -p test_contract_pack.py -v
 
 .PHONY: publication-check
