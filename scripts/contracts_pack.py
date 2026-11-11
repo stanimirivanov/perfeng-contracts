@@ -6,6 +6,7 @@ import hashlib
 import io
 import json
 import os
+import re
 import subprocess
 import tarfile
 from pathlib import Path
@@ -84,7 +85,21 @@ def pack(root: Path, selection: dict[str, Any]) -> bytes:
     if not isinstance(version, dict) or version.get("version") != selection["source"]["version"]:
         raise ValueError("Selected version differs from pinned contracts.json")
 
-    members = selection["members"]
+    return pack_members(root, revision, selection["members"])
+
+
+def pack_members(root: Path, revision: str, members: dict[str, str]) -> bytes:
+    """Write one canonical archive from verified regular Git blobs."""
+    if (
+        not re.fullmatch(r"[a-f0-9]{40}", revision)
+        or git(root, "cat-file", "-t", revision) != b"commit\n"
+    ):
+        raise ValueError("Git source revision must identify a commit")
+    for name, checksum in members.items():
+        if not re.fullmatch(
+            r"[A-Za-z0-9_][A-Za-z0-9_.{}-]*(/[A-Za-z0-9_][A-Za-z0-9_.{}-]*)*", name
+        ) or not re.fullmatch(r"[a-f0-9]{64}", checksum):
+            raise ValueError("Invalid archive member path or digest")
     if len(members) > MAX_MEMBERS:
         raise ValueError("Selection exceeds member limit")
     paths = {path.lower() for path in members}

@@ -6,9 +6,11 @@ import re
 import shutil
 from pathlib import Path
 
-from scripts.contracts_pack import blob, git, pack, parse_document
+from jsonschema import Draft202012Validator, ValidationError
+
+from scripts.contracts_pack import blob, git, pack_members, parse_document
 from scripts.contracts_publish import digest
-from scripts.validate import ROOT
+from scripts.validate import ROOT, read_json
 
 BUNDLE_PATHS = (
     "contracts.json",
@@ -58,13 +60,17 @@ def prepare(root: Path, revision: str, output: Path, release_id: str) -> None:
         },
         "members": members,
     }
-    archive = pack(root, selection)
+    archive = pack_members(root, revision, members)
     candidate = {
         **selection,
         "kind": "candidate",
+        "profile": "pr-bundle/v1",
         "releaseId": release_id,
         "archiveSha256": digest(archive),
     }
+    Draft202012Validator(read_json(ROOT / "distribution/pr-candidate.schema.json")).validate(
+        candidate
+    )
     output.parent.mkdir(parents=True, exist_ok=True)
     output.mkdir()
     try:
@@ -87,7 +93,7 @@ def main() -> None:
     args = parser.parse_args()
     try:
         prepare(ROOT, args.revision, args.output, args.release_id)
-    except (OSError, ValueError, KeyError) as error:
+    except (OSError, ValueError, KeyError, ValidationError) as error:
         parser.exit(1, f"contracts-candidate: {error}\n")
 
 

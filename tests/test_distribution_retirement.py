@@ -12,7 +12,7 @@ import yaml
 from jsonschema import Draft202012Validator
 
 from scripts.contracts_candidate import prepare
-from scripts.contracts_pack import pack
+from scripts.contracts_pack import pack, pack_members
 from scripts.contracts_publish import digest
 from scripts.validate import ROOT, read_json
 
@@ -28,6 +28,7 @@ class DistributionRetirementTests(unittest.TestCase):
             "contracts.json": b'{"version":"0.27.0"}\n',
             "LICENSE": b"fixture licence\n",
             "README.md": b"fixture readme\n",
+            "api/source/paths/runs_{runId}.json": b"{}\n",
             **{
                 f"{directory}/fixture.json": b'{"fixture":true}\n'
                 for directory in ("schemas", "examples", "api", "docs", "tests/fixtures")
@@ -65,20 +66,32 @@ class DistributionRetirementTests(unittest.TestCase):
             sorted(path.name for path in first.iterdir()), ["candidate.json", "candidate.tar.gz"]
         )
         manifest = read_json(first / "candidate.json")
-        Draft202012Validator(read_json(ROOT / "distribution/manifest.schema.json")).validate(
+        Draft202012Validator(read_json(ROOT / "distribution/pr-candidate.schema.json")).validate(
             manifest
         )
-        self.assertEqual(manifest["kind"], "candidate")
-        self.assertEqual(manifest["source"]["revision"], self.revision)
+        self.assertFalse(
+            Draft202012Validator(read_json(ROOT / "distribution/manifest.schema.json")).is_valid(
+                manifest
+            )
+        )
+        self.assertEqual(manifest["profile"], "pr-bundle/v1")
         selection = {
             key: value
             for key, value in manifest.items()
-            if key not in ("releaseId", "archiveSha256")
+            if key not in ("releaseId", "archiveSha256", "profile")
         }
         selection["kind"] = "selection"
+        with self.assertRaisesRegex(ValueError, "selection"):
+            pack(self.root, selection)
+        self.assertEqual(manifest["releaseId"], "pr-candidate-123")
+        self.assertEqual(
+            (first / "candidate.json").read_bytes(), (second / "candidate.json").read_bytes()
+        )
+        self.assertEqual(manifest["kind"], "candidate")
+        self.assertEqual(manifest["source"]["revision"], self.revision)
         compressed = (first / "candidate.tar.gz").read_bytes()
         self.assertEqual(manifest["archiveSha256"], digest(compressed))
-        self.assertEqual(compressed, pack(self.root, selection))
+        self.assertEqual(compressed, pack_members(self.root, self.revision, manifest["members"]))
         self.assertEqual(compressed, (second / "candidate.tar.gz").read_bytes())
         with tarfile.open(fileobj=io.BytesIO(compressed), mode="r:gz") as archive:
             self.assertEqual(archive.getnames(), sorted(self.files))

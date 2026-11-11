@@ -274,7 +274,10 @@ follow the deterministic distribution format.
     uv run --locked --offline python -m scripts.contracts_candidate --revision "$(git rev-parse HEAD)" --release-id pr-candidate-123 --output /tmp/pr-candidate
 
 The fresh output directory contains candidate.tar.gz and candidate.json.
-The manifest records kind=candidate, the exact checked-out commit and bundle
+The manifest uses the [PR bundle profile](../../distribution/pr-candidate.schema.json),
+which admits parameter braces in split OpenAPI authoring filenames. Promoted
+distribution path policy remains unchanged and rejects this PR-only profile.
+The manifest records kind=candidate and profile=pr-bundle/v1, the exact checked-out commit and bundle
 version, every member checksum and the archive checksum. Uncommitted and
 untracked files never enter the archive. Symlinks and existing output paths
 fail preparation. CI uploads the pair under a visibly PR-candidate artifact
