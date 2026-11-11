@@ -261,3 +261,30 @@ visible only after all expected files are available.
 A historical admission receipt establishes byte preservation. Deployment,
 rollback support and consumer compatibility still require their respective
 evidence. Keep earlier immutable releases for recovery.
+
+
+## PR candidate assembly
+
+Validation now prepares PR candidate bundles through the same canonical Git
+packager used for signed distributions. The candidate preserves the regular
+files under contracts.json, schemas, examples, api, docs, tests/fixtures,
+README.md and LICENSE. Archive order, ownership, permissions and timestamps
+follow the deterministic distribution format.
+
+    uv run --locked --offline python -m scripts.contracts_candidate --revision "$(git rev-parse HEAD)" --release-id pr-candidate-123 --output /tmp/pr-candidate
+
+The fresh output directory contains candidate.tar.gz and candidate.json.
+The manifest uses the [PR bundle profile](../../distribution/pr-candidate.schema.json),
+which admits parameter braces in split OpenAPI authoring filenames. Promoted
+distribution path policy remains unchanged and rejects this PR-only profile.
+The manifest records kind=candidate and profile=pr-bundle/v1, the exact checked-out commit and bundle
+version, every member checksum and the archive checksum. Uncommitted and
+untracked files never enter the archive. Symlinks and existing output paths
+fail preparation. CI uploads the pair under a visibly PR-candidate artifact
+name tied to the workflow run.
+
+These artifacts carry no promotion or admission record. Promotion still uses
+the protected publication workflow and its explicit review gates. Keep the
+supported historical inventory, checksums and published immutable releases
+available for current and rollback consumers. PR candidate assembly does not
+modify, replace or delete those distributions.

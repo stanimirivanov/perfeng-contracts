@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://perfeng.dev/distribution/pr-bundle/v1/candidate.schema.json",
+  "title": "Unpromoted PR source bundle candidate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "profile",
+    "source",
+    "members",
+    "releaseId",
+    "archiveSha256"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "candidate"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "revision",
+        "version"
+      ],
+      "properties": {
+        "repository": {
+          "const": "https://github.com/stanimirivanov/perfeng-contracts.git"
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 40,
+          "maxLength": 40,
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "version": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)$",
+          "not": {
+            "pattern": "[^0-9.]"
+          }
+        }
+      }
+    },
+    "members": {
+      "type": "object",
+      "minProperties": 2,
+      "required": [
+        "LICENSE"
+      ],
+      "propertyNames": {
+        "maxLength": 512,
+        "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.{}-]*(/[A-Za-z0-9_][A-Za-z0-9_.{}-]*)*$",
+        "not": {
+          "pattern": "[^A-Za-z0-9_./{}-]"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/sha256"
+      }
+    },
+    "releaseId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^pr-candidate-[1-9][0-9]{0,63}$",
+      "not": {
+        "pattern": "[^a-z0-9.-]"
+      }
+    },
+    "archiveSha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "profile": {
+      "const": "pr-bundle/v1"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64,
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}
