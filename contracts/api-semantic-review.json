@@ -1,0 +1,10 @@
+{
+  "baseCommit": "fb98cc8f5e04a29777f43f1fa988d678b83ab355",
+  "apis": {
+    "api/run-management/v1/openapi.json": {
+      "beforeSha256": "867f3369d7e1a4b6abf9c31581bb0980912294c2a9cbf985a9cb1a24e3656d2a",
+      "afterSha256": "4f96482257770bcb30209995f946abda2703b54e8720968938ca49c4efffb33e",
+      "reason": "Issue #109, M05-PR43 and ADR-0016 propose additive service identity and exact CI Run discovery. Existing operations and schemas remain unchanged; provider rollout is separate. This records intent, not human approval."
+    }
+  }
+}

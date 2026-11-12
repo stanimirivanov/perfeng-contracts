@@ -231,6 +231,34 @@ def review(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def check_review_intent(receipts: dict[str, Any], base: str, intent: Any) -> None:
+    """Bind proposed semantic changes to exact inputs; never confer human approval."""
+    changed = {
+        path: receipt
+        for path, receipt in receipts.items()
+        if any(change["classification"] != "documentation" for change in receipt["changes"])
+    }
+    if (
+        not isinstance(intent, dict)
+        or set(intent) != {"baseCommit", "apis"}
+        or intent["baseCommit"] != base
+        or not isinstance(intent["apis"], dict)
+        or set(intent["apis"]) != set(changed)
+    ):
+        raise ValueError("Semantic intent must cover exactly the changed APIs at this PR base")
+    for path, receipt in changed.items():
+        entry = intent["apis"][path]
+        if (
+            not isinstance(entry, dict)
+            or set(entry) != {"beforeSha256", "afterSha256", "reason"}
+            or entry["beforeSha256"] != receipt["beforeSha256"]
+            or entry["afterSha256"] != receipt["afterSha256"]
+            or not isinstance(entry["reason"], str)
+            or not 1 <= len(entry["reason"].strip()) <= 1000
+        ):
+            raise ValueError(f"Stale or incomplete semantic intent for {path}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base", help="Immutable Git commit for PR comparison")
@@ -257,7 +285,11 @@ def main() -> None:
             for receipt in receipts.values()
             for change in receipt["changes"]
         ):
-            raise SystemExit(1)
+            try:
+                intent = json.loads(Path("contracts/api-semantic-review.json").read_text())
+                check_review_intent(receipts, args.base, intent)
+            except (OSError, ValueError) as error:
+                parser.exit(1, f"Semantic changes require exact review intent: {error}\n")
         return
     if bool(args.before) != bool(args.after):
         parser.error("Provide both --before and --after")

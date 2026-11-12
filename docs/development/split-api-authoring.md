@@ -50,6 +50,19 @@ no path, component root, reference target, enum or field meaning changes.
 The canonical identity gate requires an explicit ledger edit for an intended
 change. Existing positive/negative and HTTP fixtures remain authoritative.
 
+The PR-base comparison fails on non-documentation changes unless
+`contracts/api-semantic-review.json` declares exactly the changed API paths,
+the immutable `baseCommit`, each `beforeSha256`/`afterSha256` semantic digest,
+and a nonblank `reason` referencing the owning issue/decision. The diff and
+its conservative classifications remain in the CI receipt. Missing entries,
+extra APIs, a changed base or subsequent API drift fail closed. Regenerate the
+intent only after reviewing the new comparison; never change classification
+or ignore the exit status. The record documents proposed intent, **not human
+approval or compatibility proof**; normal owner review and conformance gates
+remain required. A later semantic PR must replace this record for its own base;
+documentation-only comparisons need no record.
+
+
 `contracts/api-release-files.json` declares exactly what the existing candidate
 archive includes from `api`. The new source fragments are deliberately included
 for reproducibility. No archive publication is performed by the local checks.

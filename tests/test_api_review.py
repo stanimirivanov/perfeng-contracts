@@ -148,6 +148,36 @@ class ApiReviewTests(unittest.TestCase):
             )
             self.assertEqual(run.returncode, 1)
             self.assertIn('"classification": "breaking"', run.stdout)
+            self.assertIn("Semantic changes require exact review intent", run.stderr)
+            intent = {
+                "baseCommit": base,
+                "apis": {
+                    APIS[0]: {
+                        "beforeSha256": review(self.document, candidate)["beforeSha256"],
+                        "afterSha256": review(self.document, candidate)["afterSha256"],
+                        "reason": "Deliberate fixture change; still requires human review.",
+                    }
+                },
+            }
+            (root / "contracts").mkdir()
+            (root / "contracts/api-semantic-review.json").write_text(json.dumps(intent))
+            admitted = subprocess.run(
+                [sys.executable, str(script), "--base", base],
+                cwd=root,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(admitted.returncode, 0, admitted.stderr)
+            self.assertIn('"classification": "breaking"', admitted.stdout)
+            candidate["components"]["schemas"]["Input"]["maxProperties"] = 2
+            (root / APIS[0]).write_text(json.dumps(candidate))
+            drifted = subprocess.run(
+                [sys.executable, str(script), "--base", base],
+                cwd=root,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(drifted.returncode, 1)
 
     def test_literal_arrays_and_description_are_semantic_changes(self):
         for before, after in [
@@ -179,3 +209,41 @@ class ApiReviewTests(unittest.TestCase):
         candidate = copy.deepcopy(baseline)
         candidate["x-vendor"] = {"description": "external semantic setting"}
         self.assertEqual(review(baseline, candidate)["changes"][0]["classification"], "review")
+
+    def test_semantic_intent_is_bound_to_exact_base_and_both_api_digests(self):
+        from scripts.api_review import check_review_intent
+
+        candidate = copy.deepcopy(self.document)
+        candidate["paths"]["/access"] = {"get": {"operationId": "getAccess"}}
+        receipt = review(self.document, candidate)
+        base = "a" * 40
+        path = "api/run-management/v1/openapi.json"
+        receipts = {path: receipt}
+        intent: dict[str, Any] = {
+            "baseCommit": base,
+            "apis": {
+                path: {
+                    "beforeSha256": receipt["beforeSha256"],
+                    "afterSha256": receipt["afterSha256"],
+                    "reason": "Issue #109 and ADR-0016; proposed service identity semantics.",
+                }
+            },
+        }
+        check_review_intent(receipts, base, intent)
+        for mutation in ("base", "before", "after", "missing", "extra", "reason"):
+            invalid = copy.deepcopy(intent)
+            if mutation == "base":
+                invalid["baseCommit"] = "b" * 40
+            elif mutation in {"before", "after"}:
+                invalid["apis"][path][mutation + "Sha256"] = "0" * 64
+            elif mutation == "missing":
+                invalid["apis"] = {}
+            elif mutation == "extra":
+                invalid["apis"]["unknown-api"] = invalid["apis"][path]
+            else:
+                invalid["apis"][path]["reason"] = " "
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                check_review_intent(receipts, base, invalid)
+        candidate["paths"]["/another"] = {"get": {"operationId": "another"}}
+        with self.assertRaises(ValueError):
+            check_review_intent({path: review(self.document, candidate)}, base, intent)

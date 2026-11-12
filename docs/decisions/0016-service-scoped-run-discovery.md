@@ -52,3 +52,9 @@ cover human-vs-CI access, revoked grants, cross-service denial, distinct rights,
 issuer collision and native mapping substitution. Existing contract checks prove
 reproducibility and legacy shape preservation. Live identity, audit and HTTP
 isolation require provider tests; this contracts-only PR cannot verify them.
+
+The PR comparison retains all semantic classifications and requires explicit
+intent bound to the immutable base and both API semantic digests. This lets
+the proposed addition reach human review without treating additions as
+automatically compatible. Missing or drifted intent fails; the record does
+not stand in for owner approval. See the [review protocol](../development/split-api-authoring.md).
