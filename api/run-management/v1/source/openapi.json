@@ -2,7 +2,7 @@
   "openapi": "3.1.1",
   "info": {
     "title": "Performance Run and Baseline Management API",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "description": "Candidate contract only. Run lifecycle and baseline administration remain independent of measurement quality, SLO and regression verdicts. See docs/run-management-api.md."
   },
   "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
@@ -47,6 +47,12 @@
     },
     "/v1/baselines/{baselineId}/versions/{version}/transitions": {
       "$ref": "paths/v1_baselines_{baselineId}_versions_{version}_transitions.json"
+    },
+    "/v1/run-resolutions": {
+      "$ref": "paths/v1_run-resolutions.json"
+    },
+    "/v1/runs/{runId}/access": {
+      "$ref": "paths/v1_runs_{runId}_access.json"
     }
   },
   "components": {

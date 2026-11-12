@@ -36,6 +36,8 @@
 | Durable compatibility, ownership or security decision | [ADR index](decisions/README.md) | Affected consumer migration guidance |
 | Vulnerability reporting | [Security policy](../SECURITY.md) | Relevant trust-boundary documentation |
 
+Service-scoped operator access and CI deep links: [service identity](service-identity.md) and [ADR-0016](decisions/0016-service-scoped-run-discovery.md).
+
 ## Canonical collections
 
 - [Development](development/) contains engineering, harness and dependency

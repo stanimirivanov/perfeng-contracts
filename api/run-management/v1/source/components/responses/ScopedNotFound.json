@@ -1,0 +1,38 @@
+{
+  "description": "Uniform absence or scoped denial; no resource-specific details. Request ID is independent per HTTP request.",
+  "headers": {
+    "Cache-Control": {
+      "required": true,
+      "schema": {
+        "type": "string",
+        "const": "no-store"
+      }
+    }
+  },
+  "content": {
+    "application/json": {
+      "schema": {
+        "allOf": [
+          {
+            "$ref": "../schemas/Error.json"
+          },
+          {
+            "properties": {
+              "code": {
+                "const": "NOT_FOUND"
+              },
+              "message": {
+                "const": "Not Found"
+              }
+            },
+            "not": {
+              "required": [
+                "details"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

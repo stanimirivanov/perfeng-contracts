@@ -1,0 +1,63 @@
+{
+  "parameters": [
+    {
+      "name": "runId",
+      "in": "path",
+      "required": true,
+      "schema": {
+        "$ref": "../components/schemas/RunId.json"
+      }
+    }
+  ],
+  "get": {
+    "tags": [
+      "Runs"
+    ],
+    "operationId": "getRunAccess",
+    "summary": "Read verified identity and service access for a Run",
+    "description": "Requires current service run:read permission and independently retained service binding. Unknown, unbound, invisible, revoked and unavailable mapping all return the same NOT_FOUND 404; a provider outage returns 503. A resource-independent operation denial may return 403 before lookup. No-store applies to every response. See docs/service-identity.md.",
+    "x-perfeng-service-permission": "run:read",
+    "responses": {
+      "200": {
+        "description": "Authorized current observation. All responses MUST use Cache-Control: no-store.",
+        "headers": {
+          "Cache-Control": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/RunAccess.json"
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthenticated.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "404": {
+        "$ref": "../components/responses/ScopedNotFound.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

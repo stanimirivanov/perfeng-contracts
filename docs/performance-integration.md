@@ -38,6 +38,10 @@ this claim before resolving selections or returning request information. The
 body does not authorize work. Schema validation cannot prove provenance,
 association, approval or authorization; these are provider admission obligations.
 
+For human CI links, Run API 0.5.0 adds an authorized [exact native Run
+resolver](service-identity.md) keyed by this request issuer/ID. It does not
+change Integration payloads, principal scope or the opaque provider Run ID.
+
 ## HTTP and retry semantics
 
 The generated [OpenAPI](../api/performance-integration/v1/openapi.json) describes

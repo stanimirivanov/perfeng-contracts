@@ -1,0 +1,142 @@
+{
+  "access": {
+    "runId": "perf-20260902-120000-abcdef12",
+    "service": {
+      "issuer": "https://catalog.example/services",
+      "id": "search"
+    },
+    "createdBy": {
+      "issuer": "https://ci.example",
+      "id": "pipeline",
+      "kind": "CI"
+    },
+    "actor": {
+      "issuer": "https://identity.example",
+      "id": "maya",
+      "kind": "HUMAN"
+    },
+    "caller": {
+      "issuer": "https://identity.example/clients",
+      "id": "console"
+    },
+    "permissions": [
+      "run:read"
+    ]
+  },
+  "resolution": {
+    "request": {
+      "issuer": "https://ci.example",
+      "id": "request-123"
+    },
+    "runId": "perf-20260902-120000-abcdef12",
+    "service": {
+      "issuer": "https://catalog.example/services",
+      "id": "search"
+    }
+  },
+  "trusted": {
+    "run_id": "perf-20260902-120000-abcdef12",
+    "service": {
+      "issuer": "https://catalog.example/services",
+      "id": "search"
+    },
+    "grant_service": {
+      "issuer": "https://catalog.example/services",
+      "id": "search"
+    },
+    "actor": {
+      "issuer": "https://identity.example",
+      "id": "maya",
+      "kind": "HUMAN"
+    },
+    "caller": {
+      "issuer": "https://identity.example/clients",
+      "id": "console"
+    },
+    "created_by": {
+      "issuer": "https://ci.example",
+      "id": "pipeline",
+      "kind": "CI"
+    },
+    "grants": [
+      "run:read"
+    ]
+  },
+  "checks": [
+    {
+      "name": "same service human differs from CI creator",
+      "overrides": {},
+      "allowed": true
+    },
+    {
+      "name": "cross service grant",
+      "overrides": {
+        "grant_service": {
+          "issuer": "https://catalog.example/services",
+          "id": "billing"
+        }
+      },
+      "allowed": false
+    },
+    {
+      "name": "revoked grant",
+      "overrides": {
+        "grants": []
+      },
+      "allowed": false
+    },
+    {
+      "name": "read does not authorize rerun",
+      "overrides": {
+        "permission": "run:rerun"
+      },
+      "allowed": false
+    },
+    {
+      "name": "read does not authorize baseline approval",
+      "overrides": {
+        "permission": "baseline:approve"
+      },
+      "allowed": false
+    },
+    {
+      "name": "unbound legacy run",
+      "overrides": {
+        "service": null
+      },
+      "allowed": false
+    },
+    {
+      "name": "forged actor observation",
+      "overrides": {
+        "actor": {
+          "issuer": "https://identity.example",
+          "id": "admin",
+          "kind": "HUMAN"
+        }
+      },
+      "allowed": false
+    },
+    {
+      "name": "forged caller observation",
+      "overrides": {
+        "caller": {
+          "issuer": "https://identity.example/clients",
+          "id": "other"
+        }
+      },
+      "allowed": false
+    },
+    {
+      "name": "wrong retained run",
+      "overrides": {
+        "run_id": "different-run"
+      },
+      "allowed": false
+    }
+  ],
+  "requestSelector": {
+    "issuer": "https://ci.example",
+    "id": "request-123"
+  }
+}

@@ -15,7 +15,7 @@
 The [OpenAPI 3.1.1 document](../api/run-management/v1/openapi.json) defines the
 control-plane boundary from proposal sections 12-13 together with explicit
 baseline administration. This is a specification and conformance corpus, not a
-deployed service. API description version 0.4.0 ships in candidate bundle 0.9.0;
+deployed service. API description version 0.5.0 ships in candidate bundle 0.28.0;
 neither is a stable v1 release.
 
 ## Operations
@@ -24,6 +24,8 @@ neither is a stable v1 release.
 | --- | --- | --- |
 | POST /v1/runs | 201 + Run + Location | Durably accepted, not executed |
 | GET /v1/runs/{runId} | 200 + Run | Current consistent snapshot |
+| GET /v1/run-resolutions?requestIssuer=...&requestId=... | 200 + RunResolution | Exact authorized CI request mapping |
+| GET /v1/runs/{runId}/access | 200 + RunAccess | Current verified service access |
 | GET /v1/runs/{runId}/artifacts | 200 + ArtifactCollection | Current immutable-reference snapshot |
 | POST /v1/runs/{runId}/cancel before dispatch | 200 + ABORTED Run | Cancellation completed |
 | POST /v1/runs/{runId}/cancel after dispatch begins | 202 + CANCELLING Run | Cancellation requested |
@@ -31,6 +33,10 @@ neither is a stable v1 release.
 | POST /v1/baselines | 201 + CANDIDATE Baseline + Location | Immutable version created |
 | GET /v1/baselines/{id}/versions/{version} | 200 + Baseline | Exact current snapshot |
 | POST /v1/baselines/{id}/versions/{version}/transitions | 200 + Baseline | Revision-checked decision |
+
+The principal-scoped semantics below describe legacy mode. Explicitly admitted
+service mode follows [service identity](service-identity.md), including service
+baseline visibility and separate mutation rights.
 
 All operations require bearer authentication. The server derives a stable
 principal and authorization scope from the credential, never from a body field.
@@ -245,3 +251,9 @@ This initial corpus is not a general OpenAPI breaking-change detector; future
 changes require reader/writer compatibility review.
 
 Reference: [OpenAPI 3.1.1](https://spec.openapis.org/oas/v3.1.1.html).
+
+## Service-enabled providers
+
+Run API 0.5.0 adds exact request resolution and current access observations.
+See the normative [service identity contract](service-identity.md) for the
+explicit opt-in mode, independent rights and preserved legacy principal scope.

@@ -1,0 +1,48 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "runId",
+    "service",
+    "createdBy",
+    "actor",
+    "caller",
+    "permissions"
+  ],
+  "properties": {
+    "runId": {
+      "$ref": "RunId.json"
+    },
+    "service": {
+      "$ref": "ScopedIdentity.json"
+    },
+    "createdBy": {
+      "$ref": "VerifiedActor.json"
+    },
+    "actor": {
+      "$ref": "VerifiedActor.json"
+    },
+    "caller": {
+      "$ref": "ScopedIdentity.json"
+    },
+    "permissions": {
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 8,
+      "items": {
+        "type": "string",
+        "enum": [
+          "run:read",
+          "run:create",
+          "run:cancel",
+          "run:rerun",
+          "baseline:create",
+          "baseline:qualify",
+          "baseline:approve",
+          "baseline:retire"
+        ]
+      }
+    }
+  },
+  "description": "Read-only current authorization observation. Server-owned bindings and verified identities; never a capability or an authorization input. Recheck current grants on every operation. Legacy unbound Runs are not inferred into services."
+}

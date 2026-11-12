@@ -2,7 +2,7 @@
   "openapi": "3.1.1",
   "info": {
     "title": "Performance Run and Baseline Management API",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "description": "Candidate contract only. Run lifecycle and baseline administration remain independent of measurement quality, SLO and regression verdicts. See docs/run-management-api.md."
   },
   "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
@@ -581,6 +581,147 @@
           },
           "422": {
             "$ref": "#/components/responses/ValidationFailed"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/v1/run-resolutions": {
+      "get": {
+        "tags": [
+          "Runs"
+        ],
+        "operationId": "resolveRun",
+        "summary": "Resolve an exact CI request to its native Run",
+        "description": "Requires current service run:read permission and independently retained service binding. Unknown, unbound, invisible, revoked and unavailable mapping all return the same NOT_FOUND 404; a provider outage returns 503. A resource-independent operation denial may return 403 before lookup. No-store applies to every response. See docs/service-identity.md.",
+        "x-perfeng-service-permission": "run:read",
+        "responses": {
+          "200": {
+            "description": "Authorized current observation. All responses MUST use Cache-Control: no-store.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunResolution"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/ScopedNotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "requestIssuer",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri",
+              "maxLength": 512
+            },
+            "description": "Exact immutable Integration request identity; never dereference or treat as authorization."
+          },
+          {
+            "name": "requestId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "\\S"
+            },
+            "description": "Exact immutable Integration request identity; never dereference or treat as authorization."
+          }
+        ]
+      }
+    },
+    "/v1/runs/{runId}/access": {
+      "parameters": [
+        {
+          "name": "runId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/RunId"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Runs"
+        ],
+        "operationId": "getRunAccess",
+        "summary": "Read verified identity and service access for a Run",
+        "description": "Requires current service run:read permission and independently retained service binding. Unknown, unbound, invisible, revoked and unavailable mapping all return the same NOT_FOUND 404; a provider outage returns 503. A resource-independent operation denial may return 403 before lookup. No-store applies to every response. See docs/service-identity.md.",
+        "x-perfeng-service-permission": "run:read",
+        "responses": {
+          "200": {
+            "description": "Authorized current observation. All responses MUST use Cache-Control: no-store.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunAccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/ScopedNotFound"
           },
           "429": {
             "$ref": "#/components/responses/RateLimited"
@@ -1480,6 +1621,125 @@
             }
           }
         ]
+      },
+      "ScopedIdentity": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "issuer",
+          "id"
+        ],
+        "properties": {
+          "issuer": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 512
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S"
+          }
+        }
+      },
+      "RunResolution": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "request",
+          "runId",
+          "service"
+        ],
+        "properties": {
+          "request": {
+            "$ref": "#/components/schemas/ScopedIdentity"
+          },
+          "runId": {
+            "$ref": "#/components/schemas/RunId"
+          },
+          "service": {
+            "$ref": "#/components/schemas/ScopedIdentity"
+          }
+        },
+        "description": "Exact retained Integration request issuer/id to native Run association. No latest-attempt selection, redirects, credentials or authority recovery."
+      },
+      "VerifiedActor": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "issuer",
+          "id",
+          "kind"
+        ],
+        "properties": {
+          "issuer": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 512
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "\\S"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "HUMAN",
+              "CI"
+            ]
+          }
+        }
+      },
+      "RunAccess": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "runId",
+          "service",
+          "createdBy",
+          "actor",
+          "caller",
+          "permissions"
+        ],
+        "properties": {
+          "runId": {
+            "$ref": "#/components/schemas/RunId"
+          },
+          "service": {
+            "$ref": "#/components/schemas/ScopedIdentity"
+          },
+          "createdBy": {
+            "$ref": "#/components/schemas/VerifiedActor"
+          },
+          "actor": {
+            "$ref": "#/components/schemas/VerifiedActor"
+          },
+          "caller": {
+            "$ref": "#/components/schemas/ScopedIdentity"
+          },
+          "permissions": {
+            "type": "array",
+            "uniqueItems": true,
+            "maxItems": 8,
+            "items": {
+              "type": "string",
+              "enum": [
+                "run:read",
+                "run:create",
+                "run:cancel",
+                "run:rerun",
+                "baseline:create",
+                "baseline:qualify",
+                "baseline:approve",
+                "baseline:retire"
+              ]
+            }
+          }
+        },
+        "description": "Read-only current authorization observation. Server-owned bindings and verified identities; never a capability or an authorization input. Recheck current grants on every operation. Legacy unbound Runs are not inferred into services."
       }
     },
     "responses": {
@@ -1814,6 +2074,44 @@
                         "BASELINE_TRANSITION_CONFLICT"
                       ]
                     }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ScopedNotFound": {
+        "description": "Uniform absence or scoped denial; no resource-specific details. Request ID is independent per HTTP request.",
+        "headers": {
+          "Cache-Control": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Error"
+                },
+                {
+                  "properties": {
+                    "code": {
+                      "const": "NOT_FOUND"
+                    },
+                    "message": {
+                      "const": "Not Found"
+                    }
+                  },
+                  "not": {
+                    "required": [
+                      "details"
+                    ]
                   }
                 }
               ]
