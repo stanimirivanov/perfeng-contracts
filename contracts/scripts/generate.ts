@@ -6,6 +6,7 @@ import { JSONSchema } from "effect";
 
 import { GeneratedContracts } from "../source/registry.js";
 import { integrationOpenAPI } from "./integration-openapi.js";
+import { comparisonComponent } from "./run-comparison-component.js";
 
 const repositoryRoot = fileURLToPath(new URL("../../", import.meta.url));
 const check = process.argv.includes("--check");
@@ -55,6 +56,19 @@ for (const contract of GeneratedContracts) {
   } else {
     await writeFile(output, expected, "utf8");
   }
+}
+
+const comparisonPath = new URL(
+  "../../api/run-management/v1/source/components/schemas/ComparisonEvidence.json",
+  import.meta.url,
+);
+const comparisonExpected = comparisonComponent();
+if (check) {
+  if ((await readFile(comparisonPath, "utf8")) !== comparisonExpected) {
+    throw new Error("Run comparison evidence is stale; run pnpm contracts:generate");
+  }
+} else {
+  await writeFile(comparisonPath, comparisonExpected, "utf8");
 }
 
 const apiExpected = `${JSON.stringify(integrationOpenAPI(), undefined, 2)}\n`;

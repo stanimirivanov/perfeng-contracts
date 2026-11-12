@@ -1,0 +1,71 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "runId",
+    "status"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1,
+      "type": "integer"
+    },
+    "kind": {
+      "const": "RunComparison",
+      "type": "string"
+    },
+    "runId": {
+      "$ref": "RunId.json"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "AVAILABLE",
+        "INCOMPLETE",
+        "INACCESSIBLE"
+      ]
+    },
+    "request": {
+      "$ref": "CreateRun.json"
+    },
+    "evidence": {
+      "$ref": "ComparisonEvidence.json"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "AVAILABLE"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "request",
+          "evidence"
+        ]
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "request"
+              ]
+            },
+            {
+              "required": [
+                "evidence"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "description": "AVAILABLE is the immutable retained comparison. Other states are current availability observations with no evidence or performance verdict. See docs/run-comparison.md."
+}

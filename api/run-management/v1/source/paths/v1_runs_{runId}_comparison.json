@@ -1,0 +1,64 @@
+{
+  "parameters": [
+    {
+      "name": "runId",
+      "in": "path",
+      "required": true,
+      "schema": {
+        "$ref": "../components/schemas/RunId.json"
+      }
+    }
+  ],
+  "get": {
+    "tags": [
+      "Runs"
+    ],
+    "operationId": "getRunComparison",
+    "summary": "Read the immutable historical Run comparison or explicit evidence availability",
+    "description": "Authorize the Run and every disclosed evidence object. Unknown/invisible Run is the uniform scoped 404. Never rebuild from current catalog or baseline state; no-store applies to all responses. See docs/run-comparison.md.",
+    "x-perfeng-service-permission": "run:read",
+    "responses": {
+      "200": {
+        "description": "Immutable available comparison, or current INCOMPLETE/INACCESSIBLE observation without evidence. Maximum serialized body is 2 MiB; never truncate.",
+        "headers": {
+          "Cache-Control": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/RunComparison.json"
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthenticated.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "404": {
+        "$ref": "../components/responses/ScopedNotFound.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    },
+    "x-perfeng-max-response-bytes": 2097152
+  }
+}

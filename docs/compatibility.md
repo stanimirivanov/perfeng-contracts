@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.28.0`; it is not a stable release.
+- The current candidate bundle is `0.29.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,11 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.29.0 adds Run API 0.6.0 with a bounded immutable historical
+comparison read. Existing Run, Integration and analysis schemas/operations are
+unchanged. New API-document consumers must opt in after provider retention and
+serving qualify; see [comparison projection](run-comparison.md) and ADR-0017.
 
 Candidate bundle 0.28.0 adds Run API 0.5.0 service-scoped identity and exact CI
 request resolution. Existing closed Run/CreateRun/Integration payloads and
