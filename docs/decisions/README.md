@@ -103,3 +103,4 @@ How will assumptions and consequences be verified?
 | [0013](0013-support-linux-hosts.md) | Proposed | Support Linux development and native browser hosts; retire active Windows support. |
 | [0014](0014-split-api-authoring-and-review-semantics.md) | Proposed | Split authoring with source-owned Integration schemas and conservative offline semantic review receipts. |
 | [0015](0015-distribute-immutable-contract-artifacts.md) | Proposed | Distribute verified immutable contract selections while preserving offline consumer validation. |
+| [0016](0016-service-scoped-run-discovery.md) | Proposed | Separate verified actor and caller from service authority; resolve exact retained CI requests to native Runs. |

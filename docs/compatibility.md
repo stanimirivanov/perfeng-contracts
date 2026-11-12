@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.27.0`; it is not a stable release.
+- The current candidate bundle is `0.28.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,13 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.28.0 adds Run API 0.5.0 service-scoped identity and exact CI
+request resolution. Existing closed Run/CreateRun/Integration payloads and
+legacy principal scope remain unchanged. Service mode requires explicit provider
+admission; strict API consumers must opt into the new document. See
+[service identity](service-identity.md) and ADR-0016. No runtime activation or
+release publication is performed by this candidate change.
 
 Candidate bundle 0.27.0 extends Native Worker API v2 to OpenAPI 2.3.0 with
 `linux` in the closed operating-system capability union. Protocol version and

@@ -115,6 +115,9 @@ def check_http(document: dict[str, Any], case: dict[str, Any], examples: dict[st
         if parameter["in"] == "header":
             values = {k.lower(): v for k, v in case.get("requestHeaders", {}).items()}
             name = parameter["name"].lower()
+        elif parameter["in"] == "query":
+            values = case.get("queryParameters", {})
+            name = parameter["name"]
         elif parameter["in"] == "path":
             values = case.get("pathParameters", {})
             name = parameter["name"]
@@ -259,6 +262,8 @@ def lint(document: dict[str, Any], transitions: dict[str, list[str]]) -> None:
         "createBaseline",
         "getBaseline",
         "transitionBaseline",
+        "resolveRun",
+        "getRunAccess",
     }:
         raise ValueError("Unexpected API operation inventory")
     states = set(document["components"]["schemas"]["RunState"]["enum"])

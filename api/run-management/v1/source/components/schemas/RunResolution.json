@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "request",
+    "runId",
+    "service"
+  ],
+  "properties": {
+    "request": {
+      "$ref": "ScopedIdentity.json"
+    },
+    "runId": {
+      "$ref": "RunId.json"
+    },
+    "service": {
+      "$ref": "ScopedIdentity.json"
+    }
+  },
+  "description": "Exact retained Integration request issuer/id to native Run association. No latest-attempt selection, redirects, credentials or authority recovery."
+}
