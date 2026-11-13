@@ -19,7 +19,7 @@ export const AnalysisNativeBinding = Schema.Struct({
   ),
 });
 
-const AnalysisArtifact = Schema.Struct({
+export const AnalysisArtifact = Schema.Struct({
   ...artifactReference(Schema.Literal("analysis")).fields,
   sizeBytes: Integer.pipe(Schema.between(1, 1_048_576)),
   mediaType: Schema.Literal("application/json"),

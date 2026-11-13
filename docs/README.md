@@ -7,7 +7,7 @@
 - Effect Schema is authoritative for data contracts; generated JSON Schema is
   the language-neutral consumer boundary. OpenAPI remains explicitly
   authored as split fragments for Run and Native APIs; their bundled OpenAPI is
-  generated. Integration OpenAPI is generated from Effect.
+  generated. Run comparison evidence and Integration OpenAPI are generated from Effect.
 - Compatibility, examples, rejection fixtures and consumer migration guidance
   change together.
 - Update this map when a canonical source moves or a recurring task lacks a
@@ -37,6 +37,8 @@
 | Vulnerability reporting | [Security policy](../SECURITY.md) | Relevant trust-boundary documentation |
 
 Service-scoped operator access and CI deep links: [service identity](service-identity.md) and [ADR-0016](decisions/0016-service-scoped-run-discovery.md).
+
+Run-scoped historical comparisons: [projection contract](run-comparison.md), [ADR-0017](decisions/0017-project-immutable-run-comparisons.md).
 
 ## Canonical collections
 

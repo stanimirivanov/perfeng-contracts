@@ -15,7 +15,7 @@
 The [OpenAPI 3.1.1 document](../api/run-management/v1/openapi.json) defines the
 control-plane boundary from proposal sections 12-13 together with explicit
 baseline administration. This is a specification and conformance corpus, not a
-deployed service. API description version 0.5.0 ships in candidate bundle 0.28.0;
+deployed service. API description version 0.6.0 ships in candidate bundle 0.29.0;
 neither is a stable v1 release.
 
 ## Operations
@@ -25,6 +25,7 @@ neither is a stable v1 release.
 | POST /v1/runs | 201 + Run + Location | Durably accepted, not executed |
 | GET /v1/runs/{runId} | 200 + Run | Current consistent snapshot |
 | GET /v1/run-resolutions?requestIssuer=...&requestId=... | 200 + RunResolution | Exact authorized CI request mapping |
+| GET /v1/runs/{runId}/comparison | 200 + RunComparison | Immutable historical evidence or explicit availability |
 | GET /v1/runs/{runId}/access | 200 + RunAccess | Current verified service access |
 | GET /v1/runs/{runId}/artifacts | 200 + ArtifactCollection | Current immutable-reference snapshot |
 | POST /v1/runs/{runId}/cancel before dispatch | 200 + ABORTED Run | Cancellation completed |
@@ -257,3 +258,8 @@ Reference: [OpenAPI 3.1.1](https://spec.openapis.org/oas/v3.1.1.html).
 Run API 0.5.0 adds exact request resolution and current access observations.
 See the normative [service identity contract](service-identity.md) for the
 explicit opt-in mode, independent rights and preserved legacy principal scope.
+
+## Historical comparison
+
+The authenticated exact comparison GET preserves report-time selection and
+source outcomes. See the normative [comparison projection](run-comparison.md).

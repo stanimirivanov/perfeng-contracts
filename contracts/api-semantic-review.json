@@ -1,10 +1,10 @@
 {
-  "baseCommit": "fb98cc8f5e04a29777f43f1fa988d678b83ab355",
+  "baseCommit": "4ad2582ddf9137b58be8362367d45ffd817f49bb",
   "apis": {
     "api/run-management/v1/openapi.json": {
-      "beforeSha256": "867f3369d7e1a4b6abf9c31581bb0980912294c2a9cbf985a9cb1a24e3656d2a",
-      "afterSha256": "4f96482257770bcb30209995f946abda2703b54e8720968938ca49c4efffb33e",
-      "reason": "Issue #109, M05-PR43 and ADR-0016 propose additive service identity and exact CI Run discovery. Existing operations and schemas remain unchanged; provider rollout is separate. This records intent, not human approval."
+      "beforeSha256": "4f96482257770bcb30209995f946abda2703b54e8720968938ca49c4efffb33e",
+      "afterSha256": "2e2b1900fd8c1e6f762a84643ecbb33caa0271114b538fb6e09612f711427076",
+      "reason": "Issue #111 / M05-PR46 / ADR-0017 propose an additive exact historical comparison read and generated canonical evidence component. Existing schemas and operations remain unchanged; provider rollout and release are separate. Intent is not human approval."
     }
   }
 }

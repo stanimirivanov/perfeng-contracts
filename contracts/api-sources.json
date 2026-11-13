@@ -31,6 +31,7 @@
         "components/schemas/BaselineState.json",
         "components/schemas/BaselineTransition.json",
         "components/schemas/Candidate.json",
+        "components/schemas/ComparisonEvidence.json",
         "components/schemas/CreateBaseline.json",
         "components/schemas/CreateRun.json",
         "components/schemas/Error.json",
@@ -42,6 +43,7 @@
         "components/schemas/ResourceId.json",
         "components/schemas/Run.json",
         "components/schemas/RunAccess.json",
+        "components/schemas/RunComparison.json",
         "components/schemas/RunId.json",
         "components/schemas/RunResolution.json",
         "components/schemas/RunState.json",
@@ -59,9 +61,10 @@
         "paths/v1_runs_{runId}.json",
         "paths/v1_runs_{runId}_access.json",
         "paths/v1_runs_{runId}_artifacts.json",
-        "paths/v1_runs_{runId}_cancel.json"
+        "paths/v1_runs_{runId}_cancel.json",
+        "paths/v1_runs_{runId}_comparison.json"
       ],
-      "semanticSha256": "4f96482257770bcb30209995f946abda2703b54e8720968938ca49c4efffb33e"
+      "semanticSha256": "2e2b1900fd8c1e6f762a84643ecbb33caa0271114b538fb6e09612f711427076"
     },
     {
       "root": "api/native-worker/v2/source",

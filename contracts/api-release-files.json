@@ -126,6 +126,7 @@
   "api/performance-integration/v1/source/paths/integration_v1_requests_{requestId}.json",
   "api/performance-integration/v1/source/paths/integration_v1_requests_{requestId}_analysis.json",
   "api/performance-integration/v1/source/paths/integration_v1_requests_{requestId}_cancellation.json",
+  "api/run-management/v1/comparison-cases.json",
   "api/run-management/v1/examples/aborted.json",
   "api/run-management/v1/examples/artifacts.json",
   "api/run-management/v1/examples/baseline-approved.json",
@@ -170,6 +171,7 @@
   "api/run-management/v1/source/components/schemas/BaselineState.json",
   "api/run-management/v1/source/components/schemas/BaselineTransition.json",
   "api/run-management/v1/source/components/schemas/Candidate.json",
+  "api/run-management/v1/source/components/schemas/ComparisonEvidence.json",
   "api/run-management/v1/source/components/schemas/CreateBaseline.json",
   "api/run-management/v1/source/components/schemas/CreateRun.json",
   "api/run-management/v1/source/components/schemas/Error.json",
@@ -181,6 +183,7 @@
   "api/run-management/v1/source/components/schemas/ResourceId.json",
   "api/run-management/v1/source/components/schemas/Run.json",
   "api/run-management/v1/source/components/schemas/RunAccess.json",
+  "api/run-management/v1/source/components/schemas/RunComparison.json",
   "api/run-management/v1/source/components/schemas/RunId.json",
   "api/run-management/v1/source/components/schemas/RunResolution.json",
   "api/run-management/v1/source/components/schemas/RunState.json",
@@ -199,5 +202,6 @@
   "api/run-management/v1/source/paths/v1_runs_{runId}_access.json",
   "api/run-management/v1/source/paths/v1_runs_{runId}_artifacts.json",
   "api/run-management/v1/source/paths/v1_runs_{runId}_cancel.json",
+  "api/run-management/v1/source/paths/v1_runs_{runId}_comparison.json",
   "api/run-management/v1/transitions.json"
 ]

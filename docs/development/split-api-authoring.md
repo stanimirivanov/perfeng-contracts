@@ -132,3 +132,11 @@ Exact generated-file attributes classify the Integration bundle and generated
 fragments in review. The authored Effect definitions and endpoint metadata
 remain visible. This display classification has no effect on merge conflicts,
 source identity verification or the required conformance checks.
+
+## Run comparison component authority
+
+The comparison path/envelope remain split-authored. Its ComparisonEvidence
+fragment is generated from canonical Effect analysis/publication definitions by
+`contracts/scripts/run-comparison-component.ts` before bundling.
+`pnpm contracts:check` rejects drift; never hand-edit that fragment or fork
+analysis verdict types for presentation. See [comparison semantics](../run-comparison.md).

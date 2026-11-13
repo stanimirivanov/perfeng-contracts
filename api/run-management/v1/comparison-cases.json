@@ -1,0 +1,292 @@
+{
+  "schemaVersion": 1,
+  "kind": "RunComparison",
+  "runId": "perf-20260902-130000-a1b2c3d5",
+  "status": "AVAILABLE",
+  "request": {
+    "testSuite": "search-browser",
+    "catalogue": {
+      "id": "application-tests",
+      "version": "1.0.0",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "profile": "smoke",
+    "candidate": {
+      "gitSha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "image": "ghcr.io/example/sample-api@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    "environment": {
+      "id": "local-kind",
+      "version": "1.0.0",
+      "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+    },
+    "policy": {
+      "id": "search-browser",
+      "version": "1.0.0",
+      "sha256": "566a9d13e277db0b492c4a7b55294a2e479c9d449768317c072f0f4dda988646"
+    }
+  },
+  "evidence": {
+    "native": {
+      "runId": "perf-20260902-130000-a1b2c3d5",
+      "testId": "search-browser",
+      "workload": {
+        "id": "search-browser-workload",
+        "version": "1.0.0",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "policy": {
+        "id": "search-browser",
+        "version": "1.0.0",
+        "sha256": "566a9d13e277db0b492c4a7b55294a2e479c9d449768317c072f0f4dda988646"
+      },
+      "baseline": {
+        "identity": {
+          "id": "approved-search-browser",
+          "version": "1.0.0",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        },
+        "artifact": {
+          "id": "66666666-6666-4666-8666-666666666666",
+          "runId": "perf-20260901-130000-a1b2c3d5",
+          "kind": "normalized",
+          "uri": "s3://perfeng-example/runs/perf-20260901-130000-a1b2c3d5/normalized/playwright.json",
+          "sha256": "9430060da3f66d21e555aab2d52c6b8ad45febbb72817193c657be0a82d19f41",
+          "sizeBytes": 1501,
+          "mediaType": "application/json",
+          "format": "normalized-result/v1"
+        }
+      }
+    },
+    "report": {
+      "id": "88888888-8888-4888-8888-888888888888",
+      "runId": "perf-20260902-130000-a1b2c3d5",
+      "kind": "analysis",
+      "uri": "s3://perfeng-example/runs/perf-20260902-130000-a1b2c3d5/analysis/result.json",
+      "sha256": "ddea48923c2eba4c9cf1ba90c067702946094c8cc99a04ebccf5640a49993029",
+      "sizeBytes": 2362,
+      "mediaType": "application/json",
+      "format": "analysis-result/v1"
+    },
+    "analysis": {
+      "schemaVersion": 1,
+      "kind": "AnalysisResult",
+      "contractsVersion": "0.4.0",
+      "runId": "perf-20260902-130000-a1b2c3d5",
+      "testId": "search-browser",
+      "createdAt": "2026-09-02T13:02:00Z",
+      "producer": {
+        "name": "perfeng-analysis",
+        "version": "0.1.0",
+        "image": "ghcr.io/example/perfeng-analysis@sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      "policy": {
+        "id": "search-browser",
+        "version": "1.0.0",
+        "sha256": "566a9d13e277db0b492c4a7b55294a2e479c9d449768317c072f0f4dda988646",
+        "mode": "inform"
+      },
+      "candidateArtifact": {
+        "id": "44444444-4444-4444-8444-444444444444",
+        "runId": "perf-20260902-130000-a1b2c3d5",
+        "kind": "normalized",
+        "uri": "s3://perfeng-example/runs/perf-20260902-130000-a1b2c3d5/normalized/playwright.json",
+        "sha256": "586619a56a91ea457bed32d19789e708ea40cea5cf89b8da2ccf44c956317075",
+        "sizeBytes": 1506,
+        "mediaType": "application/json",
+        "format": "normalized-result/v1"
+      },
+      "referenceArtifacts": [
+        {
+          "id": "66666666-6666-4666-8666-666666666666",
+          "runId": "perf-20260901-130000-a1b2c3d5",
+          "kind": "normalized",
+          "uri": "s3://perfeng-example/runs/perf-20260901-130000-a1b2c3d5/normalized/playwright.json",
+          "sha256": "9430060da3f66d21e555aab2d52c6b8ad45febbb72817193c657be0a82d19f41",
+          "sizeBytes": 1501,
+          "mediaType": "application/json",
+          "format": "normalized-result/v1"
+        }
+      ],
+      "blocking": false,
+      "evaluations": [
+        {
+          "ruleId": "search-latency",
+          "metric": {
+            "name": "ui.search.action_to_visible_ms",
+            "statistic": "mean",
+            "unit": "ms"
+          },
+          "quality": {
+            "status": "PASS",
+            "reasons": [],
+            "samples": 2
+          },
+          "slo": {
+            "status": "PASS",
+            "reasons": [],
+            "value": 140
+          },
+          "regression": {
+            "status": "FAIL",
+            "reasons": [
+              "Example comparison exceeds the provisional practical-difference threshold."
+            ],
+            "candidateValue": 140,
+            "referenceValue": 100,
+            "referenceArtifactId": "66666666-6666-4666-8666-666666666666",
+            "effect": {
+              "kind": "relative",
+              "value": 0.4
+            },
+            "method": {
+              "name": "synthetic-point-comparison",
+              "version": "1.0.0"
+            }
+          }
+        }
+      ]
+    },
+    "directions": [
+      {
+        "ruleId": "search-latency",
+        "direction": "lower-is-better"
+      }
+    ],
+    "publication": {
+      "specversion": "1.0",
+      "id": "analysis-publication-1",
+      "source": "https://provider.example/identity",
+      "type": "dev.perfeng.integration.analysis-published.v1",
+      "time": "2026-09-02T13:03:00Z",
+      "datacontenttype": "application/json",
+      "dataschema": "https://perfeng.dev/schemas/performance-analysis/v1/performance-analysis.schema.json",
+      "data": {
+        "context": {
+          "request": {
+            "issuer": "https://argus.example/identity",
+            "id": "request-1"
+          },
+          "attempt": {
+            "issuer": "https://argus.example/identity",
+            "id": "attempt-1"
+          },
+          "principal": {
+            "issuer": "https://auth.example/tenant",
+            "id": "argus-service"
+          },
+          "requestedAt": "2026-09-02T13:00:00Z",
+          "deadline": "2026-09-02T13:01:00Z",
+          "service": {
+            "issuer": "https://provider.example/identity",
+            "id": "service-1",
+            "revision": "1",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "capability": {
+            "issuer": "https://provider.example/identity",
+            "id": "capability-1",
+            "revision": "1",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "deployment": {
+            "issuer": "https://provider.example/identity",
+            "id": "deployment-1",
+            "revision": "1",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "environment": {
+            "issuer": "https://provider.example/identity",
+            "id": "environment-1",
+            "revision": "1",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "workload": {
+            "issuer": "https://provider.example/identity",
+            "id": "workload-1",
+            "revision": "1",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "profile": {
+            "issuer": "https://provider.example/identity",
+            "id": "profile-1",
+            "revision": "1",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "issuer": "https://provider.example/identity",
+            "id": "policy-1",
+            "revision": "1",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "baseline": {
+            "issuer": "https://provider.example/identity",
+            "id": "baseline-1",
+            "revision": "1",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "evidence": [
+            {
+              "issuer": "https://provider.example/identity",
+              "id": "deployment-evidence-1",
+              "revision": "1",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          ],
+          "candidate": {
+            "source": {
+              "algorithm": "git-sha1",
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            },
+            "imageDigest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          }
+        },
+        "run": {
+          "issuer": "https://provider.example/identity",
+          "id": "run-1"
+        },
+        "native": {
+          "runId": "perf-20260902-130000-a1b2c3d5",
+          "testId": "search-browser",
+          "workload": {
+            "id": "search-browser-workload",
+            "version": "1.0.0",
+            "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "policy": {
+            "id": "search-browser",
+            "version": "1.0.0",
+            "sha256": "566a9d13e277db0b492c4a7b55294a2e479c9d449768317c072f0f4dda988646"
+          },
+          "baseline": {
+            "identity": {
+              "id": "approved-search-browser",
+              "version": "1.0.0",
+              "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            },
+            "artifact": {
+              "id": "66666666-6666-4666-8666-666666666666",
+              "runId": "perf-20260901-130000-a1b2c3d5",
+              "kind": "normalized",
+              "uri": "s3://perfeng-example/runs/perf-20260901-130000-a1b2c3d5/normalized/playwright.json",
+              "sha256": "9430060da3f66d21e555aab2d52c6b8ad45febbb72817193c657be0a82d19f41",
+              "sizeBytes": 1501,
+              "mediaType": "application/json",
+              "format": "normalized-result/v1"
+            }
+          }
+        },
+        "artifact": {
+          "id": "88888888-8888-4888-8888-888888888888",
+          "runId": "perf-20260902-130000-a1b2c3d5",
+          "kind": "analysis",
+          "uri": "s3://perfeng-example/runs/perf-20260902-130000-a1b2c3d5/analysis/result.json",
+          "sha256": "ddea48923c2eba4c9cf1ba90c067702946094c8cc99a04ebccf5640a49993029",
+          "sizeBytes": 2362,
+          "mediaType": "application/json",
+          "format": "analysis-result/v1"
+        }
+      }
+    }
+  }
+}

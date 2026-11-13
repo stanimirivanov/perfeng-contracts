@@ -145,6 +145,9 @@ def check_http(document: dict[str, Any], case: dict[str, Any], examples: dict[st
             raise ValueError("Required response header missing")
         if name.lower() in headers:
             validator.evolve(schema=definition["schema"]).validate(headers[name.lower()])
+    if case["operationId"] == "getRunComparison" and case["status"] == 200:
+        if body["runId"] != case.get("pathParameters", {}).get("runId"):
+            raise ValueError("Comparison does not identify the selected native Run")
     if case["operationId"] == "createRun" and case["status"] == 201:
         check_run(body)
         if headers["location"] != "/v1/runs/" + body["id"]:
@@ -264,6 +267,7 @@ def lint(document: dict[str, Any], transitions: dict[str, list[str]]) -> None:
         "transitionBaseline",
         "resolveRun",
         "getRunAccess",
+        "getRunComparison",
     }:
         raise ValueError("Unexpected API operation inventory")
     states = set(document["components"]["schemas"]["RunState"]["enum"])
