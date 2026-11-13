@@ -12,6 +12,7 @@ from openapi_spec_validator import OpenAPIV31SpecValidator
 from referencing import Registry
 
 if __package__:
+    from .rerun import check_http_rerun
     from .validate import (
         ROOT,
         check_baseline_consistency,
@@ -21,6 +22,7 @@ if __package__:
         reject_nonfinite_constant,
     )
 else:
+    from rerun import check_http_rerun
     from validate import (
         ROOT,
         check_baseline_consistency,
@@ -145,6 +147,8 @@ def check_http(document: dict[str, Any], case: dict[str, Any], examples: dict[st
             raise ValueError("Required response header missing")
         if name.lower() in headers:
             validator.evolve(schema=definition["schema"]).validate(headers[name.lower()])
+    if case["operationId"] in {"rerunRun", "resolveRunRerun"}:
+        check_http_rerun(case, body, examples.get(case.get("request", "")))
     if case["operationId"] == "getRunComparison" and case["status"] == 200:
         if body["runId"] != case.get("pathParameters", {}).get("runId"):
             raise ValueError("Comparison does not identify the selected native Run")
@@ -270,6 +274,8 @@ def lint(document: dict[str, Any], transitions: dict[str, list[str]]) -> None:
         "getRunComparison",
         "getRunArtifactContent",
         "getRunPolicyContent",
+        "rerunRun",
+        "resolveRunRerun",
     }:
         raise ValueError("Unexpected API operation inventory")
     states = set(document["components"]["schemas"]["RunState"]["enum"])

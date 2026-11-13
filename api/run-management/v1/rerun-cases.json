@@ -1,0 +1,498 @@
+{
+  "request": {
+    "sourceReport": {
+      "id": "88888888-8888-4888-8888-888888888888",
+      "sha256": "ddea48923c2eba4c9cf1ba90c067702946094c8cc99a04ebccf5640a49993029"
+    },
+    "reason": "Investigate the CI latency regression against the same approved baseline."
+  },
+  "receipt": {
+    "schemaVersion": 1,
+    "kind": "RunRerunReceipt",
+    "id": "99999999-9999-4999-8999-999999999999",
+    "decision": "ACCEPTED",
+    "sourceRunId": "perf-20260902-130000-a1b2c3d5",
+    "runId": "perf-20260903-120000-1234abcd",
+    "service": {
+      "issuer": "https://catalog.example/services",
+      "id": "search"
+    },
+    "sourceCreatedBy": {
+      "issuer": "https://ci.example",
+      "id": "pipeline",
+      "kind": "CI"
+    },
+    "actor": {
+      "issuer": "https://identity.example",
+      "id": "maya",
+      "kind": "HUMAN"
+    },
+    "caller": {
+      "issuer": "https://identity.example/clients",
+      "id": "console"
+    },
+    "idempotencyKey": "rerun-maya-20260903-001",
+    "acceptedAt": "2026-09-03T12:00:00Z",
+    "idempotencyKeyExpiresAt": "2026-09-04T12:00:00Z",
+    "request": {
+      "sourceReport": {
+        "id": "88888888-8888-4888-8888-888888888888",
+        "sha256": "ddea48923c2eba4c9cf1ba90c067702946094c8cc99a04ebccf5640a49993029"
+      },
+      "reason": "Investigate the CI latency regression against the same approved baseline."
+    },
+    "selection": {
+      "testSuite": "search-browser",
+      "catalogue": {
+        "id": "application-tests",
+        "version": "1.0.0",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "profile": "smoke",
+      "candidate": {
+        "gitSha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "image": "ghcr.io/example/sample-api@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "environment": {
+        "id": "local-kind",
+        "version": "1.0.0",
+        "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      },
+      "policy": {
+        "id": "search-browser",
+        "version": "1.0.0",
+        "sha256": "566a9d13e277db0b492c4a7b55294a2e479c9d449768317c072f0f4dda988646"
+      }
+    },
+    "native": {
+      "runId": "perf-20260902-130000-a1b2c3d5",
+      "testId": "search-browser",
+      "workload": {
+        "id": "search-browser-workload",
+        "version": "1.0.0",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "policy": {
+        "id": "search-browser",
+        "version": "1.0.0",
+        "sha256": "566a9d13e277db0b492c4a7b55294a2e479c9d449768317c072f0f4dda988646"
+      },
+      "baseline": {
+        "identity": {
+          "id": "approved-search-browser",
+          "version": "1.0.0",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        },
+        "artifact": {
+          "id": "66666666-6666-4666-8666-666666666666",
+          "runId": "perf-20260901-130000-a1b2c3d5",
+          "kind": "normalized",
+          "uri": "s3://perfeng-example/runs/perf-20260901-130000-a1b2c3d5/normalized/playwright.json",
+          "sha256": "9430060da3f66d21e555aab2d52c6b8ad45febbb72817193c657be0a82d19f41",
+          "sizeBytes": 1501,
+          "mediaType": "application/json",
+          "format": "normalized-result/v1"
+        }
+      }
+    }
+  },
+  "trusted": {
+    "source_run_id": "perf-20260902-130000-a1b2c3d5",
+    "run_id": "perf-20260903-120000-1234abcd",
+    "receipt_id": "99999999-9999-4999-8999-999999999999",
+    "service": {
+      "issuer": "https://catalog.example/services",
+      "id": "search"
+    },
+    "source_created_by": {
+      "issuer": "https://ci.example",
+      "id": "pipeline",
+      "kind": "CI"
+    },
+    "actor": {
+      "issuer": "https://identity.example",
+      "id": "maya",
+      "kind": "HUMAN"
+    },
+    "caller": {
+      "issuer": "https://identity.example/clients",
+      "id": "console"
+    },
+    "current_actor": {
+      "issuer": "https://identity.example",
+      "id": "maya",
+      "kind": "HUMAN"
+    },
+    "grant_service": {
+      "issuer": "https://catalog.example/services",
+      "id": "search"
+    },
+    "grants": [
+      "run:read",
+      "run:rerun"
+    ],
+    "request": {
+      "sourceReport": {
+        "id": "88888888-8888-4888-8888-888888888888",
+        "sha256": "ddea48923c2eba4c9cf1ba90c067702946094c8cc99a04ebccf5640a49993029"
+      },
+      "reason": "Investigate the CI latency regression against the same approved baseline."
+    },
+    "key": "rerun-maya-20260903-001",
+    "accepted_at": "2026-09-03T12:00:00Z",
+    "expires_at": "2026-09-04T12:00:00Z"
+  },
+  "conflict": {
+    "code": "IDEMPOTENCY_CONFLICT",
+    "message": "Request could not be completed",
+    "requestId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+  },
+  "pending": {
+    "code": "REQUEST_IN_PROGRESS",
+    "message": "Request could not be completed",
+    "requestId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+  },
+  "forbidden": {
+    "code": "FORBIDDEN",
+    "message": "Request could not be completed",
+    "requestId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+  },
+  "notFound": {
+    "code": "NOT_FOUND",
+    "message": "Not Found",
+    "requestId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+  },
+  "withdrawn": {
+    "code": "VALIDATION_FAILED",
+    "message": "Request could not be completed",
+    "requestId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+  },
+  "unavailable": {
+    "code": "UNAVAILABLE",
+    "message": "Request could not be completed",
+    "requestId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+  },
+  "http": [
+    {
+      "name": "accepted",
+      "operationId": "rerunRun",
+      "status": 201,
+      "response": "receipt",
+      "pathParameters": {
+        "runId": "perf-20260902-130000-a1b2c3d5"
+      },
+      "headers": {
+        "Cache-Control": "no-store",
+        "Location": "/v1/runs/perf-20260903-120000-1234abcd",
+        "Idempotency-Key-Expires-At": "2026-09-04T12:00:00Z"
+      },
+      "request": "request",
+      "requestHeaders": {
+        "Idempotency-Key": "rerun-maya-20260903-001"
+      }
+    },
+    {
+      "name": "replayed",
+      "operationId": "rerunRun",
+      "status": 201,
+      "response": "receipt",
+      "pathParameters": {
+        "runId": "perf-20260902-130000-a1b2c3d5"
+      },
+      "headers": {
+        "Cache-Control": "no-store",
+        "Location": "/v1/runs/perf-20260903-120000-1234abcd",
+        "Idempotency-Key-Expires-At": "2026-09-04T12:00:00Z"
+      },
+      "request": "request",
+      "requestHeaders": {
+        "Idempotency-Key": "rerun-maya-20260903-001"
+      }
+    },
+    {
+      "name": "recovered",
+      "operationId": "resolveRunRerun",
+      "status": 200,
+      "response": "receipt",
+      "pathParameters": {
+        "runId": "perf-20260902-130000-a1b2c3d5"
+      },
+      "headers": {
+        "Cache-Control": "no-store"
+      },
+      "queryParameters": {
+        "idempotencyKey": "rerun-maya-20260903-001"
+      }
+    },
+    {
+      "name": "body conflict",
+      "operationId": "rerunRun",
+      "status": 409,
+      "response": "conflict",
+      "pathParameters": {
+        "runId": "perf-20260902-130000-a1b2c3d5"
+      },
+      "headers": {
+        "Cache-Control": "no-store"
+      },
+      "request": "request",
+      "requestHeaders": {
+        "Idempotency-Key": "rerun-maya-20260903-001"
+      }
+    },
+    {
+      "name": "concurrent duplicate",
+      "operationId": "rerunRun",
+      "status": 409,
+      "response": "pending",
+      "pathParameters": {
+        "runId": "perf-20260902-130000-a1b2c3d5"
+      },
+      "headers": {
+        "Cache-Control": "no-store",
+        "Retry-After": 1
+      },
+      "request": "request",
+      "requestHeaders": {
+        "Idempotency-Key": "rerun-maya-20260903-001"
+      }
+    },
+    {
+      "name": "forbidden",
+      "operationId": "rerunRun",
+      "status": 403,
+      "response": "forbidden",
+      "pathParameters": {
+        "runId": "perf-20260902-130000-a1b2c3d5"
+      },
+      "headers": {
+        "Cache-Control": "no-store"
+      },
+      "request": "request",
+      "requestHeaders": {
+        "Idempotency-Key": "rerun-maya-20260903-001"
+      }
+    },
+    {
+      "name": "invisible source",
+      "operationId": "rerunRun",
+      "status": 404,
+      "response": "notFound",
+      "pathParameters": {
+        "runId": "perf-20260902-130000-a1b2c3d5"
+      },
+      "headers": {
+        "Cache-Control": "no-store"
+      },
+      "request": "request",
+      "requestHeaders": {
+        "Idempotency-Key": "rerun-maya-20260903-001"
+      }
+    },
+    {
+      "name": "withdrawn selection",
+      "operationId": "rerunRun",
+      "status": 422,
+      "response": "withdrawn",
+      "pathParameters": {
+        "runId": "perf-20260902-130000-a1b2c3d5"
+      },
+      "headers": {
+        "Cache-Control": "no-store"
+      },
+      "request": "request",
+      "requestHeaders": {
+        "Idempotency-Key": "rerun-maya-20260903-001"
+      }
+    },
+    {
+      "name": "unavailable evidence",
+      "operationId": "rerunRun",
+      "status": 503,
+      "response": "unavailable",
+      "pathParameters": {
+        "runId": "perf-20260902-130000-a1b2c3d5"
+      },
+      "headers": {
+        "Cache-Control": "no-store",
+        "Retry-After": 1
+      },
+      "request": "request",
+      "requestHeaders": {
+        "Idempotency-Key": "rerun-maya-20260903-001"
+      }
+    }
+  ],
+  "selectionInputs": {
+    "approved": {
+      "catalogue": [
+        {
+          "id": "application-tests",
+          "version": "1.0.0",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "environment": [
+        {
+          "id": "local-kind",
+          "version": "1.0.0",
+          "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+        }
+      ],
+      "policy": [
+        {
+          "id": "search-browser",
+          "version": "1.0.0",
+          "sha256": "566a9d13e277db0b492c4a7b55294a2e479c9d449768317c072f0f4dda988646"
+        }
+      ],
+      "workload": [
+        {
+          "id": "search-browser-workload",
+          "version": "1.0.0",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        }
+      ],
+      "baseline": [
+        {
+          "id": "approved-search-browser",
+          "version": "1.0.0",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        }
+      ]
+    },
+    "enabled_suites": [
+      "search-browser"
+    ],
+    "request": {
+      "sourceReport": {
+        "id": "88888888-8888-4888-8888-888888888888",
+        "sha256": "ddea48923c2eba4c9cf1ba90c067702946094c8cc99a04ebccf5640a49993029"
+      },
+      "reason": "Investigate the CI latency regression against the same approved baseline."
+    },
+    "evidence_available": true
+  },
+  "selectionChecks": [
+    {
+      "name": "exact approved selection",
+      "overrides": {},
+      "expected": "ACCEPTABLE"
+    },
+    {
+      "name": "withdrawn resources cannot select latest",
+      "overrides": {
+        "approved": {
+          "catalogue": [
+            {
+              "id": "application-tests",
+              "version": "1.0.0",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          ],
+          "environment": [
+            {
+              "id": "local-kind",
+              "version": "1.0.0",
+              "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+            }
+          ],
+          "policy": [
+            {
+              "id": "search-browser",
+              "version": "1.0.0",
+              "sha256": "566a9d13e277db0b492c4a7b55294a2e479c9d449768317c072f0f4dda988646"
+            }
+          ],
+          "workload": [
+            {
+              "id": "search-browser-workload",
+              "version": "1.0.0",
+              "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            }
+          ],
+          "baseline": []
+        }
+      },
+      "expected": "VALIDATION_FAILED"
+    },
+    {
+      "name": "withdrawn suite",
+      "overrides": {
+        "enabled_suites": []
+      },
+      "expected": "VALIDATION_FAILED"
+    },
+    {
+      "name": "missing exact evidence",
+      "overrides": {
+        "evidence_available": false
+      },
+      "expected": "UNAVAILABLE"
+    },
+    {
+      "name": "changed observed report",
+      "overrides": {
+        "request": {
+          "sourceReport": {
+            "id": "88888888-8888-4888-8888-888888888888",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "reason": "Investigate the CI latency regression against the same approved baseline."
+        }
+      },
+      "expected": "VALIDATION_FAILED"
+    },
+    {
+      "name": "missing report-time binding cannot be reconstructed",
+      "overrides": {
+        "source": {
+          "status": "INCOMPLETE"
+        }
+      },
+      "expected": "VALIDATION_FAILED"
+    },
+    {
+      "name": "approval in another namespace cannot admit policy",
+      "overrides": {
+        "approved": {
+          "catalogue": [
+            {
+              "id": "application-tests",
+              "version": "1.0.0",
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          ],
+          "environment": [
+            {
+              "id": "local-kind",
+              "version": "1.0.0",
+              "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+            }
+          ],
+          "policy": [],
+          "workload": [
+            {
+              "id": "search-browser-workload",
+              "version": "1.0.0",
+              "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            },
+            {
+              "id": "search-browser",
+              "version": "1.0.0",
+              "sha256": "566a9d13e277db0b492c4a7b55294a2e479c9d449768317c072f0f4dda988646"
+            }
+          ],
+          "baseline": [
+            {
+              "id": "approved-search-browser",
+              "version": "1.0.0",
+              "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            }
+          ]
+        }
+      },
+      "expected": "VALIDATION_FAILED"
+    }
+  ]
+}

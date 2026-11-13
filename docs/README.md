@@ -62,3 +62,5 @@ page focused on routing rather than duplicating contract meaning.
 accuracy and consumer impact still require review.
 
 Exact immutable content retrieval: [Run evidence reads](run-evidence-reads.md).
+
+Attributable rerun intent and exact recovery: [Run reruns](run-reruns.md).

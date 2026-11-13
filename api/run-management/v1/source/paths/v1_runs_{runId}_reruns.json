@@ -1,0 +1,173 @@
+{
+  "parameters": [
+    {
+      "name": "runId",
+      "in": "path",
+      "required": true,
+      "schema": {
+        "$ref": "../components/schemas/RunId.json"
+      }
+    }
+  ],
+  "post": {
+    "tags": [
+      "Runs"
+    ],
+    "operationId": "rerunRun",
+    "summary": "Create an attributed rerun of the frozen source selection",
+    "description": "Service mode only; verify actor/caller delegation and current source/evidence/child service rights. No-store applies to every response. Source binding, idempotency, retention, withdrawal and uniform scoped denial are normative in docs/run-reruns.md. No arbitrary selection overrides or URLs.",
+    "x-perfeng-service-permission": "run:rerun",
+    "x-perfeng-max-response-bytes": 65536,
+    "parameters": [
+      {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{15,127}$"
+        }
+      }
+    ],
+    "responses": {
+      "201": {
+        "description": "Original immutable acceptance receipt; acceptance is not completion. Replay preserves body and headers.",
+        "headers": {
+          "Cache-Control": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            }
+          },
+          "Location": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^/v1/runs/perf-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}$"
+            }
+          },
+          "Idempotency-Key-Expires-At": {
+            "required": true,
+            "schema": {
+              "$ref": "../components/schemas/Timestamp.json"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/RerunReceipt.json"
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthenticated.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "404": {
+        "$ref": "../components/responses/ScopedNotFound.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      },
+      "409": {
+        "$ref": "../components/responses/IdempotencyConflict.json"
+      },
+      "413": {
+        "$ref": "../components/responses/RequestTooLarge.json"
+      },
+      "415": {
+        "$ref": "../components/responses/UnsupportedMediaType.json"
+      },
+      "422": {
+        "$ref": "../components/responses/ValidationFailed.json"
+      }
+    },
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "../components/schemas/RerunRequest.json"
+          }
+        }
+      }
+    }
+  },
+  "get": {
+    "tags": [
+      "Runs"
+    ],
+    "operationId": "resolveRunRerun",
+    "summary": "Recover the originating actor\u2019s exact rerun receipt without mutation",
+    "description": "Service mode only; verify actor/caller delegation and current source/evidence/child service rights. No-store applies to every response. Source binding, idempotency, retention, withdrawal and uniform scoped denial are normative in docs/run-reruns.md. No arbitrary selection overrides or URLs.",
+    "x-perfeng-service-permission": "run:read",
+    "x-perfeng-max-response-bytes": 65536,
+    "parameters": [
+      {
+        "name": "idempotencyKey",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{15,127}$"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Exact retained receipt for the currently verified originating actor and key, without creating work.",
+        "headers": {
+          "Cache-Control": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../components/schemas/RerunReceipt.json"
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthenticated.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "404": {
+        "$ref": "../components/responses/ScopedNotFound.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

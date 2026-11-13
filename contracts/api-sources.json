@@ -42,6 +42,8 @@
         "components/schemas/PassedQualification.json",
         "components/schemas/PendingQualification.json",
         "components/schemas/Reference.json",
+        "components/schemas/RerunReceipt.json",
+        "components/schemas/RerunRequest.json",
         "components/schemas/ResourceId.json",
         "components/schemas/Run.json",
         "components/schemas/RunAccess.json",
@@ -66,9 +68,10 @@
         "paths/v1_runs_{runId}_artifacts_{artifactId}_content.json",
         "paths/v1_runs_{runId}_cancel.json",
         "paths/v1_runs_{runId}_comparison.json",
-        "paths/v1_runs_{runId}_policy_content.json"
+        "paths/v1_runs_{runId}_policy_content.json",
+        "paths/v1_runs_{runId}_reruns.json"
       ],
-      "semanticSha256": "da33b778121dfabd65084b113e8e4ab7b8dca49f285c6a9390e8b27e6687673a"
+      "semanticSha256": "9b5ae745be77438bc9e8f9c82d06888e996b2a5d66369f36e607bab6f631ab3b"
     },
     {
       "root": "api/native-worker/v2/source",

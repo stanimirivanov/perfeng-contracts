@@ -31,14 +31,14 @@ caller's delegation. Grants MUST be service-bound, default-deny and independent:
 | Exact Run, artifacts, baseline reads; access and resolution | `run:read` |
 | Create Run | `run:create` |
 | Cancel Run | `run:cancel` |
-| Attributable rerun (future operation) | `run:rerun` |
+| Attributable source-Run rerun | `run:rerun` |
 | Create baseline candidate | `baseline:create` |
 | Transition to QUALIFIED | `baseline:qualify` |
 | Transition to APPROVED | `baseline:approve` |
 | Transition to RETIRED | `baseline:retire` |
 
 These rights imply none of each other. Rerun permission does not grant arbitrary
-create, cancellation or baseline approval. This PR does not add a rerun endpoint.
+create, cancellation or baseline approval. The separate [rerun contract](run-reruns.md) specifies candidate rerun and exact receipt recovery operations; provider support must be admitted before use.
 Existing baseline transition rules, revision conflicts and evidence qualification
 remain mandatory. Baseline reads and transitions use their retained service
 association, never a service selected by the reader. No association means denial.

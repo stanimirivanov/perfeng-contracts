@@ -2,7 +2,7 @@
   "openapi": "3.1.1",
   "info": {
     "title": "Performance Run and Baseline Management API",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "description": "Candidate contract only. Run lifecycle and baseline administration remain independent of measurement quality, SLO and regression verdicts. See docs/run-management-api.md."
   },
   "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
@@ -898,6 +898,179 @@
           },
           "422": {
             "$ref": "#/components/responses/ValidationFailed"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/v1/runs/{runId}/reruns": {
+      "parameters": [
+        {
+          "name": "runId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/RunId"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "Runs"
+        ],
+        "operationId": "rerunRun",
+        "summary": "Create an attributed rerun of the frozen source selection",
+        "description": "Service mode only; verify actor/caller delegation and current source/evidence/child service rights. No-store applies to every response. Source binding, idempotency, retention, withdrawal and uniform scoped denial are normative in docs/run-reruns.md. No arbitrary selection overrides or URLs.",
+        "x-perfeng-service-permission": "run:rerun",
+        "x-perfeng-max-response-bytes": 65536,
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{15,127}$"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Original immutable acceptance receipt; acceptance is not completion. Replay preserves body and headers.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Location": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "pattern": "^/v1/runs/perf-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}$"
+                }
+              },
+              "Idempotency-Key-Expires-At": {
+                "required": true,
+                "schema": {
+                  "$ref": "#/components/schemas/Timestamp"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RerunReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/ScopedNotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/IdempotencyConflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/RequestTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationFailed"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RerunRequest"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Runs"
+        ],
+        "operationId": "resolveRunRerun",
+        "summary": "Recover the originating actor\u2019s exact rerun receipt without mutation",
+        "description": "Service mode only; verify actor/caller delegation and current source/evidence/child service rights. No-store applies to every response. Source binding, idempotency, retention, withdrawal and uniform scoped denial are normative in docs/run-reruns.md. No arbitrary selection overrides or URLs.",
+        "x-perfeng-service-permission": "run:read",
+        "x-perfeng-max-response-bytes": 65536,
+        "parameters": [
+          {
+            "name": "idempotencyKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{15,127}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Exact retained receipt for the currently verified originating actor and key, without creating work.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RerunReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/ScopedNotFound"
           },
           "429": {
             "$ref": "#/components/responses/RateLimited"
@@ -3555,6 +3728,275 @@
           }
         ],
         "description": "AVAILABLE is the immutable retained comparison. Other states are current availability observations with no evidence or performance verdict. See docs/run-comparison.md."
+      },
+      "RerunRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sourceReport",
+          "reason"
+        ],
+        "properties": {
+          "sourceReport": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "sha256"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+              },
+              "sha256": {
+                "$ref": "#/components/schemas/Sha256"
+              }
+            }
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024,
+            "pattern": "\\S"
+          }
+        }
+      },
+      "native": {
+        "type": "object",
+        "required": [
+          "runId",
+          "testId",
+          "workload",
+          "policy",
+          "baseline"
+        ],
+        "properties": {
+          "runId": {
+            "type": "string",
+            "description": "Reference to the run metadata",
+            "pattern": "^perf-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}$"
+          },
+          "testId": {
+            "$ref": "#/components/schemas/id"
+          },
+          "workload": {
+            "type": "object",
+            "required": [
+              "id",
+              "version",
+              "sha256"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/id"
+              },
+              "version": {
+                "$ref": "#/components/schemas/version"
+              },
+              "sha256": {
+                "$ref": "#/components/schemas/sha256"
+              }
+            },
+            "additionalProperties": false
+          },
+          "policy": {
+            "type": "object",
+            "required": [
+              "id",
+              "version",
+              "sha256"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/id"
+              },
+              "version": {
+                "$ref": "#/components/schemas/version"
+              },
+              "sha256": {
+                "$ref": "#/components/schemas/sha256"
+              }
+            },
+            "additionalProperties": false
+          },
+          "baseline": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "identity",
+                  "artifact"
+                ],
+                "properties": {
+                  "identity": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "version",
+                      "sha256"
+                    ],
+                    "properties": {
+                      "id": {
+                        "$ref": "#/components/schemas/id"
+                      },
+                      "version": {
+                        "$ref": "#/components/schemas/version"
+                      },
+                      "sha256": {
+                        "$ref": "#/components/schemas/sha256"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "artifact": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "runId",
+                      "kind",
+                      "uri",
+                      "sha256",
+                      "sizeBytes",
+                      "mediaType",
+                      "format"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "runId": {
+                        "type": "string",
+                        "description": "Reference to the run metadata",
+                        "pattern": "^perf-[0-9]{8}-[0-9]{6}-[a-f0-9]{8}$"
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "normalized"
+                        ]
+                      },
+                      "uri": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "a string matching the pattern ^(s3|https):\\/\\/[^\\s?#]+$",
+                        "pattern": "^(s3|https):\\/\\/[^\\s?#]+$"
+                      },
+                      "sha256": {
+                        "$ref": "#/components/schemas/sha256"
+                      },
+                      "sizeBytes": {
+                        "type": "integer",
+                        "description": "a non-negative number",
+                        "title": "greaterThanOrEqualTo(0)",
+                        "minimum": 0
+                      },
+                      "mediaType": {
+                        "type": "string",
+                        "enum": [
+                          "application/json"
+                        ]
+                      },
+                      "format": {
+                        "type": "string",
+                        "enum": [
+                          "normalized-result/v1"
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "RerunReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "kind",
+          "id",
+          "decision",
+          "sourceRunId",
+          "runId",
+          "service",
+          "sourceCreatedBy",
+          "actor",
+          "caller",
+          "idempotencyKey",
+          "acceptedAt",
+          "idempotencyKeyExpiresAt",
+          "request",
+          "selection",
+          "native"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "const": 1
+          },
+          "kind": {
+            "type": "string",
+            "const": "RunRerunReceipt"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+          },
+          "decision": {
+            "type": "string",
+            "const": "ACCEPTED"
+          },
+          "sourceRunId": {
+            "$ref": "#/components/schemas/RunId"
+          },
+          "runId": {
+            "$ref": "#/components/schemas/RunId"
+          },
+          "service": {
+            "$ref": "#/components/schemas/ScopedIdentity"
+          },
+          "sourceCreatedBy": {
+            "$ref": "#/components/schemas/VerifiedActor"
+          },
+          "actor": {
+            "$ref": "#/components/schemas/VerifiedActor"
+          },
+          "caller": {
+            "$ref": "#/components/schemas/ScopedIdentity"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{15,127}$"
+          },
+          "acceptedAt": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "idempotencyKeyExpiresAt": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "request": {
+            "$ref": "#/components/schemas/RerunRequest"
+          },
+          "selection": {
+            "$ref": "#/components/schemas/CreateRun"
+          },
+          "native": {
+            "$ref": "#/components/schemas/native"
+          }
+        },
+        "description": "Immutable accepted intent, not execution success or a grant. Actor/caller and source selection are provider-owned. See docs/run-reruns.md."
       }
     },
     "responses": {

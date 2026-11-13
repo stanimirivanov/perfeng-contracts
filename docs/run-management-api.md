@@ -15,7 +15,7 @@
 The [OpenAPI 3.1.1 document](../api/run-management/v1/openapi.json) defines the
 control-plane boundary from proposal sections 12-13 together with explicit
 baseline administration. This is a specification and conformance corpus, not a
-deployed service. API description version 0.7.0 ships in candidate bundle 0.30.0;
+deployed service. API description version 0.8.0 ships in candidate bundle 0.31.0;
 neither is a stable v1 release.
 
 ## Operations
@@ -26,6 +26,8 @@ neither is a stable v1 release.
 | GET /v1/runs/{runId} | 200 + Run | Current consistent snapshot |
 | GET /v1/run-resolutions?requestIssuer=...&requestId=... | 200 + RunResolution | Exact authorized CI request mapping |
 | GET /v1/runs/{runId}/comparison | 200 + RunComparison | Immutable historical evidence or explicit availability |
+| POST /v1/runs/{runId}/reruns | 201 + RerunReceipt | Attributed frozen-selection child acceptance |
+| GET /v1/runs/{runId}/reruns?idempotencyKey=... | 200 + RerunReceipt | Exact originating-actor receipt recovery |
 | GET /v1/runs/{runId}/access | 200 + RunAccess | Current verified service access |
 | GET /v1/runs/{runId}/artifacts | 200 + ArtifactCollection | Current immutable-reference snapshot |
 | GET /v1/runs/{runId}/artifacts/{artifactId}/content | 200 + original bytes | Exact authorized associated artifact |
@@ -270,3 +272,8 @@ source outcomes. See the normative [comparison projection](run-comparison.md).
 
 Run API 0.7.0 adds identifier-only protected artifact and report-used policy reads.
 See [the normative byte, authorization and error profile](run-evidence-reads.md).
+
+## Attributed rerun intent
+
+Service-mode rerun acceptance and read-only recovery follow [the rerun contract](run-reruns.md).
+Existing CreateRun/idempotency and Run lifecycle semantics remain unchanged.
