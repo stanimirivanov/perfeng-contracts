@@ -144,6 +144,7 @@
   "api/run-management/v1/http-cases.json",
   "api/run-management/v1/openapi.json",
   "api/run-management/v1/service-access-cases.json",
+  "api/run-management/v1/source/components/responses/ArtifactContent.json",
   "api/run-management/v1/source/components/responses/BadRequest.json",
   "api/run-management/v1/source/components/responses/BaselineExists.json",
   "api/run-management/v1/source/components/responses/BaselineTransitionConflict.json",
@@ -151,6 +152,7 @@
   "api/run-management/v1/source/components/responses/IdempotencyConflict.json",
   "api/run-management/v1/source/components/responses/InternalError.json",
   "api/run-management/v1/source/components/responses/NotFound.json",
+  "api/run-management/v1/source/components/responses/PolicyContent.json",
   "api/run-management/v1/source/components/responses/RateLimited.json",
   "api/run-management/v1/source/components/responses/RequestTooLarge.json",
   "api/run-management/v1/source/components/responses/RunTerminal.json",
@@ -201,7 +203,9 @@
   "api/run-management/v1/source/paths/v1_runs_{runId}.json",
   "api/run-management/v1/source/paths/v1_runs_{runId}_access.json",
   "api/run-management/v1/source/paths/v1_runs_{runId}_artifacts.json",
+  "api/run-management/v1/source/paths/v1_runs_{runId}_artifacts_{artifactId}_content.json",
   "api/run-management/v1/source/paths/v1_runs_{runId}_cancel.json",
   "api/run-management/v1/source/paths/v1_runs_{runId}_comparison.json",
+  "api/run-management/v1/source/paths/v1_runs_{runId}_policy_content.json",
   "api/run-management/v1/transitions.json"
 ]

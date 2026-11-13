@@ -105,3 +105,4 @@ How will assumptions and consequences be verified?
 | [0015](0015-distribute-immutable-contract-artifacts.md) | Proposed | Distribute verified immutable contract selections while preserving offline consumer validation. |
 | [0016](0016-service-scoped-run-discovery.md) | Proposed | Separate verified actor and caller from service authority; resolve exact retained CI requests to native Runs. |
 | [0017](0017-project-immutable-run-comparisons.md) | Proposed | Project immutable Run comparisons from retained analysis, policy and baseline evidence; distinguish availability from verdicts. |
+| [0018](0018-read-authorized-original-evidence.md) | Proposed | Read bounded original artifact and report-used policy bytes through current authorized Run associations. |

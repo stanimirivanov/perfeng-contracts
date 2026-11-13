@@ -1,0 +1,51 @@
+{
+  "parameters": [
+    {
+      "name": "runId",
+      "in": "path",
+      "required": true,
+      "schema": {
+        "$ref": "../components/schemas/RunId.json"
+      }
+    }
+  ],
+  "get": {
+    "tags": [
+      "Runs"
+    ],
+    "operationId": "getRunPolicyContent",
+    "summary": "Read exact authorized Run policy bytes",
+    "description": "Authorize selected Run and every evidence owner before lookup/disclosure. Only retained associations qualify; no-store and nosniff apply to every response. Reject query/body, Range and conditional requests with 400. Uniform 404 for unknown, invisible, unassociated or not-yet-bound evidence. Authorized unsupported format or oversized evidence is 422; integrity failure is 503 without partial bytes. Normative semantics: docs/run-evidence-reads.md.",
+    "x-perfeng-service-permission": "run:read",
+    "x-perfeng-max-response-bytes": 1048576,
+    "responses": {
+      "200": {
+        "$ref": "../components/responses/PolicyContent.json"
+      },
+      "400": {
+        "$ref": "../components/responses/BadRequest.json"
+      },
+      "401": {
+        "$ref": "../components/responses/Unauthenticated.json"
+      },
+      "403": {
+        "$ref": "../components/responses/Forbidden.json"
+      },
+      "404": {
+        "$ref": "../components/responses/ScopedNotFound.json"
+      },
+      "422": {
+        "$ref": "../components/responses/ValidationFailed.json"
+      },
+      "429": {
+        "$ref": "../components/responses/RateLimited.json"
+      },
+      "500": {
+        "$ref": "../components/responses/InternalError.json"
+      },
+      "503": {
+        "$ref": "../components/responses/Unavailable.json"
+      }
+    }
+  }
+}

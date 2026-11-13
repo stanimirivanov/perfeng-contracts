@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.29.0`; it is not a stable release.
+- The current candidate bundle is `0.30.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,12 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.30.0 adds Run API 0.7.0 protected original artifact and
+report-used policy byte reads. Existing operations, lifecycle and schemas remain
+unchanged. Providers must qualify retained associations, current authorization and
+bounded byte serving before consumers opt in; see [evidence reads](run-evidence-reads.md)
+and ADR-0018. Disable consumers first on rollback; preserve historical evidence.
 
 Candidate bundle 0.29.0 adds Run API 0.6.0 with a bounded immutable historical
 comparison read. Existing Run, Integration and analysis schemas/operations are

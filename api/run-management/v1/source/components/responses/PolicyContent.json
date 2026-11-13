@@ -1,0 +1,73 @@
+{
+  "description": "Verified original bytes. No transformation, partial content, redirects or storage locations. See docs/run-evidence-reads.md.",
+  "headers": {
+    "Content-Length": {
+      "required": true,
+      "schema": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 1048576
+      }
+    },
+    "Content-Digest": {
+      "required": true,
+      "schema": {
+        "type": "string",
+        "pattern": "^sha-256=:[A-Za-z0-9+/]{43}=:$"
+      }
+    },
+    "Cache-Control": {
+      "required": true,
+      "schema": {
+        "type": "string",
+        "const": "no-store"
+      }
+    },
+    "X-Content-Type-Options": {
+      "required": true,
+      "schema": {
+        "type": "string",
+        "const": "nosniff"
+      }
+    },
+    "X-Perfeng-Evidence-Media-Type": {
+      "required": true,
+      "schema": {
+        "type": "string",
+        "const": "application/json"
+      }
+    },
+    "X-Perfeng-Evidence-Format": {
+      "required": true,
+      "schema": {
+        "type": "string",
+        "const": "policy/v1"
+      }
+    },
+    "X-Perfeng-Run-Id": {
+      "required": true,
+      "schema": {
+        "$ref": "../schemas/RunId.json"
+      }
+    },
+    "X-Perfeng-Policy-Id": {
+      "required": true,
+      "schema": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      }
+    },
+    "X-Perfeng-Policy-Version": {
+      "required": true,
+      "schema": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      }
+    }
+  },
+  "content": {
+    "application/octet-stream": {}
+  }
+}
