@@ -60,3 +60,5 @@ canonical source or creates a recurring task without a clear route. Keep this
 page focused on routing rather than duplicating contract meaning.
 `make docs-check` validates local links and documentation structure; semantic
 accuracy and consumer impact still require review.
+
+Exact immutable content retrieval: [Run evidence reads](run-evidence-reads.md).

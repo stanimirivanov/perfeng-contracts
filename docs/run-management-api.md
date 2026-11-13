@@ -15,7 +15,7 @@
 The [OpenAPI 3.1.1 document](../api/run-management/v1/openapi.json) defines the
 control-plane boundary from proposal sections 12-13 together with explicit
 baseline administration. This is a specification and conformance corpus, not a
-deployed service. API description version 0.6.0 ships in candidate bundle 0.29.0;
+deployed service. API description version 0.7.0 ships in candidate bundle 0.30.0;
 neither is a stable v1 release.
 
 ## Operations
@@ -28,6 +28,8 @@ neither is a stable v1 release.
 | GET /v1/runs/{runId}/comparison | 200 + RunComparison | Immutable historical evidence or explicit availability |
 | GET /v1/runs/{runId}/access | 200 + RunAccess | Current verified service access |
 | GET /v1/runs/{runId}/artifacts | 200 + ArtifactCollection | Current immutable-reference snapshot |
+| GET /v1/runs/{runId}/artifacts/{artifactId}/content | 200 + original bytes | Exact authorized associated artifact |
+| GET /v1/runs/{runId}/policy/content | 200 + original bytes | Exact retained report-used policy |
 | POST /v1/runs/{runId}/cancel before dispatch | 200 + ABORTED Run | Cancellation completed |
 | POST /v1/runs/{runId}/cancel after dispatch begins | 202 + CANCELLING Run | Cancellation requested |
 | Repeat cancel after ABORTED | 200 + ABORTED Run | No mutation |
@@ -263,3 +265,8 @@ explicit opt-in mode, independent rights and preserved legacy principal scope.
 
 The authenticated exact comparison GET preserves report-time selection and
 source outcomes. See the normative [comparison projection](run-comparison.md).
+
+## Original evidence content
+
+Run API 0.7.0 adds identifier-only protected artifact and report-used policy reads.
+See [the normative byte, authorization and error profile](run-evidence-reads.md).

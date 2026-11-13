@@ -1,10 +1,10 @@
 {
-  "baseCommit": "4ad2582ddf9137b58be8362367d45ffd817f49bb",
+  "baseCommit": "45acf775cb8298a346e9a9d7b7ab0456bf101360",
   "apis": {
     "api/run-management/v1/openapi.json": {
-      "beforeSha256": "4f96482257770bcb30209995f946abda2703b54e8720968938ca49c4efffb33e",
-      "afterSha256": "2e2b1900fd8c1e6f762a84643ecbb33caa0271114b538fb6e09612f711427076",
-      "reason": "Issue #111 / M05-PR46 / ADR-0017 propose an additive exact historical comparison read and generated canonical evidence component. Existing schemas and operations remain unchanged; provider rollout and release are separate. Intent is not human approval."
+      "beforeSha256": "2e2b1900fd8c1e6f762a84643ecbb33caa0271114b538fb6e09612f711427076",
+      "afterSha256": "da33b778121dfabd65084b113e8e4ab7b8dca49f285c6a9390e8b27e6687673a",
+      "reason": "Issue #113 / M05-PR25 / ADR-0018 add bounded authorized original artifact and report-used policy byte reads. Existing operations, schemas and lifecycle semantics remain unchanged. Provider and consumer rollout are separate; this receipt is not human approval."
     }
   }
 }

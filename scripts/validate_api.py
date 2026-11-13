@@ -268,6 +268,8 @@ def lint(document: dict[str, Any], transitions: dict[str, list[str]]) -> None:
         "resolveRun",
         "getRunAccess",
         "getRunComparison",
+        "getRunArtifactContent",
+        "getRunPolicyContent",
     }:
         raise ValueError("Unexpected API operation inventory")
     states = set(document["components"]["schemas"]["RunState"]["enum"])

@@ -4,6 +4,7 @@
       "root": "api/run-management/v1/source",
       "output": "api/run-management/v1/openapi.json",
       "files": [
+        "components/responses/ArtifactContent.json",
         "components/responses/BadRequest.json",
         "components/responses/BaselineExists.json",
         "components/responses/BaselineTransitionConflict.json",
@@ -11,6 +12,7 @@
         "components/responses/IdempotencyConflict.json",
         "components/responses/InternalError.json",
         "components/responses/NotFound.json",
+        "components/responses/PolicyContent.json",
         "components/responses/RateLimited.json",
         "components/responses/RequestTooLarge.json",
         "components/responses/RunTerminal.json",
@@ -61,10 +63,12 @@
         "paths/v1_runs_{runId}.json",
         "paths/v1_runs_{runId}_access.json",
         "paths/v1_runs_{runId}_artifacts.json",
+        "paths/v1_runs_{runId}_artifacts_{artifactId}_content.json",
         "paths/v1_runs_{runId}_cancel.json",
-        "paths/v1_runs_{runId}_comparison.json"
+        "paths/v1_runs_{runId}_comparison.json",
+        "paths/v1_runs_{runId}_policy_content.json"
       ],
-      "semanticSha256": "2e2b1900fd8c1e6f762a84643ecbb33caa0271114b538fb6e09612f711427076"
+      "semanticSha256": "da33b778121dfabd65084b113e8e4ab7b8dca49f285c6a9390e8b27e6687673a"
     },
     {
       "root": "api/native-worker/v2/source",
