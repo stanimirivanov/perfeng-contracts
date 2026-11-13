@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.30.0`; it is not a stable release.
+- The current candidate bundle is `0.31.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,13 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.31.0 adds Run API 0.8.0 attributed source-Run rerun and exact
+actor-scoped receipt recovery. Existing paths/schemas and closed lifecycle/error
+families are unchanged. Service-mode providers must qualify identity, atomic
+acceptance, retention and execution fencing before consumers opt in; see
+[reruns](run-reruns.md) and ADR-0019. Disable consumers first on rollback; retain
+accepted children, audit receipts and sealed intent keys.
 
 Candidate bundle 0.30.0 adds Run API 0.7.0 protected original artifact and
 report-used policy byte reads. Existing operations, lifecycle and schemas remain

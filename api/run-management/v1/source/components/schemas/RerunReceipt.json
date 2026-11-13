@@ -1,0 +1,79 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "id",
+    "decision",
+    "sourceRunId",
+    "runId",
+    "service",
+    "sourceCreatedBy",
+    "actor",
+    "caller",
+    "idempotencyKey",
+    "acceptedAt",
+    "idempotencyKeyExpiresAt",
+    "request",
+    "selection",
+    "native"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "kind": {
+      "type": "string",
+      "const": "RunRerunReceipt"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+    },
+    "decision": {
+      "type": "string",
+      "const": "ACCEPTED"
+    },
+    "sourceRunId": {
+      "$ref": "./RunId.json"
+    },
+    "runId": {
+      "$ref": "./RunId.json"
+    },
+    "service": {
+      "$ref": "./ScopedIdentity.json"
+    },
+    "sourceCreatedBy": {
+      "$ref": "./VerifiedActor.json"
+    },
+    "actor": {
+      "$ref": "./VerifiedActor.json"
+    },
+    "caller": {
+      "$ref": "./ScopedIdentity.json"
+    },
+    "idempotencyKey": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{15,127}$"
+    },
+    "acceptedAt": {
+      "$ref": "./Timestamp.json"
+    },
+    "idempotencyKeyExpiresAt": {
+      "$ref": "./Timestamp.json"
+    },
+    "request": {
+      "$ref": "./RerunRequest.json"
+    },
+    "selection": {
+      "$ref": "./CreateRun.json"
+    },
+    "native": {
+      "$ref": "./ComparisonEvidence.json#/properties/native"
+    }
+  },
+  "description": "Immutable accepted intent, not execution success or a grant. Actor/caller and source selection are provider-owned. See docs/run-reruns.md."
+}

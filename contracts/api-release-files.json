@@ -143,6 +143,7 @@
   "api/run-management/v1/examples/invalid.json",
   "api/run-management/v1/http-cases.json",
   "api/run-management/v1/openapi.json",
+  "api/run-management/v1/rerun-cases.json",
   "api/run-management/v1/service-access-cases.json",
   "api/run-management/v1/source/components/responses/ArtifactContent.json",
   "api/run-management/v1/source/components/responses/BadRequest.json",
@@ -182,6 +183,8 @@
   "api/run-management/v1/source/components/schemas/PassedQualification.json",
   "api/run-management/v1/source/components/schemas/PendingQualification.json",
   "api/run-management/v1/source/components/schemas/Reference.json",
+  "api/run-management/v1/source/components/schemas/RerunReceipt.json",
+  "api/run-management/v1/source/components/schemas/RerunRequest.json",
   "api/run-management/v1/source/components/schemas/ResourceId.json",
   "api/run-management/v1/source/components/schemas/Run.json",
   "api/run-management/v1/source/components/schemas/RunAccess.json",
@@ -207,5 +210,6 @@
   "api/run-management/v1/source/paths/v1_runs_{runId}_cancel.json",
   "api/run-management/v1/source/paths/v1_runs_{runId}_comparison.json",
   "api/run-management/v1/source/paths/v1_runs_{runId}_policy_content.json",
+  "api/run-management/v1/source/paths/v1_runs_{runId}_reruns.json",
   "api/run-management/v1/transitions.json"
 ]
