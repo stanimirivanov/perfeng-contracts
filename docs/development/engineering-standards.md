@@ -115,8 +115,7 @@ Test behavior at the lowest boundary that proves it:
 - consumer-facing migration fixtures when a generation changes.
 
 Tests MUST be deterministic, isolated, parallel-safe and independent of network,
-locale, filesystem ordering and wall clock unless those are the subject. Defect
-fixes SHOULD begin with a failing regression test. Never weaken assertions or
+locale, filesystem ordering and wall clock unless those are the subject. Never weaken assertions or
 accept broader input merely to preserve an invalid fixture.
 
 ## Documentation and security
