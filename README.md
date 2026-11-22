@@ -61,7 +61,7 @@ and Native Worker root/path/component source fragments are hand-authored; their
 bundled OpenAPI files are regenerated through the [split authoring guide](docs/development/split-api-authoring.md). Integration OpenAPI
 is generated from the same Effect schemas; see the
 [integration guide](docs/performance-integration.md) and
-[ADR-0002](docs/decisions/0002-use-effect-schema-at-contract-boundaries.md).
+[ADR-0002](docs/adr/0002-use-effect-schema-at-contract-boundaries.md).
 
 ## Validate
 
@@ -170,7 +170,7 @@ Start with these repository sources of truth:
 - [Coding harness](docs/development/harness.md)
 - [Contract engineering standards](docs/development/engineering-standards.md)
 - [Dependency policy](docs/development/dependency-policy.md)
-- [Architecture decisions](docs/decisions/README.md)
+- [Architecture decisions](docs/adr/README.md)
 - [Security policy](SECURITY.md)
 - [Code of conduct](CODE_OF_CONDUCT.md)
 - [Cross-repository roadmap](https://github.com/stanimirivanov/perfeng-environment/blob/main/docs/roadmap/milestones.md)

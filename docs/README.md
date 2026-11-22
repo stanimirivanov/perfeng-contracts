@@ -13,39 +13,41 @@
 - Update this map when a canonical source moves or a recurring task lacks a
   clear route.
 
+Read the [repository glossary](../GLOSSARY.md) for domain terminology.
+
 ## Route by task
 
 | Task or changed area | Read before changing it | Verify or consult as needed |
 |:--|:--|:--|
 | Contribution requirements or verification | [CONTRIBUTING.md](../CONTRIBUTING.md) | [Agent entry point](../AGENTS.md) |
-| Effect Schema source or generated JSON Schema | [Contract engineering standards](development/engineering-standards.md), [ADR-0002](decisions/0002-use-effect-schema-at-contract-boundaries.md) | Root [README](../README.md), `pnpm contracts:check` |
+| Effect Schema source or generated JSON Schema | [Contract engineering standards](development/engineering-standards.md), [ADR-0002](adr/0002-use-effect-schema-at-contract-boundaries.md) | Root [README](../README.md), `pnpm contracts:check` |
 | Compatibility, generations or consumer migration | [Compatibility guide](compatibility.md), [schema versioning](architecture/schema-versioning.md) | Affected producers, consumers and ADRs |
 | Run Management API | [Run Management API guide](run-management-api.md) | API fixtures and offline validator |
-| Integration identity, admission, retry and cancellation | [Performance integration](performance-integration.md), [ADR-0009](decisions/0009-share-integration-identity-and-lifecycle.md) | Generated OpenAPI, exchange fixtures and offline conformance tests |
-| Request-linked native analysis evidence | [Analysis publications](performance-analysis.md), [ADR-0011](decisions/0011-bind-analysis-publications-to-retained-admission.md) | Strict publication shape, exact bytes and retained admission/native association checks |
-| Scoped HTTP analysis reads | [Read resource](performance-analysis.md#scoped-http-reads), [ADR-0012](decisions/0012-read-retained-analysis-by-request.md) | Generated GET, independent scope, closed families, cache/auth/retry headers and rejection tests |
-| Authorized performance catalog snapshots | [Performance catalog](performance-catalog.md), [ADR-0010](decisions/0010-project-safe-performance-catalog-snapshots.md) | Scope, pagination, freshness, digest and reference-closure conformance |
-| Native Worker API, baseline recipe or native artifact upload | [Native Worker API guide](native-worker-api.md), [ADR-0004](decisions/0004-version-native-worker-execution-recipes.md), [ADR-0005](decisions/0005-retire-native-worker-v1.md) | v2 OpenAPI, examples, rejection and HTTP cases |
-| Lost acquisition response or manual native recovery | [Native Worker API guide](native-worker-api.md#read-only-current-slot-discovery), [ADR-0006](decisions/0006-inspect-native-attempt-without-restoring-authority.md), [ADR-0007](decisions/0007-discover-native-worker-slot-without-restoring-authority.md) | Discovery and inspection conformance tests; consumer race and retention tests |
+| Integration identity, admission, retry and cancellation | [Performance integration](performance-integration.md), [ADR-0009](adr/0009-share-integration-identity-and-lifecycle.md) | Generated OpenAPI, exchange fixtures and offline conformance tests |
+| Request-linked native analysis evidence | [Analysis publications](performance-analysis.md), [ADR-0011](adr/0011-bind-analysis-publications-to-retained-admission.md) | Strict publication shape, exact bytes and retained admission/native association checks |
+| Scoped HTTP analysis reads | [Read resource](performance-analysis.md#scoped-http-reads), [ADR-0012](adr/0012-read-retained-analysis-by-request.md) | Generated GET, independent scope, closed families, cache/auth/retry headers and rejection tests |
+| Authorized performance catalog snapshots | [Performance catalog](performance-catalog.md), [ADR-0010](adr/0010-project-safe-performance-catalog-snapshots.md) | Scope, pagination, freshness, digest and reference-closure conformance |
+| Native Worker API, baseline recipe or native artifact upload | [Native Worker API guide](native-worker-api.md), [ADR-0004](adr/0004-version-native-worker-execution-recipes.md), [ADR-0005](adr/0005-retire-native-worker-v1.md) | v2 OpenAPI, examples, rejection and HTTP cases |
+| Lost acquisition response or manual native recovery | [Native Worker API guide](native-worker-api.md#read-only-current-slot-discovery), [ADR-0006](adr/0006-inspect-native-attempt-without-restoring-authority.md), [ADR-0007](adr/0007-discover-native-worker-slot-without-restoring-authority.md) | Discovery and inspection conformance tests; consumer race and retention tests |
 | Workloads, catalogues or metric naming | [Workloads and catalogues](workloads-and-catalogues.md), [metric naming](architecture/metric-naming.md) | Registry, examples and semantic tests |
-| Kubernetes benchmark admission, qualification or interference evidence | [Kubernetes benchmark evidence](kubernetes-benchmark-evidence.md), [ADR-0008](decisions/0008-separate-kubernetes-benchmark-evidence.md) | Strict scope/check tests, node/time consistency and cross-document binding |
+| Kubernetes benchmark admission, qualification or interference evidence | [Kubernetes benchmark evidence](kubernetes-benchmark-evidence.md), [ADR-0008](adr/0008-separate-kubernetes-benchmark-evidence.md) | Strict scope/check tests, node/time consistency and cross-document binding |
 | Artifact, result, browser or policy contracts | [Artifact and result transport](artifact-and-result-transport.md), [browser diagnostics](browser-diagnostics.md), [Playwright measurements](playwright-measurements.md), [performance policies](performance-policies.md) | Contract-specific fixtures and tests |
-| Contract distribution, retention or rollback | [Distribution policy](development/contract-distribution.md), [ADR-0015](decisions/0015-distribute-immutable-contract-artifacts.md) | Distribution metadata and offline conformance tests |
+| Contract distribution, retention or rollback | [Distribution policy](development/contract-distribution.md), [ADR-0015](adr/0015-distribute-immutable-contract-artifacts.md) | Distribution metadata and offline conformance tests |
 | Build, CI, repository policy or developer experience | [Harness guide](development/harness.md) | [Dependency policy](development/dependency-policy.md), `make docs-check`, `make verify` |
 | Dependency admission, updates, licensing or vulnerabilities | [Dependency policy](development/dependency-policy.md) | [Security policy](../SECURITY.md), `make supply-chain` |
-| Durable compatibility, ownership or security decision | [ADR index](decisions/README.md) | Affected consumer migration guidance |
+| Durable compatibility, ownership or security decision | [ADR index](adr/README.md) | Affected consumer migration guidance |
 | Vulnerability reporting | [Security policy](../SECURITY.md) | Relevant trust-boundary documentation |
 
-Service-scoped operator access and CI deep links: [service identity](service-identity.md) and [ADR-0016](decisions/0016-service-scoped-run-discovery.md).
+Service-scoped operator access and CI deep links: [service identity](service-identity.md) and [ADR-0016](adr/0016-service-scoped-run-discovery.md).
 
-Run-scoped historical comparisons: [projection contract](run-comparison.md), [ADR-0017](decisions/0017-project-immutable-run-comparisons.md).
+Run-scoped historical comparisons: [projection contract](run-comparison.md), [ADR-0017](adr/0017-project-immutable-run-comparisons.md).
 
 ## Canonical collections
 
 - [Development](development/) contains engineering, harness and dependency
   policy.
 - [Architecture](architecture/) records contract naming and versioning rules.
-- [Decisions](decisions/README.md) records durable choices and their lifecycle.
+- [Decisions](adr/README.md) records durable choices and their lifecycle.
 - The root [README](../README.md) inventories published contract artifacts and
   exact validation commands.
 - [Security](../SECURITY.md) defines vulnerability reporting and contribution

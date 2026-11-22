@@ -294,7 +294,7 @@ def _read_adrs(documents: dict[str, Document]) -> tuple[dict[str, ADR], list[Vio
     records: dict[str, ADR] = {}
     violations: list[Violation] = []
     for path, document in documents.items():
-        if not path.startswith("docs/decisions/") or path == "docs/decisions/README.md":
+        if not path.startswith("docs/adr/") or path == "docs/adr/README.md":
             continue
         filename_match = ADR_FILE.fullmatch(Path(path).name)
         if not filename_match:
@@ -305,7 +305,7 @@ def _read_adrs(documents: dict[str, Document]) -> tuple[dict[str, ADR], list[Vio
                     "adr.filename",
                     "ADR filename is not four-digit lowercase kebab-case",
                     "rename it and update links",
-                    "docs/decisions/README.md#naming-and-lifecycle",
+                    "docs/adr/README.md#naming-and-lifecycle",
                 )
             )
             continue
@@ -319,7 +319,7 @@ def _read_adrs(documents: dict[str, Document]) -> tuple[dict[str, ADR], list[Vio
                     "adr.heading",
                     "ADR heading and filename number do not agree",
                     "use `# ADR-NNNN: Decision title`",
-                    "docs/decisions/README.md#naming-and-lifecycle",
+                    "docs/adr/README.md#naming-and-lifecycle",
                 )
             )
         metadata: dict[str, tuple[str, int]] = {}
@@ -335,7 +335,7 @@ def _read_adrs(documents: dict[str, Document]) -> tuple[dict[str, ADR], list[Vio
                             "adr.metadata",
                             f'duplicate metadata field "{match.group(1)}"',
                             "keep exactly one value before the first section",
-                            "docs/decisions/README.md#template",
+                            "docs/adr/README.md#template",
                         )
                     )
                 metadata[match.group(1)] = (match.group(2), line_number)
@@ -348,7 +348,7 @@ def _read_adrs(documents: dict[str, Document]) -> tuple[dict[str, ADR], list[Vio
                         "adr.metadata",
                         f'missing metadata field "{field}"',
                         f"add `- {field}: ...`",
-                        "docs/decisions/README.md#template",
+                        "docs/adr/README.md#template",
                     )
                 )
         status = metadata.get("Status", ("", 1))
@@ -360,7 +360,7 @@ def _read_adrs(documents: dict[str, Document]) -> tuple[dict[str, ADR], list[Vio
                     "adr.status",
                     f'unsupported status "{status[0]}"',
                     "use a documented lifecycle status",
-                    "docs/decisions/README.md#naming-and-lifecycle",
+                    "docs/adr/README.md#naming-and-lifecycle",
                 )
             )
         recorded_date = metadata.get("Date", ("", 1))
@@ -375,7 +375,7 @@ def _read_adrs(documents: dict[str, Document]) -> tuple[dict[str, ADR], list[Vio
                         "adr.date",
                         f'invalid ISO date "{recorded_date[0]}"',
                         "use YYYY-MM-DD",
-                        "docs/decisions/README.md#template",
+                        "docs/adr/README.md#template",
                     )
                 )
         milestone = metadata.get("Milestone", ("", 1))
@@ -398,7 +398,7 @@ def _read_adrs(documents: dict[str, Document]) -> tuple[dict[str, ADR], list[Vio
                     "adr.number",
                     f"ADR-{number} duplicates {records[number].path}",
                     "renumber the later unpublished ADR from fresh state",
-                    "docs/decisions/README.md#naming-and-lifecycle",
+                    "docs/adr/README.md#naming-and-lifecycle",
                 )
             )
         else:
@@ -412,19 +412,19 @@ def _check_adrs(documents: dict[str, Document]) -> list[Violation]:
     if numbers != list(range(1, len(numbers) + 1)):
         violations.append(
             Violation(
-                "docs/decisions/README.md",
+                "docs/adr/README.md",
                 1,
                 "adr.sequence",
                 "ADR numbers are not contiguous from 0001",
                 "restore history or renumber unpublished ADRs",
-                "docs/decisions/README.md#naming-and-lifecycle",
+                "docs/adr/README.md#naming-and-lifecycle",
             )
         )
-    index = documents.get("docs/decisions/README.md")
+    index = documents.get("docs/adr/README.md")
     if index is None:
         return violations + [
             Violation(
-                "docs/decisions/README.md",
+                "docs/adr/README.md",
                 1,
                 "adr.index",
                 "ADR index is missing",
@@ -444,7 +444,7 @@ def _check_adrs(documents: dict[str, Document]) -> list[Violation]:
                         "adr.index",
                         f"ADR-{match.group(1)} has duplicate index rows",
                         "keep one row per decision number",
-                        "docs/decisions/README.md#index",
+                        "docs/adr/README.md#index",
                     )
                 )
             entries[match.group(1)] = (match.group(2).strip(), match.group(3).strip(), line_number)
@@ -458,7 +458,7 @@ def _check_adrs(documents: dict[str, Document]) -> list[Violation]:
                     "adr.index",
                     f"ADR-{number} is absent from the index",
                     "add a linked index row",
-                    "docs/decisions/README.md#index",
+                    "docs/adr/README.md#index",
                 )
             )
             continue
@@ -470,7 +470,7 @@ def _check_adrs(documents: dict[str, Document]) -> list[Violation]:
                     "adr.index",
                     f"ADR-{number} index link is wrong",
                     "link its decision file",
-                    "docs/decisions/README.md#index",
+                    "docs/adr/README.md#index",
                 )
             )
         if entry[1] != record.metadata.get("Status", ("", 1))[0]:
@@ -481,7 +481,7 @@ def _check_adrs(documents: dict[str, Document]) -> list[Violation]:
                     "adr.index",
                     f"ADR-{number} index status differs",
                     "copy metadata status",
-                    "docs/decisions/README.md#index",
+                    "docs/adr/README.md#index",
                 )
             )
     for number, entry in entries.items():
@@ -493,7 +493,7 @@ def _check_adrs(documents: dict[str, Document]) -> list[Violation]:
                     "adr.index",
                     f"ADR-{number} has no file",
                     "restore it or remove an unpublished row",
-                    "docs/decisions/README.md#index",
+                    "docs/adr/README.md#index",
                 )
             )
     for record in records.values():
@@ -508,7 +508,7 @@ def _check_adrs(documents: dict[str, Document]) -> list[Violation]:
                     "adr.supersession",
                     "superseded ADR has no replacement",
                     "link its replacement",
-                    "docs/decisions/README.md#naming-and-lifecycle",
+                    "docs/adr/README.md#naming-and-lifecycle",
                 )
             )
         for reference in references:
@@ -520,7 +520,7 @@ def _check_adrs(documents: dict[str, Document]) -> list[Violation]:
                         "adr.supersession",
                         f"replacement ADR-{reference} does not exist",
                         "link an existing ADR",
-                        "docs/decisions/README.md#naming-and-lifecycle",
+                        "docs/adr/README.md#naming-and-lifecycle",
                     )
                 )
     return violations

@@ -98,4 +98,4 @@ prove authentication, delegation, grant revocation, uniform HTTP denial and
 mutation audit persistence before consumers enable service mode. Roll back by
 disabling service-mode consumer entry points; retain admission and mappings.
 No deployment, release, identity issuer selection or consumer pin changes occur
-in this PR. See [ADR-0016](decisions/0016-service-scoped-run-discovery.md).
+in this PR. See [ADR-0016](adr/0016-service-scoped-run-discovery.md).

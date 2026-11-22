@@ -24,7 +24,7 @@
 The Native Worker API dispatches existing reviewed Playwright journeys to a
 representative Linux workstation without exposing an inbound listener,
 Kubernetes identity, permanent object-store credentials or caller-selected
-commands. [ADR-0001](decisions/0001-native-windows-worker-protocol.md) owns the
+commands. [ADR-0001](adr/0001-native-windows-worker-protocol.md) owns the
 architecture decision. This document explains the supported v2 behavior;
 the self-contained OpenAPI document is authoritative for wire shape.
 
@@ -136,8 +136,8 @@ artifact with its qualified runner identity. The SUT target environment ID is
 separate from the Linux host profile. Capabilities must cover the assigned
 browser, diagnostic mode and artifact kinds before browser launch. `journeyId`
 selects repository-owned code, never a caller-supplied command. See
-[ADR-0004](decisions/0004-version-native-worker-execution-recipes.md) for the
-recipe decision and [ADR-0005](decisions/0005-retire-native-worker-v1.md) for
+[ADR-0004](adr/0004-version-native-worker-execution-recipes.md) for the
+recipe decision and [ADR-0005](adr/0005-retire-native-worker-v1.md) for
 the supported-generation decision.
 
 ## Lease and attempt fencing
@@ -240,7 +240,7 @@ availability. An `ACTIVE` result may become stale immediately, and inspection su
 capability. Use current-slot discovery below when an acquisition response was
 lost before the attempt ID became known. Automatic restart recovery remains
 out of scope. See
-[ADR-0006](decisions/0006-inspect-native-attempt-without-restoring-authority.md).
+[ADR-0006](adr/0006-inspect-native-attempt-without-restoring-authority.md).
 
 ## Read-only current-slot discovery
 
@@ -304,7 +304,7 @@ run require the separately implemented manual recovery procedure; no discovery
 response is itself cleanup or acquisition permission. Unreported identity,
 errors, mismatches or uncertain withdrawal fail closed and retain local state.
 
-See [ADR-0007](decisions/0007-discover-native-worker-slot-without-restoring-authority.md).
+See [ADR-0007](adr/0007-discover-native-worker-slot-without-restoring-authority.md).
 
 ## Errors, security and operational limits
 

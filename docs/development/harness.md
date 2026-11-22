@@ -104,7 +104,7 @@ to print a deterministic change receipt. Non-documentation changes return a fail
 status for compatibility review. This diagnostic does not resolve remote inputs or
 prove arbitrary schema equivalence. `make api-review-check` verifies current API
 operation/reference traversal and keyword inventory without changing artifacts.
-See [ADR-0014](../decisions/0014-split-api-authoring-and-review-semantics.md).
+See [ADR-0014](../adr/0014-split-api-authoring-and-review-semantics.md).
 
 For a pull request, CI invokes `scripts/api_review.py --base <exact-base-commit>`
 after fetching repository history. The receipt compares actual base/head API
