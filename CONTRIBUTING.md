@@ -6,8 +6,6 @@
 - Use MUST, SHOULD and MAY as defined below; lowercase wording is explanatory.
 - Proceed on documented, reversible assumptions and stop for choices that
   materially affect semantics, compatibility, safety, scope or external state.
-- Prepare requested changes without staging or committing, then print issue
-  content for the repository owner.
 - Run the exact repository checks and report unavailable checks as not run—never
   as passed.
 - Use exact published milestone titles in the form `MNN — Outcome`.
@@ -25,7 +23,7 @@ silently create another normative level.
 
 | Concern | Canonical source |
 |:--|:--|
-| Contributor workflow, issue timing, escalation and completion | This document |
+| Contributor requirements and verification | This document |
 | Concise contributor and agent entry point | [AGENTS.md](AGENTS.md) |
 | Task-oriented documentation routing | [docs/README.md](docs/README.md) |
 | Coding harness and verification tiers | [docs/development/harness.md](docs/development/harness.md) |
@@ -48,8 +46,7 @@ A contributor MUST:
 - read affected schemas, examples, tests, contract documentation and ADRs;
 - identify the smallest independently reviewable observable outcome;
 - identify affected producers, consumers, bundle versions, fixtures and
-  migration requirements; and
-- determine the applicable workflow under [Issue timing](#issue-timing).
+  migration requirements.
 
 A contributor MUST NOT discard, overwrite, reformat or incorporate unrelated
 work merely to obtain a clean diff. Destructive operations and externally
@@ -68,7 +65,7 @@ A contributor MAY proceed with a documented assumption only when it is local,
 reversible and inexpensive; stays within the stated outcome; does not alter
 published semantics, security, persisted meaning or external state; and would
 not materially change what reviewers believe they are approving. Record the
-assumption and consequence in the pull request and completion report.
+assumption and consequence in the pull request when one exists.
 
 A contributor MUST stop and request a decision when missing information could
 materially change the observable outcome, milestone, compatibility, data
@@ -81,19 +78,11 @@ bury a material choice in a diff or halt on a trivial reversible choice.
 
 ## Issue timing
 
-- When an issue number is supplied, the contributor MUST follow its scope and
-  milestone. A material mismatch follows the escalation rules.
-- When no issue number is supplied, prepare the smallest coherent requested
-  change and print a complete proposed issue in the completion report. The
-  owner creates the issue and then creates or renames the branch so it contains
-  the issue number.
-- Contributors acting for the owner MUST NOT stage, commit, push, create or
-  modify issues, create pull requests, publish bundles, create releases, or
-  change milestones unless explicitly requested.
-- Read-only investigation and scoping MAY occur before an issue exists.
-
-Creating or modifying a GitHub record or published artifact is an externally
-visible write and requires explicit authority.
+Use the [issue tracker configuration](docs/agents/issue-tracker.md) and the
+applicable skill. Reuse a supplied issue and follow its scope and milestone.
+For issue or PR writes, verify the target repository and authorization first.
+Staging, committing, pushing, publishing, changing milestones and other
+external mutations require authorization.
 
 ## Milestones
 
@@ -157,20 +146,9 @@ Placeholder contract generations MUST NOT be added for roadmap appearance.
 
 ## Development workflow
 
-1. Select the workflow defined in [Issue timing](#issue-timing).
-2. Prepare one focused change without staging, committing or pushing for the
-   owner.
-3. Add positive and relevant negative conformance cases.
-4. Implement the smallest coherent contract change and update documentation.
-5. Format and run the exact repository checks.
-6. Review the full diff for secrets, generated churn, accidental semantics,
-   assumptions, bundle-version consistency and unrelated edits.
-7. Print the canonical [completion report](#completion-report).
-8. The owner creates or confirms the issue and branch, may adjust the change,
-   commits with `[#N]`, pushes and opens the pull request.
-
-Do not store task-specific issue bodies, PR descriptions or handoff notes in
-the repository.
+Use the applicable `mattpocock/skills` workflow through [AGENTS.md](AGENTS.md).
+Use this guide for the repository's technical requirements, verification,
+issue and PR metadata, and authorization boundaries.
 
 ## External operations and destructive actions
 
@@ -258,9 +236,7 @@ and rollback; and known limitations.
 
 ## Review checklist
 
-- [ ] MUST: The issue uses the required structure and exact milestone title.
-- [ ] MUST: The change is one coherent contract outcome.
-- [ ] MUST: Assumptions and affected producers and consumers are explicit.
+- [ ] MUST: Affected producers and consumers are identified.
 - [ ] MUST: Published meaning changes only through a compatible or versioned
       transition.
 - [ ] MUST: Positive and relevant rejection behavior is tested.
@@ -273,8 +249,5 @@ and rollback; and known limitations.
 
 ## Completion report
 
-After every work item, print the repository, exact milestone, proposed issue
-title, complete issue body, assumptions and limitations, verification outcomes
-distinguished as passed/failed/not run, and a suggested `[#N]` commit subject.
-When an issue exists, repeat or amend its content so delivered scope is auditable.
-Printing the report does not publish external records.
+Report actual verification outcomes and any remaining limitations. Include the
+linked issue or PR when one exists. Follow the applicable skill for delivery.

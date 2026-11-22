@@ -1,30 +1,23 @@
-# Repository working agreement
+# Repository agent guide
 
-## TL;DR
+## Agent skills
 
-- Read `CONTRIBUTING.md`; it is the canonical workflow policy.
-- Preserve published contract meaning and make compatibility effects explicit.
-- Keep validation offline, deterministic and independent of consumer code.
-- Run the exact repository checks and report their results honestly.
+Use `mattpocock/skills` as the primary workflow for planning, ticketing,
+implementation, TDD, review, and pull requests. The skills take precedence where
+contributor guidance covers the same steps. Follow the repository's technical
+requirements, CI gates, and authorization boundaries.
 
-This file is the concise, tool-facing entry point for contributors and coding
-agents. [CONTRIBUTING.md](CONTRIBUTING.md) is the canonical workflow policy.
-Normative terms such as MUST, SHOULD and MAY have the meanings defined there.
+### Issue tracker
 
-## Before changing anything
+Use GitHub Issues in `stanimirivanov/perfeng-contracts`. See [issue tracker configuration](docs/agents/issue-tracker.md).
 
-1. You MUST read [CONTRIBUTING.md](CONTRIBUTING.md), especially its ambiguity,
-   issue-timing, verification and external-side-effect rules.
-2. You MUST inspect the branch and working tree and preserve pre-existing work.
-3. You MUST use the [documentation map](docs/README.md) to select the relevant
-   engineering, contract, compatibility and decision sources. Do not bulk-read
-   unrelated guides or ADRs.
-4. You MUST use the repository-local checks. You MUST NOT claim an unavailable
-   or unexecuted check passed.
+### Triage labels
 
-If schemas, examples, documentation and an accepted decision disagree, you MUST
-NOT silently pick one. Correct an obvious local defect or propose a superseding
-ADR. Ordinary ambiguity follows CONTRIBUTING.
+Use the default Matt Pocock label mapping. See [triage labels](docs/agents/triage-labels.md).
+
+### Domain docs
+
+Single context with a root glossary and ADRs in `docs/decisions/`. See [domain docs](docs/agents/domain.md).
 
 ## Repository responsibility
 
@@ -39,16 +32,6 @@ persistence, runner implementation, analysis algorithms or deployment.
   contract does not define.
 - Consumer migrations MUST be coordinated when closed unions, required fields
   or semantics evolve.
-
-## Shape of work
-
-- Each task and pull request MUST deliver one coherent, independently
-  reviewable contract outcome.
-- Compatibility changes, dependency updates and broad cleanup MUST remain
-  separate unless inseparable for correctness.
-- Existing schema generations and candidate bundles MUST remain reproducible.
-- Scope, assumptions, compatibility effects, migration, affected consumers and
-  verification evidence MUST be explicit.
 
 ## Contract and implementation rules
 
@@ -68,7 +51,7 @@ Follow the engineering standards and relevant contract documentation.
 ## Quality and documentation
 
 - Test observable compatibility behavior at the lowest boundary that proves it.
-- Defect fixes SHOULD begin with a failing regression test.
+-
 - Tests MUST be deterministic, isolated and independent of network, locale,
   filesystem ordering and wall clock unless those are the subject.
 - Comments SHOULD explain decisions and constraints and SHOULD NOT narrate
@@ -77,7 +60,9 @@ Follow the engineering standards and relevant contract documentation.
 - Contract, examples, compatibility documentation and consumer migration notes
   MUST change together.
 
-## Completion
+## Verification
 
-The canonical required checks and completion-report format are defined in
-[CONTRIBUTING.md](CONTRIBUTING.md). Follow them after every work item.
+Run `make verify` and the applicable additional checks documented in
+[CONTRIBUTING.md](CONTRIBUTING.md#verification-and-constrained-environments).
+Use the [documentation map](docs/README.md) to find affected standards, operational
+guides and decisions. Report checks as passed, failed or unavailable.

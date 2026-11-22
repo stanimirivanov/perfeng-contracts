@@ -165,7 +165,7 @@ performance-gate readiness.
 Start with these repository sources of truth:
 
 - [Repository working agreement](AGENTS.md)
-- [Contributor workflow](CONTRIBUTING.md)
+- [Contribution requirements](CONTRIBUTING.md)
 - [Documentation map](docs/README.md)
 - [Coding harness](docs/development/harness.md)
 - [Contract engineering standards](docs/development/engineering-standards.md)

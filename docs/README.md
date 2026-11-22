@@ -17,7 +17,7 @@
 
 | Task or changed area | Read before changing it | Verify or consult as needed |
 |:--|:--|:--|
-| Contributor workflow, issue scope or completion report | [CONTRIBUTING.md](../CONTRIBUTING.md) | [Agent entry point](../AGENTS.md) |
+| Contribution requirements or verification | [CONTRIBUTING.md](../CONTRIBUTING.md) | [Agent entry point](../AGENTS.md) |
 | Effect Schema source or generated JSON Schema | [Contract engineering standards](development/engineering-standards.md), [ADR-0002](decisions/0002-use-effect-schema-at-contract-boundaries.md) | Root [README](../README.md), `pnpm contracts:check` |
 | Compatibility, generations or consumer migration | [Compatibility guide](compatibility.md), [schema versioning](architecture/schema-versioning.md) | Affected producers, consumers and ADRs |
 | Run Management API | [Run Management API guide](run-management-api.md) | API fixtures and offline validator |
