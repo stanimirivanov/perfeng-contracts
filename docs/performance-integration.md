@@ -117,7 +117,7 @@ tooling checks closed message shapes and complete exchange fixtures offline,
 including immutable correlation, duplicate delivery and state progression. It
 is conformance tooling, not a runtime SDK or authorization engine. The default
 `make validate` gate includes these checks. See proposed
-[ADR-0009](decisions/0009-share-integration-identity-and-lifecycle.md).
+[ADR-0009](adr/0009-share-integration-identity-and-lifecycle.md).
 
 The [CloudEvents specification](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md)
 informs event identity; [AsyncAPI request/reply](https://www.asyncapi.com/docs/tutorials/getting-started/request-reply)

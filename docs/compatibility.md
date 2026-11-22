@@ -60,7 +60,7 @@ Opt-in producers must retain authenticated admission/native bindings and publish
 immutable exact-byte references; consumers must implement scope, association and
 policy checks before activating ingestion. No HTTP operation, release or deployment
 is added. See [analysis publications](performance-analysis.md) and proposed
-[ADR-0011](decisions/0011-bind-analysis-publications-to-retained-admission.md).
+[ADR-0011](adr/0011-bind-analysis-publications-to-retained-admission.md).
 
 Candidate bundle 0.24.0 adds `performance-catalog/v1`: authorized resource metadata,
 exact supported profile bindings, baseline lifecycle and complete fresh snapshot
@@ -69,7 +69,7 @@ through pinned reviewed artifacts and must verify scope, reference closure,
 completeness and freshness before replacing eligibility views. There is no
 existing-consumer migration or deployed endpoint. See the
 [catalog guide](performance-catalog.md) and proposed
-[ADR-0010](decisions/0010-project-safe-performance-catalog-snapshots.md).
+[ADR-0010](adr/0010-project-safe-performance-catalog-snapshots.md).
 
 Candidate bundle 0.23.0 adds `performance-integration/v1` and its generated
 self-contained OpenAPI contract. Existing schema generations and native APIs
@@ -89,7 +89,7 @@ not qualify a cluster, authorize execution or approve a baseline. Consumers
 must verify content, trusted capture policy and comparable evidence before
 promotion. No runtime release or historical evidence is rewritten. See
 [Kubernetes evidence](kubernetes-benchmark-evidence.md) and
-[ADR-0008](decisions/0008-separate-kubernetes-benchmark-evidence.md).
+[ADR-0008](adr/0008-separate-kubernetes-benchmark-evidence.md).
 
 Candidate bundle 0.21.0 adds `discoverNativeAttempt` to Native Worker API v2
 (OpenAPI `2.2.0`) for acquisition responses lost before the worker learns the
@@ -107,7 +107,7 @@ with acquisition and presence replacement before workers call it. Manual
 recovery must stop the old process and withdraw availability; discovery does not
 restore execution authority or permit clearing evidence. Bundle promotion and
 unattended restart remain separate work. See
-[ADR-0007](decisions/0007-discover-native-worker-slot-without-restoring-authority.md)
+[ADR-0007](adr/0007-discover-native-worker-slot-without-restoring-authority.md)
 and the [Native Worker guide](native-worker-api.md#read-only-current-slot-discovery).
 
 Candidate bundle 0.20.0 adds `inspectNativeAttempt` to Native Worker API v2
@@ -118,7 +118,7 @@ consumers pinned to 0.19.0 continue using the earlier `2.0.0` API. The control
 plane must implement worker-scoped snapshots before the Playwright worker can
 use the operation. An inspection result never restores a lease capability,
 permits evidence deletion or authorizes unattended acquisition. See
-[ADR-0006](decisions/0006-inspect-native-attempt-without-restoring-authority.md).
+[ADR-0006](adr/0006-inspect-native-attempt-without-restoring-authority.md).
 
 Candidate bundle 0.19.0 retires the never-deployed `native-worker/v1` API from
 the active manifest, OpenAPI corpus and validators. `native-worker/v2` is the
@@ -133,7 +133,7 @@ retained in current source or release artifacts. Dormant local v1 assignments
 must be reviewed and recreated under the complete v2 recipe; there is no
 production traffic or authoritative evidence to migrate. See the
 [Native Worker guide](native-worker-api.md) and
-[ADR-0005](decisions/0005-retire-native-worker-v1.md).
+[ADR-0005](adr/0005-retire-native-worker-v1.md).
 
 Candidate bundle 0.18.0 adds `native-worker/v2` as an independent candidate API
 generation with a complete baseline Chromium execution recipe. V1 paths,
@@ -146,7 +146,7 @@ and Playwright worker must pin one reviewed revision and implement the v2 lease
 and runner projection together. Existing v1 assignments are not converted;
 trace, memory, smoothness, branded browsers and release archives remain deferred.
 See the [Native Worker guide](native-worker-api.md) and accepted
-[ADR-0004](decisions/0004-version-native-worker-execution-recipes.md).
+[ADR-0004](adr/0004-version-native-worker-execution-recipes.md).
 
 Candidate bundle 0.17.0 corrects Native Worker artifact-plan `format` values to
 use the registered data-contract names `playwright-measurements/v2` and
@@ -161,7 +161,7 @@ no authoritative evidence to migrate.
 
 Candidate bundle 0.16.0 corrects the not-yet-implemented native artifact upload
 authorization selected by
-[ADR-0003](decisions/0003-use-s3-presigned-put-for-native-artifacts.md). The
+[ADR-0003](adr/0003-use-s3-presigned-put-for-native-artifacts.md). The
 upload-grant response now carries a short-lived S3 SigV4 presigned `PUT` URL and
 a closed set of exact signed headers instead of a custom
 `X-Perfeng-Upload-Grant` header paired with a credential-free gateway URL. The

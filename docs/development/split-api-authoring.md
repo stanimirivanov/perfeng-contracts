@@ -78,7 +78,7 @@ Never hand-resolve a generated wire change by dropping conformance evidence.
 
 - [Redocly split](https://redocly.com/docs/cli/commands/split)
 - [Redocly bundle](https://redocly.com/docs/cli/commands/bundle)
-- [ADR-0014](../decisions/0014-split-api-authoring-and-review-semantics.md)
+- [ADR-0014](../adr/0014-split-api-authoring-and-review-semantics.md)
 
 ## Native Worker source identity
 

@@ -100,4 +100,4 @@ PR48's guarded serving and Console adoption. An old provider's 404 does not prov
 capability readiness. This PR activates no provider, consumer, deployment or
 release. Roll back consumer opt-in while retaining historical bindings/bytes.
 Offline schema and relationship tests are not live authorization or storage
-verification. See [ADR-0017](decisions/0017-project-immutable-run-comparisons.md).
+verification. See [ADR-0017](adr/0017-project-immutable-run-comparisons.md).

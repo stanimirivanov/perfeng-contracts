@@ -29,7 +29,7 @@ silently create another normative level.
 | Coding harness and verification tiers | [docs/development/harness.md](docs/development/harness.md) |
 | Contract engineering standards | [docs/development/engineering-standards.md](docs/development/engineering-standards.md) |
 | Dependency admission and supply-chain checks | [docs/development/dependency-policy.md](docs/development/dependency-policy.md) |
-| Architecture decisions | [docs/decisions](docs/decisions/README.md) |
+| Architecture decisions | [docs/adr](docs/adr/README.md) |
 | Cross-repository milestones | [perfeng-environment roadmap](https://github.com/stanimirivanov/perfeng-environment/blob/main/docs/roadmap/milestones.md) |
 | Contract inventory and exact commands | [README.md](README.md) |
 | Compatibility and migration | [docs/compatibility.md](docs/compatibility.md) |

@@ -146,4 +146,4 @@ their prior reviewed revision rather than relabeling OCI execution as an archive
 Run `make verify` and `make validate`. Strict Effect and generated JSON Schema
 tests cover scopes, completeness, summary precedence, units and closed shapes;
 offline Python tests cover temporal/node consistency and cross-document binding.
-See [ADR-0008](decisions/0008-separate-kubernetes-benchmark-evidence.md).
+See [ADR-0008](adr/0008-separate-kubernetes-benchmark-evidence.md).

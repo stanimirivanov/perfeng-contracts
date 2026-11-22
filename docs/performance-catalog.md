@@ -83,4 +83,4 @@ shape/provenance in Effect and JSON Schema plus complete snapshot semantics in
 offline Python tooling. Fixture observation time is frozen at 2026-10-22 12:00Z;
 production consumers must supply actual observation time and independently verified
 scope. Structural validation cannot authorize access or establish external artifact
-provenance. See [ADR-0010](decisions/0010-project-safe-performance-catalog-snapshots.md).
+provenance. See [ADR-0010](adr/0010-project-safe-performance-catalog-snapshots.md).

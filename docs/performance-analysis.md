@@ -79,7 +79,7 @@ Revert removes the new candidate family; existing APIs and evidence are unaffect
 The offline `scripts/performance_analysis.py` checks relationships after schema
 validation. `check_binding` additionally requires independently trusted inputs and
 already validated analysis/policy semantics; it is conformance tooling, not an SDK.
-See [ADR-0011](decisions/0011-bind-analysis-publications-to-retained-admission.md).
+See [ADR-0011](adr/0011-bind-analysis-publications-to-retained-admission.md).
 
 ## Scoped HTTP reads
 
@@ -125,4 +125,4 @@ Old payloads and operations keep their meaning and bytes. Pin the changed API
 document and confirm provider support before opting in; an old endpoint's 404 may
 mean unsupported route. Roll out provider handler/authentication, then Argus polling
 and persistence. No deployment or stable release occurs here. Roll back read opt-in
-while preserving retained evidence. See [ADR-0012](decisions/0012-read-retained-analysis-by-request.md).
+while preserving retained evidence. See [ADR-0012](adr/0012-read-retained-analysis-by-request.md).
