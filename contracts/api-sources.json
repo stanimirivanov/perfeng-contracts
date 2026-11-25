@@ -66,12 +66,13 @@
         "paths/v1_runs_{runId}_access.json",
         "paths/v1_runs_{runId}_artifacts.json",
         "paths/v1_runs_{runId}_artifacts_{artifactId}_content.json",
+        "paths/v1_runs_{runId}_artifacts_{artifactId}_report-content.json",
         "paths/v1_runs_{runId}_cancel.json",
         "paths/v1_runs_{runId}_comparison.json",
         "paths/v1_runs_{runId}_policy_content.json",
         "paths/v1_runs_{runId}_reruns.json"
       ],
-      "semanticSha256": "9b5ae745be77438bc9e8f9c82d06888e996b2a5d66369f36e607bab6f631ab3b"
+      "semanticSha256": "d203fdc4be6652bee9bea9bfea379ac2095057faa30e2455668af7a1ced75dbf"
     },
     {
       "root": "api/native-worker/v2/source",

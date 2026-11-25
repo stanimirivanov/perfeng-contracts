@@ -207,6 +207,7 @@
   "api/run-management/v1/source/paths/v1_runs_{runId}_access.json",
   "api/run-management/v1/source/paths/v1_runs_{runId}_artifacts.json",
   "api/run-management/v1/source/paths/v1_runs_{runId}_artifacts_{artifactId}_content.json",
+  "api/run-management/v1/source/paths/v1_runs_{runId}_artifacts_{artifactId}_report-content.json",
   "api/run-management/v1/source/paths/v1_runs_{runId}_cancel.json",
   "api/run-management/v1/source/paths/v1_runs_{runId}_comparison.json",
   "api/run-management/v1/source/paths/v1_runs_{runId}_policy_content.json",
