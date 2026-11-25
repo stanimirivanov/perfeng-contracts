@@ -4,6 +4,7 @@
       "root": "api/run-management/v1/source",
       "output": "api/run-management/v1/openapi.json",
       "files": [
+        "components/responses/AnalysisReportContent.json",
         "components/responses/ArtifactContent.json",
         "components/responses/BadRequest.json",
         "components/responses/BaselineExists.json",
@@ -72,7 +73,7 @@
         "paths/v1_runs_{runId}_policy_content.json",
         "paths/v1_runs_{runId}_reruns.json"
       ],
-      "semanticSha256": "d203fdc4be6652bee9bea9bfea379ac2095057faa30e2455668af7a1ced75dbf"
+      "semanticSha256": "7264290af003499f044595ea8f87b390105a6828fab7c9ef2724732ae9747319"
     },
     {
       "root": "api/native-worker/v2/source",

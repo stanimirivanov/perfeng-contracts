@@ -81,9 +81,22 @@ class EvidenceReadsTest(unittest.TestCase):
         report = self.api["paths"]["/v1/runs/{runId}/artifacts/{artifactId}/report-content"]
         self.assertEqual(report.keys(), {"get", "parameters"})
         self.assertEqual(report["parameters"], artifact["parameters"])
-        self.assertEqual(report["get"]["responses"], artifact["get"]["responses"])
+        report_responses = dict(report["get"]["responses"])
+        artifact_responses = dict(artifact["get"]["responses"])
+        components = self.api["components"]["responses"]
+        report_content = components[report_responses.pop("200")["$ref"].split("/")[-1]]
+        artifact_content = components[artifact_responses.pop("200")["$ref"].split("/")[-1]]
+        self.assertEqual(report_responses, artifact_responses)
+        self.assertEqual(report_content["content"], {"application/octet-stream": {}})
         self.assertEqual(
-            report["get"]["responses"]["200"]["$ref"], "#/components/responses/ArtifactContent"
+            report_content["headers"],
+            {
+                **artifact_content["headers"],
+                "X-Perfeng-Evidence-Format": {
+                    "required": True,
+                    "schema": {"type": "string", "const": "analysis-result/v1"},
+                },
+            },
         )
 
     def test_original_report_and_explicit_historical_baseline_are_readable(self):

@@ -145,6 +145,7 @@
   "api/run-management/v1/openapi.json",
   "api/run-management/v1/rerun-cases.json",
   "api/run-management/v1/service-access-cases.json",
+  "api/run-management/v1/source/components/responses/AnalysisReportContent.json",
   "api/run-management/v1/source/components/responses/ArtifactContent.json",
   "api/run-management/v1/source/components/responses/BadRequest.json",
   "api/run-management/v1/source/components/responses/BaselineExists.json",

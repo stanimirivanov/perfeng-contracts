@@ -3,7 +3,7 @@
   "apis": {
     "api/run-management/v1/openapi.json": {
       "beforeSha256": "9b5ae745be77438bc9e8f9c82d06888e996b2a5d66369f36e607bab6f631ab3b",
-      "afterSha256": "d203fdc4be6652bee9bea9bfea379ac2095057faa30e2455668af7a1ced75dbf",
+      "afterSha256": "7264290af003499f044595ea8f87b390105a6828fab7c9ef2724732ae9747319",
       "reason": "Issue #122 adds a separate, owner-scoped read of exact Analysis Report bytes directly registered to the selected Run. Existing broader evidence reads retain their published semantics."
     }
   }

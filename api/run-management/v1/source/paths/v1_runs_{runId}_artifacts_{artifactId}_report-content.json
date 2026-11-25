@@ -25,12 +25,12 @@
     ],
     "operationId": "getRunAnalysisReportContent",
     "summary": "Read the exact Analysis Report bytes for an owned Run",
-    "description": "Require the authenticated owning principal and current run:read permission for the selected Run. Only a directly registered, retained artifact of kind normalized and format analysis-result/v1 qualifies. Unknown, foreign and ineligible associations return the same scoped 404. After authorization and binding, advertised oversize returns 422. Verify bounded original bytes, size, SHA-256, schema and Run linkage before returning 200. Read failure, actual overflow or failed verification returns 503 without partial bytes. Apply the exact-byte HTTP profile in docs/run-evidence-reads.md#run-owned-analysis-report-content.",
+    "description": "Require current run:read permission and the owning principal. For service Runs verify the exact original actor, current service grant and any required delegation. For legacy Runs require the original credential principal. Only a directly registered, retained artifact of kind normalized and format analysis-result/v1 qualifies. Unknown, foreign and ineligible associations return the same scoped 404. After authorization and binding, advertised oversize returns 422. Verify bounded original bytes, size, SHA-256, schema and Run linkage before returning 200. Read failure, actual overflow or failed verification returns 503 without partial bytes. Apply the exact-byte HTTP profile in docs/run-evidence-reads.md#run-owned-analysis-report-content.",
     "x-perfeng-service-permission": "run:read",
     "x-perfeng-max-response-bytes": 1048576,
     "responses": {
       "200": {
-        "$ref": "../components/responses/ArtifactContent.json"
+        "$ref": "../components/responses/AnalysisReportContent.json"
       },
       "400": {
         "$ref": "../components/responses/BadRequest.json"
