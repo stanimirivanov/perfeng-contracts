@@ -8,14 +8,14 @@
   and terminal state advance independently.
 - Principal scope, idempotency, revision checks and explicit lifecycle
   transitions are required parts of the contract.
-- Artifact endpoints return immutable references, not bytes or storage
-  credentials.
+- The artifact collection returns immutable registrations. The report-content
+  operation returns verified original bytes to the owning principal.
 - Implementations must follow the OpenAPI document and fixtures together.
 
 The [OpenAPI 3.1.1 document](../api/run-management/v1/openapi.json) defines the
 control-plane boundary from proposal sections 12-13 together with explicit
 baseline administration. This is a specification and conformance corpus, not a
-deployed service. API description version 0.8.0 ships in candidate bundle 0.31.0;
+deployed service. API description version 0.9.0 ships in candidate bundle 0.32.0;
 neither is a stable v1 release.
 
 ## Operations
@@ -31,6 +31,7 @@ neither is a stable v1 release.
 | GET /v1/runs/{runId}/access | 200 + RunAccess | Current verified service access |
 | GET /v1/runs/{runId}/artifacts | 200 + ArtifactCollection | Current immutable-reference snapshot |
 | GET /v1/runs/{runId}/artifacts/{artifactId}/content | 200 + original bytes | Exact authorized associated artifact |
+| GET /v1/runs/{runId}/artifacts/{artifactId}/report-content | 200 + original bytes | Directly registered Analysis Report for its Run owner |
 | GET /v1/runs/{runId}/policy/content | 200 + original bytes | Exact retained report-used policy |
 | POST /v1/runs/{runId}/cancel before dispatch | 200 + ABORTED Run | Cancellation completed |
 | POST /v1/runs/{runId}/cancel after dispatch begins | 202 + CANCELLING Run | Cancellation requested |
@@ -63,11 +64,12 @@ lifecycle advancement are separate durable operations. Read the Run state to
 determine lifecycle progress; after REPORTING or COMPLETED the normalized
 `normalized-result/v1` reference can be selected by its kind and format.
 
-The API returns references, not object bytes. It does not issue object-store
-credentials, presigned URLs or redirects, and stored URIs never carry query
-parameters or user information. Authorization to read referenced bytes belongs
-to the artifact data plane. A reference establishes neither an analysis verdict
-nor renewed verification of bytes by the API request.
+A registration identifies the object. To fetch an Analysis Report as the Run
+owner, use the [report-content operation](run-evidence-reads.md#run-owned-analysis-report-content)
+and check the returned bytes against the registered size and SHA-256. A
+registration alone grants no access to storage and establishes no SLO verdict.
+The provider keeps object-store credentials and storage addresses off the
+content response.
 
 Run creation and baseline create/transition accept application/json bodies of at
 most 65,536 UTF-8 bytes. Duplicate JSON object keys at any depth, nonfinite
@@ -270,7 +272,8 @@ source outcomes. See the normative [comparison projection](run-comparison.md).
 
 ## Original evidence content
 
-Run API 0.7.0 adds identifier-only protected artifact and report-used policy reads.
+Run API 0.7.0 added identifier-only protected artifact and report-used policy
+reads. Run API 0.9.0 adds a direct report read scoped to the owning principal.
 See [the normative byte, authorization and error profile](run-evidence-reads.md).
 
 ## Attributed rerun intent

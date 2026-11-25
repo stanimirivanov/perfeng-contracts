@@ -2,7 +2,7 @@
   "openapi": "3.1.1",
   "info": {
     "title": "Performance Run and Baseline Management API",
-    "version": "0.8.0",
+    "version": "0.9.0",
     "description": "Candidate contract only. Run lifecycle and baseline administration remain independent of measurement quality, SLO and regression verdicts. See docs/run-management-api.md."
   },
   "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
@@ -1071,6 +1071,67 @@
           },
           "404": {
             "$ref": "#/components/responses/ScopedNotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/v1/runs/{runId}/artifacts/{artifactId}/report-content": {
+      "parameters": [
+        {
+          "name": "runId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/RunId"
+          }
+        },
+        {
+          "name": "artifactId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Runs"
+        ],
+        "operationId": "getRunAnalysisReportContent",
+        "summary": "Read the exact Analysis Report bytes for an owned Run",
+        "description": "Require current run:read permission and the owning principal. For service Runs verify the exact original actor, current service grant and any required delegation. For legacy Runs require the original credential principal. Only a directly registered, retained artifact of kind normalized and format analysis-result/v1 qualifies. Unknown, foreign and ineligible associations return the same scoped 404. After authorization and binding, advertised oversize returns 422. Verify bounded original bytes, size, SHA-256, schema and Run linkage before returning 200. Read failure, actual overflow or failed verification returns 503 without partial bytes. Apply the exact-byte HTTP profile in docs/run-evidence-reads.md#run-owned-analysis-report-content.",
+        "x-perfeng-service-permission": "run:read",
+        "x-perfeng-max-response-bytes": 1048576,
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/AnalysisReportContent"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/ScopedNotFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationFailed"
           },
           "429": {
             "$ref": "#/components/responses/RateLimited"
@@ -4516,6 +4577,77 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 128
+            }
+          }
+        },
+        "content": {
+          "application/octet-stream": {}
+        }
+      },
+      "AnalysisReportContent": {
+        "description": "Verified original Analysis Report bytes. See docs/run-evidence-reads.md#run-owned-analysis-report-content.",
+        "headers": {
+          "Content-Length": {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1048576
+            }
+          },
+          "Content-Digest": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^sha-256=:[A-Za-z0-9+/]{43}=:$"
+            }
+          },
+          "Cache-Control": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            }
+          },
+          "X-Content-Type-Options": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "nosniff"
+            }
+          },
+          "X-Perfeng-Evidence-Media-Type": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "application/json"
+            }
+          },
+          "X-Perfeng-Evidence-Format": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "analysis-result/v1"
+            }
+          },
+          "X-Perfeng-Run-Id": {
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/RunId"
+            }
+          },
+          "X-Perfeng-Artifact-Id": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+            }
+          },
+          "X-Perfeng-Artifact-Run-Id": {
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/RunId"
             }
           }
         },

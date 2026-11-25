@@ -273,6 +273,7 @@ def lint(document: dict[str, Any], transitions: dict[str, list[str]]) -> None:
         "getRunAccess",
         "getRunComparison",
         "getRunArtifactContent",
+        "getRunAnalysisReportContent",
         "getRunPolicyContent",
         "rerunRun",
         "resolveRunRerun",

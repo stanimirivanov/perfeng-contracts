@@ -59,6 +59,10 @@ class EvidenceReadsTest(unittest.TestCase):
     def test_authenticated_bounded_identifier_only_operations(self):
         for path, operation in (
             ("/v1/runs/{runId}/artifacts/{artifactId}/content", "getRunArtifactContent"),
+            (
+                "/v1/runs/{runId}/artifacts/{artifactId}/report-content",
+                "getRunAnalysisReportContent",
+            ),
             ("/v1/runs/{runId}/policy/content", "getRunPolicyContent"),
         ):
             value = self.api["paths"][path]["get"]
@@ -71,6 +75,29 @@ class EvidenceReadsTest(unittest.TestCase):
                 {"200", "400", "401", "403", "404", "422", "429", "500", "503"},
             )
         self.assertEqual(self.api["security"], [{"bearerAuth": []}])
+
+    def test_report_content_reuses_the_exact_artifact_wire_contract(self):
+        artifact = self.api["paths"]["/v1/runs/{runId}/artifacts/{artifactId}/content"]
+        report = self.api["paths"]["/v1/runs/{runId}/artifacts/{artifactId}/report-content"]
+        self.assertEqual(report.keys(), {"get", "parameters"})
+        self.assertEqual(report["parameters"], artifact["parameters"])
+        report_responses = dict(report["get"]["responses"])
+        artifact_responses = dict(artifact["get"]["responses"])
+        components = self.api["components"]["responses"]
+        report_content = components[report_responses.pop("200")["$ref"].split("/")[-1]]
+        artifact_content = components[artifact_responses.pop("200")["$ref"].split("/")[-1]]
+        self.assertEqual(report_responses, artifact_responses)
+        self.assertEqual(report_content["content"], {"application/octet-stream": {}})
+        self.assertEqual(
+            report_content["headers"],
+            {
+                **artifact_content["headers"],
+                "X-Perfeng-Evidence-Format": {
+                    "required": True,
+                    "schema": {"type": "string", "const": "analysis-result/v1"},
+                },
+            },
+        )
 
     def test_original_report_and_explicit_historical_baseline_are_readable(self):
         self.check()

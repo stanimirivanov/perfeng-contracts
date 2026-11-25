@@ -4,6 +4,12 @@ import base64
 import hashlib
 from typing import Any
 
+from jsonschema import Draft202012Validator
+
+from scripts.contracts_pack import parse_document
+
+MAX_EVIDENCE_BYTES = 1048576
+
 
 def check_bytes(
     raw: bytes, headers: dict[str, str], *, expected: dict[str, str], sha256: str
@@ -26,7 +32,7 @@ def check_bytes(
         "X-Perfeng-Evidence-Media-Type": "application/json",
         **expected,
     }
-    if not 0 < len(raw) <= 1048576 or hashlib.sha256(raw).hexdigest() != sha256:
+    if not 0 < len(raw) <= MAX_EVIDENCE_BYTES or hashlib.sha256(raw).hexdigest() != sha256:
         raise ValueError("Evidence exceeds 1 MiB or differs from retained digest")
     if any(normalized.get(key.lower()) != value for key, value in required.items()):
         raise ValueError("Missing or inconsistent evidence response metadata")
@@ -92,3 +98,68 @@ def check_policy_content(
             "X-Perfeng-Evidence-Format": "policy/v1",
         },
     )
+
+
+def report_content_status(
+    *,
+    run_id: str,
+    artifact_id: str,
+    runs: dict[str, Any],
+    authority: dict[str, Any] | None,
+    raw: bytes | None,
+    validator: Draft202012Validator,
+) -> int:
+    """Derive the expected status from independently supplied offline fixture facts.
+
+    The mode and identities come from verified credentials. Grants and delegation are
+    current provider facts. Runs and registrations are retained admission metadata.
+    A missing raw body represents a storage read failure.
+    """
+    if authority is None:
+        return 401
+    if not authority["operationAllowed"]:
+        return 403
+    run = runs.get(run_id)
+    if run is None:
+        return 404
+    if "service" in run:
+        if (
+            authority["mode"] != "service"
+            or authority.get("actor") != run["createdBy"]
+            or authority.get("grantService") != run["service"]
+            or "run:read" not in authority.get("permissions", [])
+            or not authority.get("callerAuthorizedForActor")
+        ):
+            return 404
+    elif (
+        authority["mode"] != "legacy"
+        or not run.get("legacyPrincipal")
+        or authority.get("legacyPrincipal") != run["legacyPrincipal"]
+    ):
+        return 404
+    matches = [ref for ref in run["registrations"] if ref["id"] == artifact_id]
+    if len(matches) != 1:
+        return 404
+    reference = matches[0]
+    if (
+        reference["runId"] != run_id
+        or reference["kind"] != "normalized"
+        or reference["format"] != "analysis-result/v1"
+        or reference["mediaType"] != "application/json"
+    ):
+        return 404
+    if reference["sizeBytes"] > MAX_EVIDENCE_BYTES:
+        return 422
+    if not raw or len(raw) != reference["sizeBytes"] or len(raw) > MAX_EVIDENCE_BYTES:
+        return 503
+    if hashlib.sha256(raw).hexdigest() != reference["sha256"]:
+        return 503
+    try:
+        report = parse_document(raw)
+    except (ValueError, RecursionError):
+        return 503
+    if not validator.is_valid(report):
+        return 503
+    if report["runId"] != run_id or report["candidateArtifact"]["runId"] != run_id:
+        return 503
+    return 200

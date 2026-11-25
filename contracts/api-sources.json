@@ -4,6 +4,7 @@
       "root": "api/run-management/v1/source",
       "output": "api/run-management/v1/openapi.json",
       "files": [
+        "components/responses/AnalysisReportContent.json",
         "components/responses/ArtifactContent.json",
         "components/responses/BadRequest.json",
         "components/responses/BaselineExists.json",
@@ -66,12 +67,13 @@
         "paths/v1_runs_{runId}_access.json",
         "paths/v1_runs_{runId}_artifacts.json",
         "paths/v1_runs_{runId}_artifacts_{artifactId}_content.json",
+        "paths/v1_runs_{runId}_artifacts_{artifactId}_report-content.json",
         "paths/v1_runs_{runId}_cancel.json",
         "paths/v1_runs_{runId}_comparison.json",
         "paths/v1_runs_{runId}_policy_content.json",
         "paths/v1_runs_{runId}_reruns.json"
       ],
-      "semanticSha256": "9b5ae745be77438bc9e8f9c82d06888e996b2a5d66369f36e607bab6f631ab3b"
+      "semanticSha256": "7264290af003499f044595ea8f87b390105a6828fab7c9ef2724732ae9747319"
     },
     {
       "root": "api/native-worker/v2/source",
