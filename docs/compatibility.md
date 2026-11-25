@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- The current candidate bundle is `0.31.0`; it is not a stable release.
+- The current candidate bundle is `0.32.0`; it is not a stable release.
 - Consumers must explicitly support new schema generations and new members of
   closed execution-artifact or tool unions before accepting them.
 - Existing documents retain their original meaning; conversions create new
@@ -11,6 +11,21 @@
   preserve immutable provenance.
 - Use this document as the compatibility and migration ledger for candidate
   bundle changes.
+
+Candidate bundle 0.32.0 adds Run API 0.9.0 with a direct, owner-scoped
+[Analysis Report read](run-evidence-reads.md#run-owned-analysis-report-content).
+Existing Run metadata, artifact listing, service-authorized evidence reads and
+closed schemas retain their meaning. Consumers should pin the reviewed source
+revision and exact file bytes of `api/run-management/v1/openapi.json`. The
+0.9.0 document SHA-256 is
+`5f650e99f77f8b6a1b536588af8d11bac90132719a058f863e92160f8833eb1c`.
+Control Plane
+qualifies the provider first, including credential rotation/revocation, two
+distinct principals, storage failure and corrupt bytes. Environment then pins
+the qualified provider release and verifies the registered report independently.
+Older local deployments retain the approved exact-object delivery route.
+Rollback disables use of the new operation while retaining the registration and
+original bytes.
 
 Candidate bundle 0.31.0 adds Run API 0.8.0 attributed source-Run rerun and exact
 actor-scoped receipt recovery. Existing paths/schemas and closed lifecycle/error

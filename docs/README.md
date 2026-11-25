@@ -63,6 +63,6 @@ page focused on routing rather than duplicating contract meaning.
 `make docs-check` validates local links and documentation structure; semantic
 accuracy and consumer impact still require review.
 
-Exact immutable content retrieval: [Run evidence reads](run-evidence-reads.md).
+For original evidence bytes, see [Run evidence reads](run-evidence-reads.md). For an operator retrieving their own registered report, see [Run-owned Analysis Report content](run-evidence-reads.md#run-owned-analysis-report-content).
 
 Attributable rerun intent and exact recovery: [Run reruns](run-reruns.md).
