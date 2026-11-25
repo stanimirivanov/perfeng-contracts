@@ -141,8 +141,8 @@ all error mappings, bounded storage I/O and exact schema validation separately.
 Bundle 0.30.0 introduced the Run API 0.7.0 evidence reads. Bundle 0.32.0
 adds the owner-only operation in Run API 0.9.0. Consumer implementations can
 exercise the [portable report cases](../tests/fixtures/report-content/cases.json)
-and [conformance test](../tests/test_report_content.py) before provider
-admission. Control Plane must exercise the route with two authenticated
+before provider admission. The source checkout runs the same cases in
+`tests/test_report_content.py`. Control Plane must exercise the route with two authenticated
 principals, a revoked credential and failing storage. Environment selects the
 qualified immutable release after those checks pass. No existing operations,
 closed enums, lifecycle transitions or Integration/Native API semantics change.
