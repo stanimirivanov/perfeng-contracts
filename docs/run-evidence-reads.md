@@ -130,8 +130,9 @@ the existing sanitized internal-error contract. Run lifecycle is not changed.
 `tests/test_evidence_reads.py` exercises independently retained fixture references,
 original report/policy bytes, a synthetic historical baseline, identity swaps,
 tampering, missing headers, transformations, duplicate names and bounds.
-`scripts/evidence_reads.py` checks wire integrity only; it cannot authenticate
-principals, establish provenance, or prove live storage/authorization behavior.
+The offline conformance checker verifies wire integrity and models report-read
+outcomes from independent identity, authorization, registration and storage
+fixtures. These examples do not establish live provider authority or provenance.
 Provider admission MUST test authorization/revocation, cross-service associations,
 all error mappings, bounded storage I/O and exact schema validation separately.
 
